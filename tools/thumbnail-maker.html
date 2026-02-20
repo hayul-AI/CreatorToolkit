@@ -3,581 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free YouTube Thumbnail Maker - CreatorToolkit</title>
-    <meta name="description" content="Create professional YouTube thumbnails for free. Simple drag-and-drop editor to add text, colors, and overlays to your images.">
+    <title>Thumbnail Editor - CreatorToolkit</title>
     <link rel="stylesheet" href="/style.css">
-    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=Montserrat:wght@900&family=Poppins:wght@900&family=Roboto:wght@900&family=Impact&family=Noto+Sans+KR:wght@900&display=swap" rel="stylesheet">
     <style>
-        .maker-layout { display: grid; gap: 2rem; grid-template-columns: 1fr; }
-        @media(min-width: 1024px) {
-            .maker-layout { grid-template-columns: 320px 1fr; }
-        }
+        .editor-layout { display: grid; grid-template-columns: 1fr 350px; gap: 20px; padding: 20px; max-width: 1600px; margin: 0 auto; }
+        .workspace { background: #1e293b; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; height: 750px; border: 2px solid var(--ct-border); }
+        .canvas-container { position: relative; width: 1280px; height: 720px; background: #000; zoom: 0.5; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        #bg-preview { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        
+        .text-layer { position: absolute; cursor: move; user-select: none; white-space: nowrap; padding: 10px; border: 2px solid transparent; }
+        .text-layer.selected { border: 2px dashed #E11D48; background: rgba(225, 29, 72, 0.1); }
+
+        .sidebar { background: var(--ct-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--ct-border); height: fit-content; }
+        .prop-section { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--ct-border); }
+        .prop-label { font-size: 0.75rem; font-weight: 800; color: var(--ct-muted); display: block; margin-bottom: 10px; text-transform: uppercase; }
+        .control-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .full-input { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--ct-border); background: var(--ct-bg); color: var(--ct-text); font-family: inherit; }
+        
+        #export-canvas { display: none; }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <nav>
-                <a href="/index.html" class="logo">
-                    CreatorToolkit<span class="text-red">.</span>
-                </a>
-                <ul class="nav-links">
-                    <li><a href="/index.html#tools">Tools</a></li>
-                    <li><a href="/index.html#guides">Guides</a></li>
-                    <li><a href="/about.html">About</a></li>
-                </ul>
-                <div class="flex items-center gap-4">
-                    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme">🌙</button>
-                    <a href="/index.html#tools" class="btn btn-outline btn-sm">All Tools</a>
-                    <button class="mobile-menu-btn" aria-label="Menu">☰</button>
-                </div>
-            </nav>
-        </div>
-    </header>
+    <creator-header></creator-header>
 
-    <main class="section bg-surface">
-        <div class="container">
-            <div class="text-center" style="margin-bottom: 2rem;">
-                <h1>Thumbnail Maker</h1>
-                <p>Design click-worthy thumbnails in seconds. Add text, backgrounds, and export in high quality.</p>
-            </div>
-
-            <div class="maker-layout">
-                <!-- Sidebar Controls -->
-                <div class="tool-sidebar">
-                    <h3 style="font-size: 1.25rem; margin-bottom: 1.5rem;">Editor Controls</h3>
-                    
-                    <!-- AI Thumbnail Generator -->
-                    <div style="margin-bottom: 2rem; border: 1px solid var(--ct-red); border-radius: var(--radius-md); padding: 1rem; background: var(--ct-red-light);">
-                        <h4 style="color: var(--ct-red); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <span>✨</span> AI Thumbnail Generator
-                        </h4>
-                        
-                        <div class="form-group">
-                            <label>Describe your image</label>
-                            <textarea id="ai-prompt" placeholder="e.g. A futuristic gaming room with neon lights, realistic 3D render" style="height: 80px; min-height: 80px; font-size: 0.9rem;"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Style Preset</label>
-                            <select id="ai-style" style="height: 40px; font-size: 0.9rem;">
-                                <option value="Clean Studio Photo">Clean Studio Photo</option>
-                                <option value="Minimal Vector">Minimal Vector</option>
-                                <option value="3D Render">3D Render</option>
-                                <option value="Cinematic">Cinematic</option>
-                                <option value="Anime">Anime</option>
-                                <option value="Watercolor">Watercolor</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Negative Prompt (Optional)</label>
-                            <input type="text" id="ai-negative" placeholder="no text, no watermark, no blur" style="height: 40px; font-size: 0.9rem;">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Output Option</label>
-                            <div class="flex gap-4" style="font-size: 0.9rem;">
-                                <label style="display: flex; align-items: center; gap: 0.25rem; font-weight: normal; cursor: pointer;">
-                                    <input type="radio" name="ai-output" value="background" checked> Set as BG
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 0.25rem; font-weight: normal; cursor: pointer;">
-                                    <input type="radio" name="ai-output" value="layer"> Add Layer
-                                </label>
-                            </div>
-                        </div>
-
-                        <button id="generate-ai-btn" class="btn btn-primary" style="width: 100%; justify-content: center; gap: 0.5rem;">
-                            Generate Image
-                        </button>
-                        <p style="font-size: 0.75rem; color: var(--ct-muted); margin-top: 0.5rem; text-align: center;">
-                            No text will be auto-added. Add text manually below.
-                        </p>
-                        
-                        <div id="ai-status" style="display: none; margin-top: 1rem; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.85rem;"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Custom Background Image</label>
-                        <div class="file-drop-zone" onclick="document.getElementById('bg-input').click()" style="padding: 1.5rem;">
-                            <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">📁</span>
-                            <span style="font-size: 0.9rem; color: var(--ct-muted);">Click to Upload</span>
-                            <input type="file" id="bg-input" accept="image/*" class="file-input-hidden">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Add Text Overlay</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="text-input" placeholder="Enter text...">
-                            <button id="add-text-btn" class="btn btn-primary" style="padding: 0 1rem;">+</button>
-                        </div>
-                    </div>
-
-                    <div id="layer-controls" style="display: none; border-top: 1px solid var(--ct-border); padding-top: 1.5rem; margin-top: 1.5rem;">
-                        <h4 style="margin-bottom: 1rem;">Selected Layer</h4>
-                        
-                        <div class="form-group">
-                            <label>Font Size</label>
-                            <input type="range" id="font-size" min="20" max="200" value="60">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Color</label>
-                            <input type="color" id="font-color" value="#ffffff" style="width: 100%; height: 40px; padding: 2px; cursor: pointer;">
-                        </div>
-                        
-                        <div class="grid grid-2 gap-2" style="margin-bottom: 1.5rem;">
-                            <div class="form-group" style="margin: 0;">
-                                <label style="font-size: 0.8rem;">X Position</label>
-                                <input type="number" id="pos-x" value="100">
-                            </div>
-                            <div class="form-group" style="margin: 0;">
-                                <label style="font-size: 0.8rem;">Y Position</label>
-                                <input type="number" id="pos-y" value="100">
-                            </div>
-                        </div>
-
-                        <button id="delete-layer" class="btn btn-outline" style="width: 100%; border-color: var(--ct-error); color: var(--ct-error);">
-                            Remove Layer
-                        </button>
-                    </div>
-
-                    <div style="margin-top: 2rem; border-top: 1px solid var(--ct-border); padding-top: 1.5rem;">
-                         <a id="download-btn" class="btn btn-primary" style="width: 100%; justify-content: center;">
-                            Download Thumbnail
-                         </a>
-                    </div>
-                </div>
-
-                <!-- Canvas Area -->
-                <div class="canvas-container">
-                    <canvas id="canvas" width="1280" height="720" style="width: 100%; max-width: 100%; box-shadow: var(--shadow-xl); border-radius: 4px;"></canvas>
-                </div>
-            </div>
-
-            <!-- Ad / Content Block -->
-            <div class="container" style="max-width: 800px; margin-top: 4rem;">
-                <div class="card">
-                    <h2>3 Tips for High-CTR Thumbnails</h2>
-                    <ul class="features-list">
-                        <li>
-                            <span class="check-icon">✓</span>
-                            <div>
-                                <strong>High Contrast Colors:</strong> Use bright colors like Yellow or Green on dark backgrounds to pop.
-                            </div>
-                        </li>
-                        <li>
-                            <span class="check-icon">✓</span>
-                            <div>
-                                <strong>Readable Text:</strong> Keep it short (under 5 words). Use bold, sans-serif fonts.
-                            </div>
-                        </li>
-                        <li>
-                            <span class="check-icon">✓</span>
-                            <div>
-                                <strong>Emotion:</strong> If using a face, show clear emotion (surprise, joy) to spark curiosity.
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+    <main class="editor-layout">
+        <div class="workspace">
+            <div class="canvas-container" id="canvas-view">
+                <img id="bg-preview" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">
+                <div id="layers-root"></div>
             </div>
         </div>
+
+        <aside class="sidebar">
+            <div class="prop-section">
+                <span class="prop-label">1. Background</span>
+                <input type="file" id="bg-upload" class="full-input" accept="image/*">
+            </div>
+
+            <div id="edit-panel" style="display:none;">
+                <div class="prop-section">
+                    <span class="prop-label">2. Text Content</span>
+                    <input type="text" id="input-text" class="full-input">
+                </div>
+
+                <div class="prop-section">
+                    <span class="prop-label">3. Typography</span>
+                    <select id="input-font" class="full-input" style="margin-bottom:10px;">
+                        <option value="Impact">Impact (Viral)</option>
+                        <option value="Inter">Inter</option>
+                        <option value="Montserrat">Montserrat</option>
+                        <option value="Poppins">Poppins</option>
+                        <option value="Roboto">Roboto</option>
+                        <option value="Noto Sans KR">Noto Sans KR</option>
+                    </select>
+                    <div class="control-row">
+                        <input type="number" id="input-size" class="full-input" value="80">
+                        <input type="color" id="input-color" class="full-input" style="height:38px; padding:2px;">
+                    </div>
+                    <div class="control-row">
+                        <button class="btn btn-outline btn-sm" onclick="toggleProp('bold')">B</button>
+                        <button class="btn btn-outline btn-sm" onclick="toggleProp('italic')">I</button>
+                    </div>
+                </div>
+
+                <div class="prop-section">
+                    <span class="prop-label">4. Outline & Shadow</span>
+                    <div class="control-row">
+                        <input type="color" id="input-stroke-color" class="full-input" style="height:38px; padding:2px;">
+                        <input type="number" id="input-stroke-width" class="full-input" value="5">
+                    </div>
+                </div>
+
+                <div class="prop-section">
+                    <div class="control-row">
+                        <button class="btn btn-outline btn-sm" onclick="changeZ(1)">Forward</button>
+                        <button class="btn btn-outline btn-sm" onclick="changeZ(-1)">Backward</button>
+                    </div>
+                    <button class="btn btn-outline btn-sm" style="width:100%; color:var(--up-accent); border-color:var(--up-accent);" onclick="deleteLayer()">Delete Layer</button>
+                </div>
+            </div>
+
+            <div class="btn-stack" style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">
+                <button class="btn btn-outline" onclick="addTextLayer()">+ Add Text</button>
+                <button class="btn btn-primary" onclick="exportPNG()">Export 1280x720 PNG</button>
+                <button class="btn btn-outline btn-sm" onclick="saveProject()">Save Project</button>
+            </div>
+        </aside>
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <a href="/index.html" class="logo" style="margin-bottom: 1rem;">
-                        CreatorToolkit<span class="text-red">.</span>
-                    </a>
-                    <p>Empowering creators with free tools.</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><a href="/privacy-policy.html">Privacy Policy</a></li>
-                        <li><a href="/terms.html">Terms of Service</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2026 Creator Toolkit. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    <canvas id="export-canvas" width="1280" height="720"></canvas>
+    <creator-footer></creator-footer>
 
     <script src="/main.js"></script>
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const bgInput = document.getElementById('bg-input');
-        const textInput = document.getElementById('text-input');
-        const addTextBtn = document.getElementById('add-text-btn');
-        const downloadBtn = document.getElementById('download-btn');
-        
-        // AI Controls
-        const aiPrompt = document.getElementById('ai-prompt');
-        const aiStyle = document.getElementById('ai-style');
-        const aiNegative = document.getElementById('ai-negative');
-        const generateAiBtn = document.getElementById('generate-ai-btn');
-        const aiStatus = document.getElementById('ai-status');
-
-        // Layer Controls
-        const layerControls = document.getElementById('layer-controls');
-        const fontSizeInput = document.getElementById('font-size');
-        const fontColorInput = document.getElementById('font-color');
-        const posXInput = document.getElementById('pos-x');
-        const posYInput = document.getElementById('pos-y');
-        const deleteLayerBtn = document.getElementById('delete-layer');
-
-        let bgImage = null;
         let layers = [];
-        let selectedLayerIndex = -1;
+        let selectedId = null;
+        const root = document.getElementById('layers-root');
+        const bgImg = document.getElementById('bg-preview');
 
-        // Init
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#94a3b8';
-        ctx.font = 'bold 40px Inter, Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('Upload or Generate a Background', 640, 360);
-
-        // AI Generation Logic
-        generateAiBtn.addEventListener('click', async () => {
-            const prompt = aiPrompt.value.trim();
-            if (!prompt) {
-                showAiStatus('Please enter a description.', 'error');
-                return;
+        // 1. Image Upload
+        document.getElementById('bg-upload').onchange = (e) => {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = (f) => bgImg.src = f.target.result;
+                reader.readAsDataURL(file);
             }
+        };
 
-            const style = aiStyle.value;
-            const negative = aiNegative.value.trim();
-            const outputType = document.querySelector('input[name="ai-output"]:checked').value;
-
-            setAiLoading(true);
-            const startTime = Date.now();
-
-            try {
-                const response = await fetch('/api/generate-thumbnail-image', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        prompt: prompt,
-                        stylePreset: style,
-                        negativePrompt: negative
-                    })
-                });
-
-                if (response.status === 404) {
-                    throw new Error('API Endpoint not found (404). If running locally, ensure you are using "firebase emulators:start". If deployed, check if the "generateThumbnailImage" function is active in the Firebase Console.');
-                }
-
-                const contentType = response.headers.get("content-type");
-                if (!contentType || !contentType.includes("application/json")) {
-                    const text = await response.text();
-                    console.error('Non-JSON response:', text);
-                    throw new Error(`Expected JSON but received ${contentType || 'text/plain'}. This usually happens when the Firebase Function fails to start or your OpenAI API key is missing.`);
-                }
-
-                const data = await response.json();
-
-                if (!response.ok || data.ok === false) {
-                    throw new Error(data.error || 'Failed to generate image.');
-                }
-
-                const duration = ((Date.now() - startTime) / 1000).toFixed(1);
-                
-                if (outputType === 'background') {
-                    await setBackgroundFromBase64(data.imageBase64, data.mimeType);
-                } else {
-                    await addImageLayerFromBase64(data.imageBase64, data.mimeType);
-                }
-
-                showAiStatus(`Generated in ${duration}s!`, 'success');
-
-            } catch (err) {
-                console.error('Fetch Error:', err);
-                showAiStatus(err.message, 'error');
-            } finally {
-                setAiLoading(false);
-            }
-        });
-
-        async function setBackgroundFromBase64(base64, mimeType) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => {
-                    bgImage = img;
-                    drawCanvas();
-                    resolve();
-                };
-                img.src = `data:${mimeType};base64,${base64}`;
-            });
-        }
-
-        async function addImageLayerFromBase64(base64, mimeType) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => {
-                    layers.push({
-                        type: 'image',
-                        img: img,
-                        x: 640,
-                        y: 360,
-                        width: 400,
-                        height: 400
-                    });
-                    selectedLayerIndex = layers.length - 1;
-                    updateControls();
-                    drawCanvas();
-                    resolve();
-                };
-                img.src = `data:${mimeType};base64,${base64}`;
-            });
-        }
-
-        function setAiLoading(isLoading) {
-            generateAiBtn.disabled = isLoading;
-            generateAiBtn.innerHTML = isLoading ? '<span>⏳</span> Generating...' : 'Generate Image';
-            if (isLoading) {
-                aiStatus.style.display = 'none';
-            }
-        }
-
-        function showAiStatus(message, type) {
-            aiStatus.style.display = 'block';
-            aiStatus.innerText = message;
-            aiStatus.style.background = type === 'error' ? '#fee2e2' : '#dcfce7';
-            aiStatus.style.color = type === 'error' ? '#991b1b' : '#166534';
-            aiStatus.style.border = `1px solid ${type === 'error' ? '#fecaca' : '#bbf7d0'}`;
-        }
-
-        bgInput.addEventListener('change', (e) => {
-            if(e.target.files.length > 0) {
-                const url = URL.createObjectURL(e.target.files[0]);
-                bgImage = new Image();
-                bgImage.onload = () => {
-                    drawCanvas();
-                    URL.revokeObjectURL(url);
-                };
-                bgImage.src = url;
-            }
-        });
-
-        addTextBtn.addEventListener('click', () => {
-            const text = textInput.value.trim();
-            if(!text) return;
-            
+        // 2. Layer Logic
+        function addTextLayer() {
+            const id = Date.now();
             layers.push({
-                type: 'text',
-                text: text,
-                x: 640,
-                y: 360,
-                size: 80,
-                color: '#ffffff'
+                id, text: 'VIRAL TITLE', x: 100, y: 100,
+                size: 120, font: 'Impact', color: '#ffffff',
+                bold: true, italic: false, strokeColor: '#000000', strokeWidth: 8,
+                zIndex: layers.length
             });
-            textInput.value = '';
-            selectedLayerIndex = layers.length - 1;
-            updateControls();
-            drawCanvas();
-        });
-
-        // Event Listeners for controls
-        fontSizeInput.addEventListener('input', (e) => {
-            if(selectedLayerIndex > -1) {
-                const l = layers[selectedLayerIndex];
-                if (l.type === 'text') {
-                    l.size = parseInt(e.target.value);
-                } else if (l.type === 'image') {
-                    const ratio = l.height / l.width;
-                    l.width = parseInt(e.target.value) * 4; // Use as width multiplier
-                    l.height = l.width * ratio;
-                }
-                drawCanvas();
-            }
-        });
-
-        fontColorInput.addEventListener('input', (e) => {
-            if(selectedLayerIndex > -1 && layers[selectedLayerIndex].type === 'text') {
-                layers[selectedLayerIndex].color = e.target.value;
-                drawCanvas();
-            }
-        });
-
-        posXInput.addEventListener('input', (e) => {
-             if(selectedLayerIndex > -1) {
-                layers[selectedLayerIndex].x = parseInt(e.target.value);
-                drawCanvas();
-            }
-        });
-
-        posYInput.addEventListener('input', (e) => {
-             if(selectedLayerIndex > -1) {
-                layers[selectedLayerIndex].y = parseInt(e.target.value);
-                drawCanvas();
-            }
-        });
-
-        deleteLayerBtn.addEventListener('click', () => {
-             if(selectedLayerIndex > -1) {
-                 layers.splice(selectedLayerIndex, 1);
-                 selectedLayerIndex = -1;
-                 updateControls();
-                 drawCanvas();
-             }
-        });
-        
-        // Simple click selection logic
-        canvas.addEventListener('mousedown', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const clickX = (e.clientX - rect.left) * scaleX;
-            const clickY = (e.clientY - rect.top) * scaleY;
-
-            let found = false;
-            for(let i = layers.length - 1; i >= 0; i--) {
-                const l = layers[i];
-                let width, height;
-
-                if (l.type === 'text') {
-                    ctx.font = `bold ${l.size}px Arial`;
-                    width = ctx.measureText(l.text).width;
-                    height = l.size; 
-                } else {
-                    width = l.width;
-                    height = l.height;
-                }
-                
-                if(clickX >= l.x - width/2 && clickX <= l.x + width/2 && 
-                   clickY >= l.y - height/2 && clickY <= l.y + height/2) {
-                       selectedLayerIndex = i;
-                       found = true;
-                       updateControls();
-                       break;
-                }
-            }
-            if(!found) {
-                selectedLayerIndex = -1;
-                layerControls.style.display = 'none';
-                drawCanvas(); 
-            } else {
-                drawCanvas();
-            }
-        });
-
-        function updateControls() {
-            if(selectedLayerIndex > -1) {
-                const l = layers[selectedLayerIndex];
-                layerControls.style.display = 'block';
-                
-                if (l.type === 'text') {
-                    fontSizeInput.value = l.size;
-                    fontSizeInput.parentNode.querySelector('label').innerText = 'Font Size';
-                    fontColorInput.parentNode.style.display = 'block';
-                } else {
-                    fontSizeInput.value = l.width / 4;
-                    fontSizeInput.parentNode.querySelector('label').innerText = 'Image Scale';
-                    fontColorInput.parentNode.style.display = 'none';
-                }
-                
-                fontColorInput.value = l.color || '#ffffff';
-                posXInput.value = l.x;
-                posYInput.value = l.y;
-            } else {
-                layerControls.style.display = 'none';
-            }
+            render();
+            selectLayer(id);
         }
 
-        function drawCanvas() {
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            if(bgImage) {
-                const ratio = Math.max(canvas.width / bgImage.width, canvas.height / bgImage.height);
-                const centerShift_x = (canvas.width - bgImage.width * ratio) / 2;
-                const centerShift_y = (canvas.height - bgImage.height * ratio) / 2;
-                ctx.drawImage(bgImage, 0, 0, bgImage.width, bgImage.height, centerShift_x, centerShift_y, bgImage.width * ratio, bgImage.height * ratio);
-            } else {
-                 ctx.fillStyle = '#1e293b';
-                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
-
-            layers.forEach((l, index) => {
-                ctx.save();
-                
-                if (l.type === 'text') {
-                    ctx.font = `bold ${l.size}px Arial`;
-                    ctx.fillStyle = l.color;
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    
-                    ctx.shadowColor = "rgba(0,0,0,0.8)";
-                    ctx.shadowBlur = 4;
-                    ctx.shadowOffsetX = 2;
-                    ctx.shadowOffsetY = 2;
-
-                    ctx.fillText(l.text, l.x, l.y);
-                    
-                    if(index === selectedLayerIndex) {
-                        ctx.shadowColor = "transparent"; 
-                        const width = ctx.measureText(l.text).width;
-                        const height = l.size;
-                        ctx.strokeStyle = '#E11D48';
-                        ctx.lineWidth = 4;
-                        ctx.setLineDash([10, 5]);
-                        ctx.strokeRect(l.x - width/2 - 10, l.y - height/2 - 10, width + 20, height + 20);
-                    }
-                } else if (l.type === 'image') {
-                    ctx.drawImage(l.img, l.x - l.width/2, l.y - l.height/2, l.width, l.height);
-                    
-                    if(index === selectedLayerIndex) {
-                        ctx.strokeStyle = '#E11D48';
-                        ctx.lineWidth = 4;
-                        ctx.setLineDash([10, 5]);
-                        ctx.strokeRect(l.x - l.width/2 - 5, l.y - l.height/2 - 5, l.width + 10, l.height + 10);
-                    }
-                }
-
-                ctx.restore();
+        function render() {
+            root.innerHTML = '';
+            layers.sort((a,b) => a.zIndex - b.zIndex).forEach(l => {
+                const div = document.createElement('div');
+                div.className = `text-layer ${l.id === selectedId ? 'selected' : ''}`;
+                div.innerText = l.text;
+                div.style.cssText = `
+                    left:${l.x}px; top:${l.y}px; font-size:${l.size}px; font-family:'${l.font}';
+                    color:${l.color}; font-weight:${l.bold?'900':'400'}; font-style:${l.italic?'italic':'normal'};
+                    -webkit-text-stroke:${l.strokeWidth}px ${l.strokeColor}; z-index:${l.zIndex};
+                `;
+                div.onmousedown = (e) => { selectLayer(l.id); startDrag(e, l); };
+                root.appendChild(div);
             });
-
-            downloadBtn.href = canvas.toDataURL('image/jpeg', 0.9);
-            downloadBtn.download = 'thumbnail-creatortoolkit.jpg';
         }
-        
-        // Mobile menu
-        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
-            const nav = document.querySelector('.nav-links');
-            const isHidden = getComputedStyle(nav).display === 'none';
-            
-            if(isHidden) {
-                nav.style.display = 'flex';
-                nav.style.flexDirection = 'column';
-                nav.style.position = 'absolute';
-                nav.style.top = '72px';
-                nav.style.left = '0';
-                nav.style.width = '100%';
-                nav.style.background = 'white';
-                nav.style.padding = '1.5rem';
-                nav.style.borderBottom = '1px solid var(--ct-border)';
-                nav.style.zIndex = '999';
-            } else {
-                nav.style.display = ''; // reset to css
+
+        function selectLayer(id) {
+            selectedId = id;
+            const l = layers.find(x => x.id === id);
+            document.getElementById('edit-panel').style.display = l ? 'block' : 'none';
+            if(l) {
+                document.getElementById('input-text').value = l.text;
+                document.getElementById('input-font').value = l.font;
+                document.getElementById('input-size').value = l.size;
+                document.getElementById('input-color').value = l.color;
+                document.getElementById('input-stroke-color').value = l.strokeColor;
+                document.getElementById('input-stroke-width').value = l.strokeWidth;
             }
+            render();
+        }
+
+        // 3. Drag Logic
+        function startDrag(e, l) {
+            const startX = e.clientX; const startY = e.clientY;
+            const initX = l.x; const initY = l.y;
+            const zoom = 0.5; // Matches the CSS zoom
+
+            function move(ev) {
+                l.x = initX + (ev.clientX - startX) / zoom;
+                l.y = initY + (ev.clientY - startY) / zoom;
+                render();
+            }
+            function stop() { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop); }
+            window.addEventListener('mousemove', move);
+            window.addEventListener('mouseup', stop);
+        }
+
+        // 4. Sync Inputs
+        ['input-text','input-font','input-size','input-color','input-stroke-color','input-stroke-width'].forEach(id => {
+            document.getElementById(id).oninput = () => {
+                const l = layers.find(x => x.id === selectedId);
+                if(!l) return;
+                l.text = document.getElementById('input-text').value;
+                l.font = document.getElementById('input-font').value;
+                l.size = parseInt(document.getElementById('input-size').value);
+                l.color = document.getElementById('input-color').value;
+                l.strokeColor = document.getElementById('input-stroke-color').value;
+                l.strokeWidth = parseInt(document.getElementById('input-stroke-width').value);
+                render();
+            };
         });
+
+        function toggleProp(p) { const l = layers.find(x => x.id === selectedId); if(l) { l[p] = !l[p]; render(); } }
+        function changeZ(v) { const l = layers.find(x => x.id === selectedId); if(l) { l.zIndex += v; render(); } }
+        function deleteLayer() { layers = layers.filter(x => x.id !== selectedId); selectedId = null; render(); selectLayer(null); }
+
+        // 5. Export
+        function exportPNG() {
+            const canvas = document.getElementById('export-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(bgImg, 0, 0, 1280, 720);
+            layers.sort((a,b) => a.zIndex - b.zIndex).forEach(l => {
+                ctx.font = `${l.italic?'italic ':''}${l.bold?'900 ':'400 '}${l.size}px ${l.font}`;
+                ctx.textBaseline = 'top';
+                if(l.strokeWidth > 0) {
+                    ctx.strokeStyle = l.strokeColor;
+                    ctx.lineWidth = l.strokeWidth * 2;
+                    ctx.strokeText(l.text, l.x + 10, l.y + 10);
+                }
+                ctx.fillStyle = l.color;
+                ctx.fillText(l.text, l.x + 10, l.y + 10);
+            });
+            const link = document.createElement('a');
+            link.download = 'thumbnail.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function saveProject() { localStorage.setItem('thumb_v1', JSON.stringify({bg: bgImg.src, layers})); alert('Project Saved!'); }
+        window.onload = () => {
+            const saved = JSON.parse(localStorage.getItem('thumb_v1'));
+            if(saved) { bgImg.src = saved.bg; layers = saved.layers; render(); }
+        };
     </script>
-<link rel="stylesheet" href="/assets/upload-panel.css">
-    <script defer src="/assets/upload-panel.js"></script>
 </body>
 </html>

@@ -184,21 +184,28 @@
     }
 
     function generateDescription() {
-        const title = state.content.title || "Your Content";
+        const title = state.content.title || "this video";
         const tone = document.getElementById('up-gen-tone').value;
         const purpose = document.getElementById('up-gen-purpose').value;
         const tags = state.content.tags.map(t => `#${t}`).join(' ');
-        const firstKw = state.content.tags[0] || "this topic";
+        const kw = state.content.tags[0] || "valuable content";
 
-        const templates = {
-            Relax: `Sit back and unwind with "${title}". This session is crafted to help you ${purpose.toLowerCase()} in a ${tone.toLowerCase()} atmosphere. Perfect for your daily ritual.`,
-            Study: `Boost your productivity while listening to "${title}". Whether you are ${purpose.toLowerCase()} or working, this ${tone.toLowerCase()} vibe will keep you focused.`,
-            Work: `Enhance your workflow with "${title}". Designed for ${purpose.toLowerCase()}, this ${tone.toLowerCase()} soundscape minimizes distractions.`
-        };
+        const intro = {
+            Calm: `Welcome to a moment of stillness. In today's upload, we explore "${title}".`,
+            Cozy: `Make yourself at home! ✨ Today we're diving into "${title}" for some good vibes.`,
+            Professional: `Welcome back. This session is a deep dive into "${title}", designed for clarity.`
+        }[tone] || "";
 
-        const base = templates[purpose] || templates.Relax;
-        const cta = "\n\n✨ Support the channel by Liking and Subscribing for more content like this!";
-        const fullDesc = `${tags}\n\n${base}${cta}\n\n#${firstKw} #creator #toolkit`;
+        const body = {
+            Relax: `If you're looking to unwind, this content centered around ${kw} is exactly what you need. Let the atmosphere take over.`,
+            Study: `Maximize your productivity while focusing on ${kw}. This background set is optimized for deep work and concentration.`,
+            Work: `Streamline your professional workflow. We cover the essentials of ${kw} to help you achieve your goals faster.`,
+            Sleep: `Specifically crafted for rest. The gentle nature of this ${kw}-focused piece will guide you into a deep, restful sleep.`
+        }[purpose] || "";
+
+        const cta = "\n\n🔔 If you find this helpful, please Like and Subscribe to support the channel! It helps us create more content like this.";
+        
+        const fullDesc = `${tags}\n\n${intro}\n\n${body}${cta}\n\n#youtube #optimization #contentcreator`;
 
         document.getElementById('up-desc-in').value = fullDesc;
         state.content.description = fullDesc;
