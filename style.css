@@ -176,8 +176,33 @@ nav {
 
 .nav-links a:hover { color: var(--ct-red); }
 
+/* Mobile Menu Active State */
+.nav-links.active {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: var(--header-height);
+  left: 0;
+  width: 100%;
+  background: var(--ct-bg);
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--ct-border);
+  z-index: 999;
+  box-shadow: var(--shadow-lg);
+}
+
 @media (min-width: 768px) {
   .nav-links { display: flex; }
+  .nav-links.active {
+    display: flex;
+    flex-direction: row;
+    position: static;
+    width: auto;
+    background: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+  }
 }
 
 /* Buttons */
@@ -267,9 +292,15 @@ nav {
 /* Hero Section */
 .hero {
   position: relative;
-  padding: 8rem 0 6rem;
+  padding: 4rem 0 3rem;
   text-align: center;
   overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    padding: 8rem 0 6rem;
+  }
 }
 
 .hero-blob {
@@ -284,11 +315,30 @@ nav {
   z-index: -1;
 }
 
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .hero h1 {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
 .hero p {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   color: var(--ct-muted);
   max-width: 600px;
-  margin: 0 auto 2.5rem;
+  margin: 0 auto 2rem;
+}
+
+@media (min-width: 768px) {
+  .hero p {
+    font-size: 1.25rem;
+    margin-bottom: 2.5rem;
+  }
 }
 
 /* Features List */

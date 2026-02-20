@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     setupGlobalDragAndDrop();
     setupMobileMenu();
+    registerWebComponents();
 });
 
 function initTheme() {
@@ -34,12 +35,12 @@ function updateThemeToggleUI(theme) {
 window.toggleTheme = toggleTheme;
 
 function setupGlobalDragAndDrop() {
-    /* ... existing code ... */
     const dropZones = document.querySelectorAll('.file-drop-zone');
     
     dropZones.forEach(zone => {
         const input = zone.querySelector('input[type="file"]');
-        
+        if (!input) return;
+
         // Click to open file dialog
         zone.addEventListener('click', (e) => {
             if(e.target !== input) {
@@ -51,27 +52,20 @@ function setupGlobalDragAndDrop() {
         zone.addEventListener('dragover', (e) => {
             e.preventDefault();
             zone.classList.add('dragover');
-            zone.style.borderColor = 'var(--ct-red)';
-            zone.style.backgroundColor = 'var(--ct-red-light)';
         });
 
         zone.addEventListener('dragleave', () => {
             zone.classList.remove('dragover');
-            zone.style.borderColor = '';
-            zone.style.backgroundColor = '';
         });
 
         // Drop Handler
         zone.addEventListener('drop', (e) => {
             e.preventDefault();
             zone.classList.remove('dragover');
-            zone.style.borderColor = '';
-            zone.style.backgroundColor = '';
             
-            if (e.dataTransfer.files.length && input) {
+            if (e.dataTransfer.files.length) {
                 input.files = e.dataTransfer.files;
-                // Trigger change event manually
-                const event = new Event('change');
+                const event = new Event('change', { bubbles: true });
                 input.dispatchEvent(event);
             }
         });
@@ -79,31 +73,113 @@ function setupGlobalDragAndDrop() {
 }
 
 function setupMobileMenu() {
-    /* ... existing code ... */
     const btn = document.querySelector('.mobile-menu-btn');
     const nav = document.querySelector('.nav-links');
     
     if(btn && nav) {
         btn.addEventListener('click', (e) => {
-            e.stopImmediatePropagation(); 
-            
-            const isHidden = getComputedStyle(nav).display === 'none';
-            
-            if(isHidden) {
-                nav.style.display = 'flex';
-                nav.style.flexDirection = 'column';
-                nav.style.position = 'absolute';
-                nav.style.top = '72px';
-                nav.style.left = '0';
-                nav.style.width = '100%';
-                nav.style.background = 'var(--ct-bg)';
-                nav.style.padding = '1.5rem';
-                nav.style.borderBottom = '1px solid var(--ct-border)';
-                nav.style.zIndex = '999';
-                nav.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
-            } else {
-                nav.style.display = ''; 
+            e.stopPropagation();
+            nav.classList.toggle('active');
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (nav.classList.contains('active') && !nav.contains(e.target) && !btn.contains(e.target)) {
+                nav.classList.remove('active');
             }
         });
+    }
+}
+
+/**
+ * WEB COMPONENTS
+ */
+function registerWebComponents() {
+    // Shared Header
+    class CreatorHeader extends HTMLElement {
+        connectedCallback() {
+            const activePath = window.location.pathname;
+            this.innerHTML = `
+            <header>
+                <div class="container">
+                    <nav>
+                        <a href="/index.html" class="logo">
+                            CreatorToolkit<span class="text-red">.</span>
+                        </a>
+                        <ul class="nav-links">
+                            <li><a href="/index.html#tools" class="${activePath.includes('tools') ? 'text-red' : ''}">Tools</a></li>
+                            <li><a href="/index.html#guides" class="${activePath.includes('guides') ? 'text-red' : ''}">Guides</a></li>
+                            <li><a href="/about.html" class="${activePath === '/about.html' ? 'text-red' : ''}">About</a></li>
+                            <li><a href="/contact.html" class="${activePath === '/contact.html' ? 'text-red' : ''}">Contact</a></li>
+                        </ul>
+                        <div class="flex items-center gap-4">
+                            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme">🌙</button>
+                            <a href="/index.html#tools" class="btn btn-primary btn-sm">Start Creating</a>
+                            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+                        </div>
+                    </nav>
+                </div>
+            </header>
+            `;
+            // Re-setup mobile menu after rendering
+            setupMobileMenu();
+            initTheme();
+        }
+    }
+
+    // Shared Footer
+    class CreatorFooter extends HTMLElement {
+        connectedCallback() {
+            this.innerHTML = `
+            <footer>
+                <div class="container">
+                    <div class="footer-grid">
+                        <div class="footer-col">
+                            <a href="/index.html" class="logo" style="margin-bottom: 1.5rem;">
+                                CreatorToolkit<span class="text-red">.</span>
+                            </a>
+                            <p class="text-muted">Empowering creators with free, high-quality tools for channel growth and SEO optimization.</p>
+                        </div>
+                        <div class="footer-col">
+                            <h4>Tools</h4>
+                            <ul>
+                                <li><a href="/tools/thumbnail-maker.html">Thumbnail Maker</a></li>
+                                <li><a href="/tools/title-generator.html">Title Generator</a></li>
+                                <li><a href="/tools/keyword-generator.html">Keyword Tool</a></li>
+                                <li><a href="/tools/image-converter.html">Image Converter</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-col">
+                            <h4>Resources</h4>
+                            <ul>
+                                <li><a href="/guides/youtube-seo-guide.html">SEO Guide</a></li>
+                                <li><a href="/guides/thumbnail-ctr-guide.html">CTR Guide</a></li>
+                                <li><a href="/guides/viral-titles-guide.html">Viral Titles</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-col">
+                            <h4>Legal</h4>
+                            <ul>
+                                <li><a href="/about.html">About Us</a></li>
+                                <li><a href="/contact.html">Contact</a></li>
+                                <li><a href="/privacy-policy.html">Privacy Policy</a></li>
+                                <li><a href="/terms.html">Terms of Service</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="text-center" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--ct-border);">
+                        <p class="text-muted" style="font-size: 0.875rem;">&copy; 2026 CreatorToolkit. All rights reserved.</p>
+                    </div>
+                </div>
+            </footer>
+            `;
+        }
+    }
+
+    if (!customElements.get('creator-header')) {
+        customElements.define('creator-header', CreatorHeader);
+    }
+    if (!customElements.get('creator-footer')) {
+        customElements.define('creator-footer', CreatorFooter);
     }
 }

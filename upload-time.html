@@ -3,37 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Best Upload Time - CreatorToolkit</title>
+    <title>Best Upload Time Finder - CreatorToolkit</title>
+    <meta name="description" content="Find the best time to upload your YouTube videos for maximum views and engagement. Region-based optimization.">
     <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>CreatorToolkit</h1>
-            <p>Free Optimization Tools for Content Creators</p>
-            <nav>
-                <ul>
-                    <li><a href="/index.html">Home</a></li>
-                    <li><a href="title-checker.html">Title Checker</a></li>
-                    <li><a href="tag-generator.html">Tag Generator</a></li>
-                    <li><a href="hashtag-generator.html">Hashtag Generator</a></li>
-                    <li><a href="upload-time.html">Upload Time</a></li>
-                    <li><a href="thumbnail-checker.html">Thumbnail Checker</a></li>
-                    <li><a href="/about.html">About</a></li>
-                    <li><a href="privacy.html">Privacy Policy</a></li>
-                    <li><a href="/contact.html">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <creator-header></creator-header>
 
-    <main class="tool-page">
+    <main class="section bg-surface">
         <div class="container">
-            <div class="tool-container">
-                <h2>Best Upload Time Finder</h2>
-                <div class="form-group">
-                    <label for="day">Select Day:</label>
-                    <select id="day">
+            <div class="text-center" style="margin-bottom: 3rem;">
+                <h1>YouTube Upload Time Finder</h1>
+                <p>Maximize your initial reach by uploading when your audience is most active.</p>
+            </div>
+
+            <div class="card" style="max-width: 600px; margin: 0 auto;">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="day" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Select Day</label>
+                    <select id="day" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--ct-border); font-family: inherit; font-size: 1rem;">
                         <option value="monday">Monday</option>
                         <option value="tuesday">Tuesday</option>
                         <option value="wednesday">Wednesday</option>
@@ -43,36 +34,29 @@
                         <option value="sunday">Sunday</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="region">Select Region:</label>
-                    <select id="region">
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="region" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Select Region</label>
+                    <select id="region" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--ct-border); font-family: inherit; font-size: 1rem;">
                         <option value="us">United States (EST)</option>
                         <option value="eu">Europe (GMT)</option>
                         <option value="asia">Asia (IST)</option>
                         <option value="global">Global Average</option>
                     </select>
                 </div>
-                <button id="find-time" class="btn-primary">Find Best Time</button>
 
-                <div id="result-area" class="result-container" style="display: none;">
-                    <h3>Recommended Upload Time:</h3>
-                    <p id="recommended-time" style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color);"></p>
-                    <p id="time-note" class="secondary-text"></p>
+                <button id="find-time" class="btn btn-primary" style="width: 100%; margin-bottom: 1.5rem;">Find Best Time</button>
+
+                <div id="result-area" style="display: none; border-top: 1px solid var(--ct-border); padding-top: 1.5rem; text-align: center;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--ct-muted);">Recommended Time:</h3>
+                    <p id="recommended-time" style="font-size: 2.5rem; font-weight: 800; color: var(--ct-red); line-height: 1; margin-bottom: 1rem;"></p>
+                    <p id="time-note" class="text-muted" style="font-size: 0.9rem;"></p>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <ul>
-                <li><a href="/about.html">About</a></li>
-                <li><a href="privacy.html">Privacy Policy</a></li>
-                <li><a href="/contact.html">Contact</a></li>
-            </ul>
-            <p>Contact: <a href="mailto:hotplmedia@gmail.com">hotplmedia@gmail.com</a></p>
-        </div>
-    </footer>
+    <creator-footer></creator-footer>
 
     <script src="/main.js"></script>
     <script>
@@ -100,6 +84,7 @@
             noteDisplay.textContent = `Based on average viewer activity for ${day.charAt(0).toUpperCase() + day.slice(1)} in the ${region.toUpperCase()} region.`;
             
             resultArea.style.display = 'block';
+            resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
     </script>
 </body>

@@ -4,33 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - CreatorToolkit</title>
+    <meta name="description" content="Learn more about CreatorToolkit and our mission to help content creators grow.">
     <link rel="stylesheet" href="/style.css">
-    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <nav>
-                <a href="/index.html" class="logo">
-                    CreatorToolkit<span class="text-red">.</span>
-                </a>
-                <ul class="nav-links">
-                    <li><a href="index.html#tools">Tools</a></li>
-                    <li><a href="index.html#guides">Guides</a></li>
-                    <li><a href="/about.html">About</a></li>
-                    <li><a href="/contact.html">Contact</a></li>
-                </ul>
-                <div class="flex items-center gap-4">
-                    <a href="index.html#tools" class="btn btn-outline btn-sm">All Tools</a>
-                    <button class="mobile-menu-btn" aria-label="Menu">☰</button>
-                </div>
-            </nav>
-        </div>
-    </header>
+    <creator-header></creator-header>
 
     <main class="section bg-surface">
         <div class="container" style="max-width: 800px;">
@@ -38,14 +20,14 @@
                 <h1>About CreatorToolkit</h1>
                 <p>Welcome to CreatorToolkit, your number one source for all things YouTube optimization. We're dedicated to providing you the best tools for content creation, with a focus on simplicity, privacy, and speed.</p>
                 
-                <h3>Our Mission</h3>
+                <h3 style="margin-top: 2rem;">Our Mission</h3>
                 <p>Founded in 2026, CreatorToolkit has come a long way from its beginnings. When we first started out, our passion for helping new creators grow their channels drove us to start this project.</p>
                 
-                <h3>Why Choose Us?</h3>
+                <h3 style="margin-top: 2rem;">Why Choose Us?</h3>
                 <ul class="features-list" style="margin-bottom: 1.5rem;">
-                    <li><span class="check-icon" style="color: var(--ct-red);">✓</span> <strong>Privacy First:</strong> All our tools run directly in your browser. No server uploads.</li>
-                    <li><span class="check-icon" style="color: var(--ct-red);">✓</span> <strong>Always Free:</strong> We believe essential creator tools should be accessible to everyone.</li>
-                    <li><span class="check-icon" style="color: var(--ct-red);">✓</span> <strong>Fast:</strong> Optimized for speed so you can get back to creating.</li>
+                    <li><span class="check-icon">✓</span> <div><strong>Privacy First:</strong> All our tools run directly in your browser. No server uploads.</div></li>
+                    <li><span class="check-icon">✓</span> <div><strong>Always Free:</strong> We believe essential creator tools should be accessible to everyone.</div></li>
+                    <li><span class="check-icon">✓</span> <div><strong>Fast:</strong> Optimized for speed so you can get back to creating.</div></li>
                 </ul>
                 
                 <p>We hope you enjoy our products as much as we enjoy offering them to you. If you have any questions or comments, please don't hesitate to contact us.</p>
@@ -55,51 +37,8 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <a href="/index.html" class="logo" style="margin-bottom: 1rem;">
-                        CreatorToolkit<span class="text-red">.</span>
-                    </a>
-                    <p>Empowering creators with free tools.</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
-                        <li><a href="terms.html">Terms of Service</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2026 Creator Toolkit. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    <creator-footer></creator-footer>
 
     <script src="/main.js"></script>
-    <script>
-        // Mobile menu
-        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
-            const nav = document.querySelector('.nav-links');
-            const isHidden = getComputedStyle(nav).display === 'none';
-            if(isHidden) {
-                nav.style.display = 'flex';
-                nav.style.flexDirection = 'column';
-                nav.style.position = 'absolute';
-                nav.style.top = '72px';
-                nav.style.left = '0';
-                nav.style.width = '100%';
-                nav.style.background = 'white';
-                nav.style.padding = '1.5rem';
-                nav.style.borderBottom = '1px solid var(--ct-border)';
-                nav.style.zIndex = '999';
-            } else {
-                nav.style.display = ''; 
-            }
-        });
-    </script>
 </body>
 </html>

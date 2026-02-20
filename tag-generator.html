@@ -4,57 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tag Generator - CreatorToolkit</title>
+    <meta name="description" content="Generate high-volume YouTube tags for your videos. Boost your SEO and rank higher in search results.">
     <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .tag-list { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+        .tag { background: var(--ct-red-light); color: var(--ct-red); padding: 0.5rem 1rem; border-radius: 99px; font-weight: 600; font-size: 0.875rem; border: 1px solid #fecaca; }
+        .copy-btn { margin-top: 2rem; width: 100%; }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>CreatorToolkit</h1>
-            <p>Free Optimization Tools for Content Creators</p>
-            <nav>
-                <ul>
-                    <li><a href="/index.html">Home</a></li>
-                    <li><a href="title-checker.html">Title Checker</a></li>
-                    <li><a href="tag-generator.html">Tag Generator</a></li>
-                    <li><a href="hashtag-generator.html">Hashtag Generator</a></li>
-                    <li><a href="upload-time.html">Upload Time</a></li>
-                    <li><a href="thumbnail-checker.html">Thumbnail Checker</a></li>
-                    <li><a href="/about.html">About</a></li>
-                    <li><a href="privacy.html">Privacy Policy</a></li>
-                    <li><a href="/contact.html">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <creator-header></creator-header>
 
-    <main class="tool-page">
+    <main class="section bg-surface">
         <div class="container">
-            <div class="tool-container">
-                <h2>YouTube Tag Generator</h2>
-                <div class="form-group">
-                    <label for="keyword">Enter a primary keyword:</label>
-                    <input type="text" id="keyword" placeholder="e.g. Cooking, Gaming, Tech">
+            <div class="text-center" style="margin-bottom: 3rem;">
+                <h1>YouTube Tag Generator</h1>
+                <p>Generate 20+ optimized tags based on your primary keyword.</p>
+            </div>
+
+            <div class="card" style="max-width: 600px; margin: 0 auto;">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="keyword" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Primary Keyword</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="keyword" placeholder="e.g. Cooking, Gaming, Tech" style="flex: 1; padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--ct-border); font-family: inherit; font-size: 1rem;">
+                        <button id="generate-tags" class="btn btn-primary">Generate</button>
+                    </div>
                 </div>
-                <button id="generate-tags" class="btn-primary">Generate Tags</button>
 
-                <div id="result-area" class="result-container" style="display: none;">
-                    <h3>Generated Tags (20):</h3>
+                <div id="result-area" style="display: none; border-top: 1px solid var(--ct-border); padding-top: 1.5rem;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Generated Tags (20):</h3>
                     <div id="tag-list" class="tag-list"></div>
+                    <button id="copy-all" class="btn btn-outline copy-btn">Copy All to Clipboard</button>
+                    <p id="copy-status" style="text-align: center; font-size: 0.8rem; margin-top: 0.5rem; color: #059669; display: none;">Copied!</p>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <ul>
-                <li><a href="/about.html">About</a></li>
-                <li><a href="privacy.html">Privacy Policy</a></li>
-                <li><a href="/contact.html">Contact</a></li>
-            </ul>
-            <p>Contact: <a href="mailto:hotplmedia@gmail.com">hotplmedia@gmail.com</a></p>
-        </div>
-    </footer>
+    <creator-footer></creator-footer>
 
     <script src="/main.js"></script>
     <script>
@@ -62,9 +53,11 @@
         const generateBtn = document.getElementById('generate-tags');
         const resultArea = document.getElementById('result-area');
         const tagList = document.getElementById('tag-list');
+        const copyBtn = document.getElementById('copy-all');
+        const copyStatus = document.getElementById('copy-status');
 
         const modifiers = [
-            'tutorial', 'best', 'review', 'tips', 'tricks', 'guide', '2024', '2025',
+            'tutorial', 'best', 'review', 'tips', 'tricks', 'guide', '2026', '2025',
             'how to', 'for beginners', 'walkthrough', 'unboxing', 'explained',
             'top 10', 'latest', 'comparison', 'vs', 'easy', 'pro', 'hacks'
         ];
@@ -99,6 +92,20 @@
             });
 
             resultArea.style.display = 'block';
+        });
+
+        copyBtn.addEventListener('click', () => {
+            const tags = Array.from(tagList.querySelectorAll('.tag')).map(t => t.textContent).join(', ');
+            navigator.clipboard.writeText(tags).then(() => {
+                copyStatus.style.display = 'block';
+                setTimeout(() => {
+                    copyStatus.style.display = 'none';
+                }, 2000);
+            });
+        });
+
+        keywordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') generateBtn.click();
         });
     </script>
 </body>
