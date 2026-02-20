@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free YouTube Thumbnail Maker - CreatorToolkit</title>
+    <meta name="description" content="Create professional YouTube thumbnails for free. Simple drag-and-drop editor to add text, colors, and overlays to your images.">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .maker-layout { display: flex; flex-wrap: wrap; gap: 2rem; }
+        .maker-sidebar { flex: 1; min-width: 300px; background: var(--surface); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); }
+        .maker-canvas { flex: 2; min-width: 300px; display: flex; justify-content: center; align-items: flex-start; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container nav-wrapper">
+            <a href="/" class="logo"><span>✦</span> CreatorToolkit</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html#tools">Tools</a></li>
+                    <li><a href="../index.html#guides">Guides</a></li>
+                </ul>
+            </nav>
+            <a href="../index.html#tools" class="btn btn-primary">All Tools</a>
+        </div>
+    </header>
+
+    <main class="container section">
+        <div class="content-area" style="max-width: 100%;">
+            <h1>Thumbnail Maker Canvas</h1>
+            <p>Design click-worthy thumbnails in seconds. Add text, backgrounds, and export in high quality.</p>
+
+            <div class="maker-layout">
+                <div class="maker-sidebar">
+                    <h3>Controls</h3>
+                    
+                    <div class="form-group">
+                        <label>Background Image</label>
+                        <input type="file" id="bg-input" accept="image/*">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Add Text</label>
+                        <input type="text" id="text-input" placeholder="Type text here...">
+                        <button id="add-text-btn" class="btn btn-outline" style="width: 100%; margin-top: 0.5rem;">+ Add Text Layer</button>
+                    </div>
+
+                    <div id="layer-controls" style="display: none; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem;">
+                        <h4>Selected Layer</h4>
+                        <div class="form-group">
+                            <label>Font Size</label>
+                            <input type="range" id="font-size" min="20" max="200" value="60">
+                        </div>
+                        <div class="form-group">
+                            <label>Color</label>
+                            <input type="color" id="font-color" value="#ffffff" style="width: 100%; height: 40px;">
+                        </div>
+                        <div class="form-group">
+                            <label>X Position</label>
+                            <input type="range" id="pos-x" min="0" max="1280" value="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Y Position</label>
+                            <input type="range" id="pos-y" min="0" max="720" value="100">
+                        </div>
+                        <button id="delete-layer" class="btn btn-outline" style="border-color: var(--danger); color: var(--danger); width: 100%;">Remove Layer</button>
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                         <a id="download-btn" class="btn btn-primary" style="width: 100%; text-align: center;">Download Thumbnail</a>
+                    </div>
+                </div>
+
+                <div class="maker-canvas">
+                    <canvas id="canvas" width="1280" height="720" style="width: 100%; max-width: 800px; border: 1px solid var(--border); background: #333; box-shadow: var(--shadow);"></canvas>
+                </div>
+            </div>
+
+            <!-- Ad Placeholder -->
+            <div class="ad-banner" style="margin-top: 2rem;">In-Content Ad Placeholder</div>
+
+            <article style="max-width: 800px; margin: 2rem auto;">
+                <h2>Design Tips for YouTube Thumbnails</h2>
+                <p>Your thumbnail is the first thing a viewer sees. To maximize your Click-Through Rate (CTR), follow these design principles:</p>
+                <ul>
+                    <li><strong>Contrast is Key:</strong> Ensure your text stands out against the background. Use bright colors like yellow, green, or white on dark backgrounds.</li>
+                    <li><strong>Less is More:</strong> Don't clutter your thumbnail with too much text. Aim for 3-5 words maximum.</li>
+                    <li><strong>Emotional Connection:</strong> If you use a face, ensure the expression matches the video's tone (shock, joy, curiosity).</li>
+                    <li><strong>Consistency:</strong> Use consistent fonts and colors to build a recognizable brand for your channel.</li>
+                </ul>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-bottom">
+            &copy; 2026 CreatorToolkit. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="../main.js"></script>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const bgInput = document.getElementById('bg-input');
+        const textInput = document.getElementById('text-input');
+        const addTextBtn = document.getElementById('add-text-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        
+        // Layer Controls
+        const layerControls = document.getElementById('layer-controls');
+        const fontSizeInput = document.getElementById('font-size');
+        const fontColorInput = document.getElementById('font-color');
+        const posXInput = document.getElementById('pos-x');
+        const posYInput = document.getElementById('pos-y');
+        const deleteLayerBtn = document.getElementById('delete-layer');
+
+        let bgImage = null;
+        let layers = [];
+        let selectedLayerIndex = -1;
+
+        // Init
+        ctx.fillStyle = '#333';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#fff';
+        ctx.font = '40px Arial';
+        ctx.fillText('Upload a Background to Start', 380, 360);
+
+        bgInput.addEventListener('change', (e) => {
+            if(e.target.files.length > 0) {
+                const url = URL.createObjectURL(e.target.files[0]);
+                bgImage = new Image();
+                bgImage.onload = drawCanvas;
+                bgImage.src = url;
+            }
+        });
+
+        addTextBtn.addEventListener('click', () => {
+            const text = textInput.value.trim();
+            if(!text) return;
+            
+            layers.push({
+                type: 'text',
+                text: text,
+                x: 640,
+                y: 360,
+                size: 60,
+                color: '#ffffff'
+            });
+            textInput.value = '';
+            selectedLayerIndex = layers.length - 1;
+            updateControls();
+            drawCanvas();
+        });
+
+        // Event Listeners for controls
+        fontSizeInput.addEventListener('input', (e) => {
+            if(selectedLayerIndex > -1) {
+                layers[selectedLayerIndex].size = parseInt(e.target.value);
+                drawCanvas();
+            }
+        });
+
+        fontColorInput.addEventListener('input', (e) => {
+            if(selectedLayerIndex > -1) {
+                layers[selectedLayerIndex].color = e.target.value;
+                drawCanvas();
+            }
+        });
+
+        posXInput.addEventListener('input', (e) => {
+             if(selectedLayerIndex > -1) {
+                layers[selectedLayerIndex].x = parseInt(e.target.value);
+                drawCanvas();
+            }
+        });
+
+        posYInput.addEventListener('input', (e) => {
+             if(selectedLayerIndex > -1) {
+                layers[selectedLayerIndex].y = parseInt(e.target.value);
+                drawCanvas();
+            }
+        });
+
+        deleteLayerBtn.addEventListener('click', () => {
+             if(selectedLayerIndex > -1) {
+                 layers.splice(selectedLayerIndex, 1);
+                 selectedLayerIndex = -1;
+                 updateControls();
+                 drawCanvas();
+             }
+        });
+        
+        // Simple click selection logic (bounding box approximation)
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const clickX = (e.clientX - rect.left) * scaleX;
+            const clickY = (e.clientY - rect.top) * scaleY;
+
+            // Check layers in reverse (top first)
+            let found = false;
+            for(let i = layers.length - 1; i >= 0; i--) {
+                const l = layers[i];
+                // Approx text height/width
+                ctx.font = `bold ${l.size}px Arial`;
+                const width = ctx.measureText(l.text).width;
+                const height = l.size; 
+                
+                // Text is drawn from bottom-left baseline usually, but let's assume center for simplicity in next iteration
+                // Current drawText uses center alignment
+                if(clickX >= l.x - width/2 && clickX <= l.x + width/2 && 
+                   clickY >= l.y - height/2 && clickY <= l.y + height/2) {
+                       selectedLayerIndex = i;
+                       found = true;
+                       updateControls();
+                       break;
+                }
+            }
+            if(!found) {
+                selectedLayerIndex = -1;
+                layerControls.style.display = 'none';
+            }
+        });
+
+        function updateControls() {
+            if(selectedLayerIndex > -1) {
+                const l = layers[selectedLayerIndex];
+                layerControls.style.display = 'block';
+                fontSizeInput.value = l.size;
+                fontColorInput.value = l.color;
+                posXInput.value = l.x;
+                posYInput.value = l.y;
+            } else {
+                layerControls.style.display = 'none';
+            }
+        }
+
+        function drawCanvas() {
+            // Clear
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw BG
+            if(bgImage) {
+                // Cover fit
+                const ratio = Math.max(canvas.width / bgImage.width, canvas.height / bgImage.height);
+                const centerShift_x = (canvas.width - bgImage.width * ratio) / 2;
+                const centerShift_y = (canvas.height - bgImage.height * ratio) / 2;
+                ctx.drawImage(bgImage, 0, 0, bgImage.width, bgImage.height, centerShift_x, centerShift_y, bgImage.width * ratio, bgImage.height * ratio);
+            }
+
+            // Draw Layers
+            layers.forEach((l, index) => {
+                ctx.save();
+                ctx.font = `bold ${l.size}px Arial`;
+                ctx.fillStyle = l.color;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // Drop shadow
+                ctx.shadowColor = "rgba(0,0,0,0.8)";
+                ctx.shadowBlur = 4;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
+
+                ctx.fillText(l.text, l.x, l.y);
+                
+                // Highlight selection
+                if(index === selectedLayerIndex) {
+                    const width = ctx.measureText(l.text).width;
+                    const height = l.size;
+                    ctx.strokeStyle = '#0ea5e9';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(l.x - width/2 - 10, l.y - height/2 - 10, width + 20, height + 20);
+                }
+
+                ctx.restore();
+            });
+
+            downloadBtn.href = canvas.toDataURL('image/jpeg', 0.9);
+            downloadBtn.download = 'my-thumbnail.jpg';
+        }
+    </script>
+</body>
+</html>

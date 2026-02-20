@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free YouTube Keyword Tool - CreatorToolkit</title>
+    <meta name="description" content="Generate high-volume, low-competition keywords for your YouTube videos. Find the best tags to rank your content higher.">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container nav-wrapper">
+            <a href="/" class="logo"><span>✦</span> CreatorToolkit</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html#tools">Tools</a></li>
+                    <li><a href="../index.html#guides">Guides</a></li>
+                </ul>
+            </nav>
+            <a href="../index.html#tools" class="btn btn-primary">All Tools</a>
+        </div>
+    </header>
+
+    <main class="container section">
+        <div class="content-area">
+            <h1>YouTube Keyword Generator</h1>
+            <p>Find long-tail keywords that your audience is actually searching for. Improve your rankings by targeting specific phrases.</p>
+
+            <div class="tool-workspace">
+                <div class="form-group">
+                    <label for="topic">Enter your main topic</label>
+                    <input type="text" id="topic" placeholder="e.g. Photography, Fitness, Gaming">
+                </div>
+                <button id="find-keys-btn" class="btn btn-primary" style="width: 100%;">Find Keywords</button>
+
+                <div id="results-area" style="display: none; margin-top: 2rem;">
+                    <h3>Keyword Suggestions</h3>
+                    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; max-height: 400px; overflow-y: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="text-align: left; border-bottom: 1px solid var(--border);">
+                                    <th style="padding: 0.5rem;">Keyword</th>
+                                    <th style="padding: 0.5rem;">Competition</th>
+                                    <th style="padding: 0.5rem;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="keyword-table">
+                                <!-- Rows injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                         <textarea id="copy-box" rows="3" style="width: 100%;" placeholder="Selected tags will appear here..." readonly></textarea>
+                         <button id="copy-all-btn" class="btn btn-outline" style="margin-top: 0.5rem;">Copy Selected</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ad Placeholder -->
+            <div class="ad-banner">In-Content Ad Placeholder</div>
+
+            <article>
+                <h2>How to Use Keywords on YouTube</h2>
+                <p>Keywords help YouTube's algorithm understand what your video is about. While "tags" are less important than they used to be, keywords in your <strong>Title</strong>, <strong>Description</strong>, and <strong>Spoken Content</strong> (captions) are vital.</p>
+
+                <h3>Strategy: The "Long-Tail" Approach</h3>
+                <p>Instead of targeting broad terms like "Fitness" (which has millions of videos), target specific phrases like "10 minute fitness routine for beginners at home". These are called long-tail keywords. They have less competition and higher intent, making it easier for new channels to rank.</p>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-bottom">
+            &copy; 2026 CreatorToolkit. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="../main.js"></script>
+    <script>
+        const findBtn = document.getElementById('find-keys-btn');
+        const resultsArea = document.getElementById('results-area');
+        const tableBody = document.getElementById('keyword-table');
+        const copyBox = document.getElementById('copy-box');
+        const copyAllBtn = document.getElementById('copy-all-btn');
+        
+        const modifiers = [
+            "for beginners", "tutorial", "review", "tips", "guide", "2026", "vs", "explained", "how to", "best", "cheap", "fast"
+        ];
+        
+        const competitionLevels = ["Low", "Medium", "High"];
+
+        findBtn.addEventListener('click', () => {
+            const topic = document.getElementById('topic').value.trim();
+            if(!topic) return;
+
+            tableBody.innerHTML = '';
+            const keywords = [];
+
+            // Generate variations
+            modifiers.forEach(mod => {
+                keywords.push(`${topic} ${mod}`);
+                keywords.push(`${mod} ${topic}`);
+            });
+            
+            // Randomize order
+            keywords.sort(() => 0.5 - Math.random());
+
+            keywords.forEach(kw => {
+                const tr = document.createElement('tr');
+                const comp = competitionLevels[Math.floor(Math.random() * competitionLevels.length)];
+                
+                let compColor = "var(--success)";
+                if(comp === "Medium") compColor = "var(--warning)";
+                if(comp === "High") compColor = "var(--danger)";
+
+                tr.innerHTML = `
+                    <td style="padding: 0.5rem; border-bottom: 1px solid #eee;">${kw}</td>
+                    <td style="padding: 0.5rem; border-bottom: 1px solid #eee; color: ${compColor}; font-weight: bold;">${comp}</td>
+                    <td style="padding: 0.5rem; border-bottom: 1px solid #eee;"><button class="add-btn btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">+</button></td>
+                `;
+                tableBody.appendChild(tr);
+
+                tr.querySelector('.add-btn').addEventListener('click', () => {
+                    const current = copyBox.value;
+                    const separator = current ? ', ' : '';
+                    copyBox.value = current + separator + kw;
+                });
+            });
+
+            resultsArea.style.display = 'block';
+        });
+
+        copyAllBtn.addEventListener('click', () => {
+            copyBox.select();
+            document.execCommand('copy');
+            copyAllBtn.textContent = "Copied!";
+            setTimeout(() => copyAllBtn.textContent = "Copy Selected", 2000);
+        });
+    </script>
+</body>
+</html>

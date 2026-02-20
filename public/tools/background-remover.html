@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Background Remover - CreatorToolkit</title>
+    <meta name="description" content="Remove backgrounds from images for free. Use our chroma key tool to make backgrounds transparent instantly in your browser.">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container nav-wrapper">
+            <a href="/" class="logo"><span>✦</span> CreatorToolkit</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html#tools">Tools</a></li>
+                    <li><a href="../index.html#guides">Guides</a></li>
+                </ul>
+            </nav>
+            <a href="../index.html#tools" class="btn btn-primary">All Tools</a>
+        </div>
+    </header>
+
+    <main class="container section">
+        <div class="content-area">
+            <h1>Background Remover (Chroma Key)</h1>
+            <p>Remove specific colors or backgrounds from your images instantly. Perfect for green screens or solid color backgrounds.</p>
+
+            <div class="tool-workspace">
+                <div class="drop-zone" id="drop-zone">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">✂️</div>
+                    <h3>Drag & Drop Image</h3>
+                    <p>Works best with solid backgrounds (Green, Blue, White)</p>
+                    <input type="file" id="file-input" accept="image/*" hidden>
+                </div>
+
+                <div class="controls" id="controls" style="display: none;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Pick Color to Remove:</label>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">Click on the image below to select the color.</p>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                             <div id="color-preview" style="width: 40px; height: 40px; border: 1px solid #ccc; border-radius: 4px; background: #00ff00;"></div>
+                             <input type="range" id="tolerance" min="1" max="100" value="30" style="flex:1">
+                             <span>Tol: <span id="tol-val">30</span></span>
+                        </div>
+                    </div>
+                    <a id="download-btn" class="btn btn-primary">Download PNG</a>
+                </div>
+
+                <div class="canvas-container" id="canvas-wrapper" style="display: none;">
+                    <canvas id="canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Ad Placeholder -->
+            <div class="ad-banner">In-Content Ad Placeholder</div>
+
+            <article>
+                <h2>How to Remove Backgrounds for Free</h2>
+                <p>Removing backgrounds usually requires expensive software like Photoshop or paid AI tools. CreatorToolkit offers a free, client-side "Chroma Key" solution. This technique is widely used in movies and weather forecasts to replace green screens with other backgrounds.</p>
+
+                <h3>Best Practices for this Tool</h3>
+                <ul>
+                    <li><strong>Use Solid Backgrounds:</strong> This tool works best if your subject is in front of a solid color (like a green screen, a white wall, or a blue sheet).</li>
+                    <li><strong>Lighting Matters:</strong> Ensure the background is evenly lit. Shadows create different shades of the color, making it harder to remove comfortably.</li>
+                    <li><strong>Adjust Tolerance:</strong> Use the tolerance slider to control how "strict" the color matching is. A higher tolerance removes more shades of the selected color.</li>
+                </ul>
+
+                <h3>Why Client-Side Processing?</h3>
+                <p>Most online background removers upload your photos to their servers to process them with AI. This can raise privacy concerns. Our tool runs entirely in your browser using the HTML5 Canvas API, meaning your images never leave your computer.</p>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-bottom">
+            &copy; 2026 CreatorToolkit. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="../main.js"></script>
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const controls = document.getElementById('controls');
+        const canvasWrapper = document.getElementById('canvas-wrapper');
+        const toleranceInput = document.getElementById('tolerance');
+        const tolVal = document.getElementById('tol-val');
+        const colorPreview = document.getElementById('color-preview');
+        const downloadBtn = document.getElementById('download-btn');
+
+        let img = new Image();
+        let targetColor = { r: 0, g: 255, b: 0 }; // Default Green
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const url = URL.createObjectURL(e.target.files[0]);
+                img.onload = () => {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    // Limit display size
+                    if(img.width > 800) {
+                        canvas.style.width = '100%';
+                        canvas.style.height = 'auto';
+                    }
+                    processImage();
+                    controls.style.display = 'flex';
+                    canvasWrapper.style.display = 'flex';
+                };
+                img.src = url;
+            }
+        });
+
+        toleranceInput.addEventListener('input', (e) => {
+            tolVal.textContent = e.target.value;
+            processImage();
+        });
+
+        // Pick color on click
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+            
+            const pixel = ctx.getImageData(x, y, 1, 1).data;
+            targetColor = { r: pixel[0], g: pixel[1], b: pixel[2] };
+            colorPreview.style.background = `rgb(${targetColor.r}, ${targetColor.g}, ${targetColor.b})`;
+            processImage();
+        });
+
+        function processImage() {
+            ctx.drawImage(img, 0, 0);
+            const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = frame.data;
+            const tol = parseInt(toleranceInput.value);
+
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+
+                // Simple Euclidean distance
+                const diff = Math.sqrt(
+                    Math.pow(r - targetColor.r, 2) +
+                    Math.pow(g - targetColor.g, 2) +
+                    Math.pow(b - targetColor.b, 2)
+                );
+
+                if (diff < tol * 1.5) { // Multiplier to make slider feel better
+                    data[i + 3] = 0; // Alpha to 0
+                }
+            }
+            ctx.putImageData(frame, 0, 0);
+            downloadBtn.href = canvas.toDataURL('image/png');
+            downloadBtn.download = 'removed-bg.png';
+        }
+    </script>
+</body>
+</html>

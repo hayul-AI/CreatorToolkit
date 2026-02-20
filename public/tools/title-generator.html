@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free YouTube Title Generator - CreatorToolkit</title>
+    <meta name="description" content="Generate viral YouTube video titles instantly. Use our free tool to get click-worthy title ideas based on top-performing templates.">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container nav-wrapper">
+            <a href="/" class="logo"><span>✦</span> CreatorToolkit</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html#tools">Tools</a></li>
+                    <li><a href="../index.html#guides">Guides</a></li>
+                </ul>
+            </nav>
+            <a href="../index.html#tools" class="btn btn-primary">All Tools</a>
+        </div>
+    </header>
+
+    <main class="container section">
+        <div class="content-area">
+            <h1>Viral YouTube Title Generator</h1>
+            <p>Stuck on a title? Enter your main keyword and let our algorithm generate proven, high-CTR title templates for you.</p>
+
+            <div class="tool-workspace">
+                <div class="form-group">
+                    <label for="keyword">Main Keyword / Topic</label>
+                    <input type="text" id="keyword" placeholder="e.g. Vegan Cooking, Minecraft, Bitcoin">
+                </div>
+                <div class="form-group">
+                    <label for="niche">Video Style</label>
+                    <select id="niche">
+                        <option value="tutorial">How-To / Tutorial</option>
+                        <option value="list">Listicle / Top 10</option>
+                        <option value="story">Storytime / Vlog</option>
+                        <option value="review">Review / Comparison</option>
+                        <option value="shock">Shocking / Viral</option>
+                    </select>
+                </div>
+                <button id="generate-btn" class="btn btn-primary" style="width: 100%;">Generate Titles</button>
+
+                <div id="results" style="margin-top: 2rem; display: none;">
+                    <h3>Generated Ideas:</h3>
+                    <ul id="title-list" style="list-style: none; padding: 0;">
+                        <!-- Results injected here -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ad Placeholder -->
+            <div class="ad-banner">In-Content Ad Placeholder</div>
+
+            <article>
+                <h2>The Science of Click-Worthy Titles</h2>
+                <p>Your title is the "headline" of your video. If it doesn't grab attention, your content won't get watched. Great titles often invoke curiosity, promise a specific benefit, or create a sense of urgency.</p>
+
+                <h3>Power Words used in this Generator</h3>
+                <p>Our tool mixes your keyword with psychological triggers like "Secret," "Mistake," "Ultimate," and "Insane." These words have been proven to increase click-through rates across millions of videos.</p>
+
+                <h3>How to Choose the Best Title</h3>
+                <ul>
+                    <li><strong>Be Honest:</strong> Don't clickbait if you can't deliver. The title must match the content.</li>
+                    <li><strong>Keep it Short:</strong> Titles under 60 characters ensure the full text is visible on mobile screens.</li>
+                    <li><strong>Test It:</strong> Try A/B testing different titles if your CTR is low in the first 24 hours.</li>
+                </ul>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-bottom">
+            &copy; 2026 CreatorToolkit. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="../main.js"></script>
+    <script>
+        const keywordInput = document.getElementById('keyword');
+        const nicheSelect = document.getElementById('niche');
+        const generateBtn = document.getElementById('generate-btn');
+        const resultsDiv = document.getElementById('results');
+        const titleList = document.getElementById('title-list');
+
+        const templates = {
+            tutorial: [
+                "How to {kw} in 10 Minutes (Step by Step)",
+                "The Ultimate Guide to {kw} for Beginners",
+                "Stop Doing {kw} Wrong! (Do This Instead)",
+                "Master {kw} with this Simple Trick",
+                "I Tried {kw} for 30 Days and This Happened",
+                "The Secret to Perfect {kw} Revealed"
+            ],
+            list: [
+                "Top 10 {kw} Tips You Need to Know",
+                "7 {kw} Hacks That Actually Work",
+                "The 5 Best {kw} Tools in 2026",
+                "Ranked: Every {kw} From Worst to Best",
+                "15 {kw} Secrets Experts Won't Tell You"
+            ],
+            story: [
+                "Why I Quit {kw}...",
+                "The Truth About {kw} (My Experience)",
+                "I Spent $1000 on {kw} so You Don't Have To",
+                "My {kw} Journey: From Zero to Hero",
+                "The Day {kw} Changed My Life"
+            ],
+            review: [
+                "{kw} Review: Is It Worth It?",
+                "Don't Buy {kw} Until You Watch This",
+                "{kw} vs The Competition: The Winner is Clear",
+                "The Problem with {kw}...",
+                "Why Everyone is Talking About {kw}"
+            ],
+            shock: [
+                "You Won't Believe This {kw} Hack!",
+                "Is {kw} Dead in 2026?",
+                "The {kw} Apocalypse is Here",
+                "WARNING: Do Not Try {kw} at Home",
+                "This {kw} Mistake Cost Me Everything"
+            ]
+        };
+
+        generateBtn.addEventListener('click', () => {
+            const kw = keywordInput.value.trim();
+            const niche = nicheSelect.value;
+            
+            if(!kw) {
+                alert('Please enter a keyword');
+                return;
+            }
+
+            // Get templates for niche
+            const ideas = templates[niche];
+            // Also mix in some generic ones
+            const generic = [
+                "The Future of {kw}",
+                "{kw} Explained in 5 Minutes"
+            ];
+            
+            const allIdeas = [...ideas, ...generic];
+            
+            // Randomize and pick 5
+            const shuffled = allIdeas.sort(() => 0.5 - Math.random()).slice(0, 5);
+
+            titleList.innerHTML = '';
+            shuffled.forEach(t => {
+                const finalTitle = t.replace(/{kw}/g, kw);
+                const li = document.createElement('li');
+                li.style.padding = '1rem';
+                li.style.borderBottom = '1px solid var(--border)';
+                li.style.display = 'flex';
+                li.style.justifyContent = 'space-between';
+                li.style.alignItems = 'center';
+                
+                li.innerHTML = `
+                    <span style="font-weight: 500; font-size: 1.1rem;">${finalTitle}</span>
+                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="navigator.clipboard.writeText('${finalTitle.replace(/'/g, "'")}')">Copy</button>
+                `;
+                titleList.appendChild(li);
+            });
+
+            resultsDiv.style.display = 'block';
+        });
+    </script>
+</body>
+</html>

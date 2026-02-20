@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free YouTube Thumbnail Compressor - CreatorToolkit</title>
+    <meta name="description" content="Compress your YouTube thumbnails online for free. Reduce file size without losing quality. Fast, secure, and runs in your browser.">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container nav-wrapper">
+            <a href="/" class="logo"><span>✦</span> CreatorToolkit</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html#tools">Tools</a></li>
+                    <li><a href="../index.html#guides">Guides</a></li>
+                </ul>
+            </nav>
+            <a href="../index.html#tools" class="btn btn-primary">All Tools</a>
+        </div>
+    </header>
+
+    <main class="container section">
+        <div class="content-area">
+            <h1>YouTube Thumbnail Compressor</h1>
+            <p>Reduce your thumbnail file size instantly while maintaining high visual quality. YouTube has a 2MB limit for thumbnails—ensure yours fits perfectly.</p>
+
+            <div class="tool-workspace">
+                <div class="drop-zone" id="drop-zone">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">⬇️</div>
+                    <h3>Drag & Drop your Thumbnail here</h3>
+                    <p>or click to browse (JPG, PNG)</p>
+                    <input type="file" id="file-input" accept="image/jpeg, image/png" hidden>
+                </div>
+
+                <div class="controls" id="controls" style="display: none;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="quality">Compression Level: <span id="quality-val">80</span>%</label>
+                        <input type="range" id="quality" min="10" max="100" value="80">
+                    </div>
+                    <div class="form-group" style="flex: 1; text-align: center;">
+                        <p>Original: <span id="original-size">0 KB</span></p>
+                        <p>Compressed: <span id="compressed-size">0 KB</span></p>
+                    </div>
+                    <a id="download-btn" class="btn btn-primary" download="thumbnail-compressed.jpg">Download Compressed Image</a>
+                </div>
+
+                <div class="canvas-container" id="preview-container" style="display: none;">
+                    <img id="preview-img" style="max-width: 100%; border-radius: 4px;" />
+                </div>
+            </div>
+
+            <!-- Ad Placeholder -->
+            <div class="ad-banner">In-Content Ad Placeholder</div>
+
+            <article>
+                <h2>Why Compress Your YouTube Thumbnails?</h2>
+                <p>YouTube imposes a strict <strong>2MB file size limit</strong> on custom thumbnails. High-resolution images, especially those exported from Photoshop or Canva with complex layers, often exceed this limit. Our tool helps you reduce the file size significantly without a noticeable drop in visual quality.</p>
+
+                <h3>How to Use This Tool</h3>
+                <ol>
+                    <li>Click the upload area or drag and drop your thumbnail image.</li>
+                    <li>Adjust the compression slider to find the perfect balance between size and quality.</li>
+                    <li>Observe the real-time size calculation.</li>
+                    <li>Click "Download" to save your optimized thumbnail.</li>
+                </ol>
+
+                <h3>Tips for High-CTR Thumbnails</h3>
+                <p>While technical optimization is crucial, the content of your thumbnail drives clicks. Ensure your text is readable on mobile devices, use high-contrast colors, and include an expressive face if possible. Compressing your image ensures it loads instantly for users on slower connections, preventing a blank placeholder from appearing.</p>
+
+                <h3>Supported Formats</h3>
+                <p>This tool currently supports JPEG and PNG formats. It converts PNGs to high-quality JPEGs to achieve maximum compression, as JPEGs are generally smaller and perfectly suitable for YouTube thumbnails.</p>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-bottom">
+            &copy; 2026 CreatorToolkit. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="../main.js"></script>
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const qualityInput = document.getElementById('quality');
+        const qualityVal = document.getElementById('quality-val');
+        const controls = document.getElementById('controls');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImg = document.getElementById('preview-img');
+        const originalSize = document.getElementById('original-size');
+        const compressedSize = document.getElementById('compressed-size');
+        const downloadBtn = document.getElementById('download-btn');
+
+        let currentFile = null;
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                currentFile = e.target.files[0];
+                originalSize.textContent = (currentFile.size / 1024).toFixed(2) + ' KB';
+                controls.style.display = 'flex';
+                previewContainer.style.display = 'flex';
+                compressImage();
+            }
+        });
+
+        qualityInput.addEventListener('input', (e) => {
+            qualityVal.textContent = e.target.value;
+            compressImage();
+        });
+
+        function compressImage() {
+            if (!currentFile) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+
+                    const quality = parseInt(qualityInput.value) / 100;
+                    const dataUrl = canvas.toDataURL('image/jpeg', quality);
+
+                    previewImg.src = dataUrl;
+                    downloadBtn.href = dataUrl;
+
+                    // Calculate rough size
+                    const head = 'data:image/jpeg;base64,';
+                    const size = Math.round((dataUrl.length - head.length) * 3 / 4);
+                    compressedSize.textContent = (size / 1024).toFixed(2) + ' KB';
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(currentFile);
+        }
+    </script>
+</body>
+</html>

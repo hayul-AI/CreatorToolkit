@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPG/PNG/WebP Image Converter - CreatorToolkit</title>
+    <meta name="description" content="Convert your images to JPG, PNG, or WebP formats for free online. Optimize your YouTube channel art and thumbnails with correct formats.">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container nav-wrapper">
+            <a href="/" class="logo"><span>✦</span> CreatorToolkit</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html#tools">Tools</a></li>
+                    <li><a href="../index.html#guides">Guides</a></li>
+                </ul>
+            </nav>
+            <a href="../index.html#tools" class="btn btn-primary">All Tools</a>
+        </div>
+    </header>
+
+    <main class="container section">
+        <div class="content-area">
+            <h1>Image Format Converter</h1>
+            <p>Convert your images between JPG, PNG, and WebP formats instantly. No server uploads—100% private and secure.</p>
+
+            <div class="tool-workspace">
+                <div class="drop-zone" id="drop-zone">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔄</div>
+                    <h3>Drag & Drop an Image</h3>
+                    <p>Supported: JPG, PNG, WebP</p>
+                    <input type="file" id="file-input" accept="image/jpeg, image/png, image/webp" hidden>
+                </div>
+
+                <div class="controls" id="controls" style="display: none; justify-content: center; gap: 2rem;">
+                    <div class="form-group">
+                        <label for="format">Convert to:</label>
+                        <select id="format">
+                            <option value="image/jpeg">JPG (Best for Photos)</option>
+                            <option value="image/png">PNG (Best for Graphics)</option>
+                            <option value="image/webp">WebP (Modern & Small)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <a id="download-btn" class="btn btn-primary">Convert & Download</a>
+                    </div>
+                </div>
+                
+                <div class="canvas-container" id="preview-container" style="display: none;">
+                    <img id="preview-img" style="max-height: 400px; max-width: 100%;" />
+                </div>
+            </div>
+
+            <!-- Ad Placeholder -->
+            <div class="ad-banner">In-Content Ad Placeholder</div>
+
+            <article>
+                <h2>Choosing the Right Image Format for YouTube</h2>
+                <p>Understanding image formats is key to maintaining a professional channel appearance. Here is a breakdown of when to use each format:</p>
+
+                <h3>JPG (JPEG)</h3>
+                <p><strong>Best for:</strong> Thumbnails, Channel Banners, and Profile Pictures.</p>
+                <p>JPGs use lossy compression, meaning they discard some data to keep file sizes small. They are perfect for photographs or complex images with many colors (like thumbnails with faces). YouTube recommends JPGs for thumbnails to stay under the 2MB limit.</p>
+
+                <h3>PNG</h3>
+                <p><strong>Best for:</strong> Logos, Overlays, and Graphics with Text.</p>
+                <p>PNGs use lossless compression. They keep every pixel perfect, which is essential for logos or text-heavy images where sharp lines matter. They also support transparency. However, file sizes can be large.</p>
+
+                <h3>WebP</h3>
+                <p><strong>Best for:</strong> Websites and Portfolios.</p>
+                <p>WebP is a modern format developed by Google that provides superior lossless and lossy compression for images on the web. It is often 26% smaller than PNGs and 25-34% smaller than comparable JPEG images.</p>
+
+                <h3>How This Tool Works</h3>
+                <p>Unlike other converters that upload your files to a cloud server, CreatorToolkit processes your images directly in your browser. This means your personal photos never leave your device, ensuring maximum privacy and speed.</p>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-bottom">
+            &copy; 2026 CreatorToolkit. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="../main.js"></script>
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const formatSelect = document.getElementById('format');
+        const controls = document.getElementById('controls');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImg = document.getElementById('preview-img');
+        const downloadBtn = document.getElementById('download-btn');
+
+        let currentFile = null;
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                currentFile = e.target.files[0];
+                const url = URL.createObjectURL(currentFile);
+                previewImg.src = url;
+                controls.style.display = 'flex';
+                previewContainer.style.display = 'flex';
+                updateDownloadLink();
+            }
+        });
+
+        formatSelect.addEventListener('change', updateDownloadLink);
+
+        function updateDownloadLink() {
+            if (!currentFile) return;
+
+            const format = formatSelect.value;
+            const ext = format.split('/')[1];
+            
+            // Use Canvas to convert
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                
+                // Fill white background for JPG conversions if transparency exists
+                if (format === 'image/jpeg') {
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+                
+                ctx.drawImage(img, 0, 0);
+                const dataUrl = canvas.toDataURL(format, 0.9);
+                
+                downloadBtn.href = dataUrl;
+                downloadBtn.download = `converted-image.${ext}`;
+            };
+            img.src = previewImg.src;
+        }
+    </script>
+</body>
+</html>

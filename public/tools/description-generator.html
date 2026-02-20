@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free YouTube Description Generator - CreatorToolkit</title>
+    <meta name="description" content="Generate SEO-optimized YouTube video descriptions. Fill in the blanks and get a professional description template ready to copy.">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container nav-wrapper">
+            <a href="/" class="logo"><span>✦</span> CreatorToolkit</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html#tools">Tools</a></li>
+                    <li><a href="../index.html#guides">Guides</a></li>
+                </ul>
+            </nav>
+            <a href="../index.html#tools" class="btn btn-primary">All Tools</a>
+        </div>
+    </header>
+
+    <main class="container section">
+        <div class="content-area">
+            <h1>YouTube Description Generator</h1>
+            <p>Don't leave your description blank. A structured description helps YouTube understand your video and rank it higher in search results.</p>
+
+            <div class="tool-workspace">
+                <div class="grid grid-2">
+                    <div>
+                        <div class="form-group">
+                            <label>Video Topic / Keyword</label>
+                            <input type="text" id="desc-topic" placeholder="e.g. iPhone 16 Review">
+                        </div>
+                        <div class="form-group">
+                            <label>Brief Summary (1-2 sentences)</label>
+                            <textarea id="desc-summary" rows="3" placeholder="In this video, I review the new iPhone 16 and tell you if it's worth the upgrade."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Timestamps (Optional)</label>
+                            <textarea id="desc-timestamps" rows="4" placeholder="0:00 Intro&#10;1:30 Unboxing&#10;5:00 Camera Test&#10;8:45 Verdict"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Social Links</label>
+                            <input type="text" id="desc-instagram" placeholder="Instagram URL">
+                            <input type="text" id="desc-twitter" placeholder="Twitter URL" style="margin-top: 0.5rem;">
+                        </div>
+                        <div class="form-group">
+                            <label>Affiliate / Product Links</label>
+                            <textarea id="desc-links" rows="3" placeholder="Buy it here: https://amazon.com/..."></textarea>
+                        </div>
+                        <button id="generate-desc-btn" class="btn btn-primary" style="width: 100%;">Generate Description</button>
+                    </div>
+
+                    <div>
+                        <label>Result</label>
+                        <textarea id="final-desc" rows="20" style="width: 100%; height: 500px; font-family: monospace; background: var(--surface);" readonly></textarea>
+                        <button id="copy-desc-btn" class="btn btn-outline" style="width: 100%; margin-top: 1rem;">Copy to Clipboard</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ad Placeholder -->
+            <div class="ad-banner">In-Content Ad Placeholder</div>
+
+            <article>
+                <h2>Why YouTube Descriptions Matter for SEO</h2>
+                <p>The first 200 characters of your description are crucial. They appear in search results and help viewers decide whether to click. Additionally, YouTube's algorithm scans your description for keywords to understand the context of your video.</p>
+
+                <h3>Anatomy of a Perfect Description</h3>
+                <ul>
+                    <li><strong>The Hook:</strong> State clearly what the video is about in the first sentence using your main keyword.</li>
+                    <li><strong>Timestamps:</strong> Essential for long videos. They create "chapters" in the progress bar and appear in Google Search.</li>
+                    <li><strong>Links:</strong> Direct traffic to your other social platforms, products, or affiliate offers.</li>
+                    <li><strong>Hashtags:</strong> Add up to 3 hashtags at the bottom. These appear above your video title on mobile.</li>
+                </ul>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-bottom">
+            &copy; 2026 CreatorToolkit. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="../main.js"></script>
+    <script>
+        const generateBtn = document.getElementById('generate-desc-btn');
+        const copyBtn = document.getElementById('copy-desc-btn');
+        const finalDesc = document.getElementById('final-desc');
+
+        generateBtn.addEventListener('click', () => {
+            const topic = document.getElementById('desc-topic').value;
+            const summary = document.getElementById('desc-summary').value;
+            const timestamps = document.getElementById('desc-timestamps').value;
+            const insta = document.getElementById('desc-instagram').value;
+            const twitter = document.getElementById('desc-twitter').value;
+            const links = document.getElementById('desc-links').value;
+
+            let output = "";
+
+            // Hook
+            if(summary) {
+                output += `${summary}
+
+`;
+            } else if(topic) {
+                output += `In this video, we're talking about ${topic}. If you want to learn more about ${topic}, watch until the end!
+
+`;
+            }
+
+            // CTA
+            output += `🔔 Subscribe for more videos like this: https://www.youtube.com/channel/YOUR_CHANNEL_ID?sub_confirmation=1
+
+`;
+
+            // Timestamps
+            if(timestamps) {
+                output += `TIMESTAMPS:
+${timestamps}
+
+`;
+            }
+
+            // Links
+            if(links) {
+                output += `RESOURCES & LINKS:
+${links}
+
+`;
+            }
+
+            // Socials
+            if(insta || twitter) {
+                output += `CONNECT WITH ME:
+`;
+                if(insta) output += `📸 Instagram: ${insta}
+`;
+                if(twitter) output += `🐦 Twitter: ${twitter}
+`;
+                output += `
+`;
+            }
+
+            // Disclaimer
+            output += `DISCLAIMER: This description contains affiliate links. If you click on one of the product links, I’ll receive a small commission. This supports the channel and allows us to continue to make videos like this.
+
+`;
+
+            // Hashtags
+            if(topic) {
+                const tag = topic.replace(/\s+/g, '').toLowerCase();
+                output += `#${tag} #youtube #creator`;
+            }
+
+            finalDesc.value = output;
+        });
+
+        copyBtn.addEventListener('click', () => {
+            finalDesc.select();
+            document.execCommand('copy');
+            copyBtn.textContent = "Copied!";
+            setTimeout(() => copyBtn.textContent = "Copy to Clipboard", 2000);
+        });
+    </script>
+</body>
+</html>
