@@ -6,74 +6,127 @@
     <title>Free YouTube Title Generator - CreatorToolkit</title>
     <meta name="description" content="Generate viral YouTube video titles instantly. Use our free tool to get click-worthy title ideas based on top-performing templates.">
     <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <div class="container nav-wrapper">
-            <a href="/" class="logo"><span>✦</span> CreatorToolkit</a>
+        <div class="container">
             <nav>
+                <a href="../index.html" class="logo">
+                    CreatorToolkit<span class="text-red">.</span>
+                </a>
                 <ul class="nav-links">
                     <li><a href="../index.html#tools">Tools</a></li>
                     <li><a href="../index.html#guides">Guides</a></li>
+                    <li><a href="../about.html">About</a></li>
                 </ul>
+                <div class="flex items-center gap-4">
+                    <a href="../index.html#tools" class="btn btn-outline btn-sm">All Tools</a>
+                    <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+                </div>
             </nav>
-            <a href="../index.html#tools" class="btn btn-primary">All Tools</a>
         </div>
     </header>
 
-    <main class="container section">
-        <div class="content-area">
-            <h1>Viral YouTube Title Generator</h1>
-            <p>Stuck on a title? Enter your main keyword and let our algorithm generate proven, high-CTR title templates for you.</p>
+    <main class="section bg-surface">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 3rem;">
+                <h1>Viral Title Generator</h1>
+                <p>Generate high-CTR video titles based on proven psychological triggers.</p>
+            </div>
 
-            <div class="tool-workspace">
-                <div class="form-group">
-                    <label for="keyword">Main Keyword / Topic</label>
-                    <input type="text" id="keyword" placeholder="e.g. Vegan Cooking, Minecraft, Bitcoin">
+            <div class="grid grid-2" style="max-width: 1000px; margin: 0 auto; gap: 2rem; align-items: start;">
+                <!-- Input Card -->
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem;">Generator Settings</h3>
+                    
+                    <div class="form-group">
+                        <label for="keyword">Main Keyword / Topic</label>
+                        <input type="text" id="keyword" placeholder="e.g. Minecraft, Vegan Cooking, Bitcoin" style="font-size: 1.1rem;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="niche">Video Style</label>
+                        <select id="niche">
+                            <option value="tutorial">How-To / Tutorial</option>
+                            <option value="list">Listicle / Top 10</option>
+                            <option value="story">Storytime / Vlog</option>
+                            <option value="review">Review / Comparison</option>
+                            <option value="shock">Shocking / Viral</option>
+                        </select>
+                    </div>
+                    
+                    <button id="generate-btn" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                        Generate Ideas ✨
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label for="niche">Video Style</label>
-                    <select id="niche">
-                        <option value="tutorial">How-To / Tutorial</option>
-                        <option value="list">Listicle / Top 10</option>
-                        <option value="story">Storytime / Vlog</option>
-                        <option value="review">Review / Comparison</option>
-                        <option value="shock">Shocking / Viral</option>
-                    </select>
-                </div>
-                <button id="generate-btn" class="btn btn-primary" style="width: 100%;">Generate Titles</button>
 
-                <div id="results" style="margin-top: 2rem; display: none;">
-                    <h3>Generated Ideas:</h3>
-                    <ul id="title-list" style="list-style: none; padding: 0;">
-                        <!-- Results injected here -->
-                    </ul>
+                <!-- Results Card -->
+                <div class="card bg-surface" id="results-card" style="min-height: 400px; border: 2px dashed var(--ct-border); background: #fff;">
+                    <div id="empty-state" class="text-center" style="padding: 4rem 0;">
+                        <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">💡</span>
+                        <h3 class="text-muted">Ready to Generate</h3>
+                        <p class="text-muted">Enter a keyword to see results.</p>
+                    </div>
+                    
+                    <div id="results" style="display: none;">
+                        <h3 style="margin-bottom: 1.5rem;">Generated Titles:</h3>
+                        <ul id="title-list" style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1rem;">
+                            <!-- Results injected here -->
+                        </ul>
+                    </div>
                 </div>
             </div>
 
-            <!-- Ad Placeholder -->
-            <div class="ad-banner">In-Content Ad Placeholder</div>
-
-            <article>
-                <h2>The Science of Click-Worthy Titles</h2>
-                <p>Your title is the "headline" of your video. If it doesn't grab attention, your content won't get watched. Great titles often invoke curiosity, promise a specific benefit, or create a sense of urgency.</p>
-
-                <h3>Power Words used in this Generator</h3>
-                <p>Our tool mixes your keyword with psychological triggers like "Secret," "Mistake," "Ultimate," and "Insane." These words have been proven to increase click-through rates across millions of videos.</p>
-
-                <h3>How to Choose the Best Title</h3>
-                <ul>
-                    <li><strong>Be Honest:</strong> Don't clickbait if you can't deliver. The title must match the content.</li>
-                    <li><strong>Keep it Short:</strong> Titles under 60 characters ensure the full text is visible on mobile screens.</li>
-                    <li><strong>Test It:</strong> Try A/B testing different titles if your CTR is low in the first 24 hours.</li>
-                </ul>
-            </article>
+            <!-- Content Block -->
+            <div class="container" style="max-width: 800px; margin-top: 4rem;">
+                <h2>Title Psychology 101</h2>
+                <div class="grid grid-3" style="margin-top: 2rem;">
+                    <div class="card">
+                        <span class="badge" style="margin-bottom: 1rem;">Curiosity</span>
+                        <h3>Open Loops</h3>
+                        <p style="font-size: 0.9rem;">"This Secret..." or "The Truth About..." makes viewers click to find the answer.</p>
+                    </div>
+                    <div class="card">
+                        <span class="badge" style="margin-bottom: 1rem;">Benefit</span>
+                        <h3>Clear Value</h3>
+                        <p style="font-size: 0.9rem;">"How to..." or "Get More..." promises a specific outcome for the viewer.</p>
+                    </div>
+                    <div class="card">
+                        <span class="badge" style="margin-bottom: 1rem;">Urgency</span>
+                        <h3>FOMO</h3>
+                        <p style="font-size: 0.9rem;">"Don't Buy Until..." or "Stop Doing This..." creates fear of missing out.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
+    <!-- Footer -->
     <footer>
-        <div class="container footer-bottom">
-            &copy; 2026 CreatorToolkit. All rights reserved.
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="../index.html" class="logo" style="margin-bottom: 1rem;">
+                        CreatorToolkit<span class="text-red">.</span>
+                    </a>
+                    <p>Empowering creators with free tools.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="../terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 Creator Toolkit. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
@@ -84,6 +137,8 @@
         const generateBtn = document.getElementById('generate-btn');
         const resultsDiv = document.getElementById('results');
         const titleList = document.getElementById('title-list');
+        const emptyState = document.getElementById('empty-state');
+        const resultsCard = document.getElementById('results-card');
 
         const templates = {
             tutorial: [
@@ -132,38 +187,77 @@
                 alert('Please enter a keyword');
                 return;
             }
+            
+            // UI State
+            emptyState.style.display = 'none';
+            resultsDiv.style.display = 'block';
+            resultsCard.style.border = '1px solid var(--ct-border)';
+            resultsCard.style.background = 'white';
 
-            // Get templates for niche
-            const ideas = templates[niche];
-            // Also mix in some generic ones
+            // Logic
+            let ideas = templates[niche] || templates['tutorial'];
             const generic = [
                 "The Future of {kw}",
                 "{kw} Explained in 5 Minutes"
             ];
             
+            // Mix and shuffle
             const allIdeas = [...ideas, ...generic];
-            
-            // Randomize and pick 5
-            const shuffled = allIdeas.sort(() => 0.5 - Math.random()).slice(0, 5);
+            const shuffled = allIdeas.sort(() => 0.5 - Math.random()).slice(0, 6);
 
             titleList.innerHTML = '';
             shuffled.forEach(t => {
                 const finalTitle = t.replace(/{kw}/g, kw);
                 const li = document.createElement('li');
+                li.className = 'card';
                 li.style.padding = '1rem';
-                li.style.borderBottom = '1px solid var(--border)';
-                li.style.display = 'flex';
+                li.style.flexDirection = 'row';
                 li.style.justifyContent = 'space-between';
                 li.style.alignItems = 'center';
+                li.style.marginBottom = '0';
                 
                 li.innerHTML = `
-                    <span style="font-weight: 500; font-size: 1.1rem;">${finalTitle}</span>
-                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="navigator.clipboard.writeText('${finalTitle.replace(/'/g, "'")}')">Copy</button>
+                    <span style="font-weight: 600; font-size: 1.05rem; color: var(--ct-ink);">${finalTitle}</span>
+                    <button class="btn btn-outline btn-sm" onclick="copyToClipboard('${finalTitle.replace(/'/g, "\\'")}', this)">Copy</button>
                 `;
                 titleList.appendChild(li);
             });
+        });
 
-            resultsDiv.style.display = 'block';
+        function copyToClipboard(text, btn) {
+            navigator.clipboard.writeText(text);
+            const originalText = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.style.backgroundColor = 'var(--ct-red-light)';
+            btn.style.color = 'var(--ct-red)';
+            btn.style.borderColor = 'transparent';
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.backgroundColor = '';
+                btn.style.color = '';
+                btn.style.borderColor = '';
+            }, 2000);
+        }
+        
+        // Mobile menu
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            const nav = document.querySelector('.nav-links');
+            const isHidden = getComputedStyle(nav).display === 'none';
+            if(isHidden) {
+                nav.style.display = 'flex';
+                nav.style.flexDirection = 'column';
+                nav.style.position = 'absolute';
+                nav.style.top = '72px';
+                nav.style.left = '0';
+                nav.style.width = '100%';
+                nav.style.background = 'white';
+                nav.style.padding = '1.5rem';
+                nav.style.borderBottom = '1px solid var(--ct-border)';
+                nav.style.zIndex = '999';
+            } else {
+                nav.style.display = ''; 
+            }
         });
     </script>
 </body>

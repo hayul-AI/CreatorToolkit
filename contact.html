@@ -5,53 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us - CreatorToolkit</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <div class="container nav-wrapper">
-            <a href="/" class="logo"><span>✦</span> CreatorToolkit</a>
+        <div class="container">
             <nav>
+                <a href="index.html" class="logo">
+                    CreatorToolkit<span class="text-red">.</span>
+                </a>
                 <ul class="nav-links">
                     <li><a href="index.html#tools">Tools</a></li>
                     <li><a href="index.html#guides">Guides</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
                 </ul>
+                <div class="flex items-center gap-4">
+                    <a href="index.html#tools" class="btn btn-outline btn-sm">All Tools</a>
+                    <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+                </div>
             </nav>
-            <a href="index.html#tools" class="btn btn-primary">All Tools</a>
         </div>
     </header>
 
-    <main class="container section">
-        <div class="content-area">
-            <h1>Contact Us</h1>
-            <p>Have questions about our tools? Found a bug? We'd love to hear from you. Fill out the form below or send us an email directly.</p>
+    <main class="section bg-surface">
+        <div class="container" style="max-width: 600px;">
+            <div class="text-center" style="margin-bottom: 3rem;">
+                <h1>Contact Us</h1>
+                <p>Have questions, suggestions, or found a bug? We'd love to hear from you.</p>
+            </div>
 
-            <form action="#" method="POST" style="background: var(--surface); padding: 2rem; border-radius: var(--radius); border: 1px solid var(--border);">
-                <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label>Message</label>
-                    <textarea name="message" rows="5" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Send Message</button>
-            </form>
+            <div class="card">
+                <form action="#" method="POST">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" name="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea name="message" rows="5" placeholder="How can we help?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                </form>
+            </div>
 
-            <div style="margin-top: 2rem; text-align: center;">
-                <h3>Email Us Directly</h3>
-                <p><a href="mailto:support@creatortoolkit.com">support@creatortoolkit.com</a></p>
+            <div style="margin-top: 3rem; text-align: center;">
+                <h3>Prefer Email?</h3>
+                <p class="text-muted">You can reach us directly at:</p>
+                <a href="mailto:support@creatortoolkit.com" class="text-red" style="font-weight: 600;">support@creatortoolkit.com</a>
             </div>
         </div>
     </main>
 
+    <!-- Footer -->
     <footer>
-        <div class="container footer-bottom">
-            &copy; 2026 CreatorToolkit. All rights reserved.
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html" class="logo" style="margin-bottom: 1rem;">
+                        CreatorToolkit<span class="text-red">.</span>
+                    </a>
+                    <p>Empowering creators with free tools.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 Creator Toolkit. All rights reserved.</p>
+            </div>
         </div>
     </footer>
+
+    <script src="main.js"></script>
+    <script>
+        // Mobile menu
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            const nav = document.querySelector('.nav-links');
+            const isHidden = getComputedStyle(nav).display === 'none';
+            if(isHidden) {
+                nav.style.display = 'flex';
+                nav.style.flexDirection = 'column';
+                nav.style.position = 'absolute';
+                nav.style.top = '72px';
+                nav.style.left = '0';
+                nav.style.width = '100%';
+                nav.style.background = 'white';
+                nav.style.padding = '1.5rem';
+                nav.style.borderBottom = '1px solid var(--ct-border)';
+                nav.style.zIndex = '999';
+            } else {
+                nav.style.display = ''; 
+            }
+        });
+    </script>
 </body>
 </html>

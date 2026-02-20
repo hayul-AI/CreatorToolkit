@@ -6,78 +6,119 @@
     <title>Free YouTube Thumbnail Compressor - CreatorToolkit</title>
     <meta name="description" content="Compress your YouTube thumbnails online for free. Reduce file size without losing quality. Fast, secure, and runs in your browser.">
     <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <div class="container nav-wrapper">
-            <a href="/" class="logo"><span>✦</span> CreatorToolkit</a>
+        <div class="container">
             <nav>
+                <a href="../index.html" class="logo">
+                    CreatorToolkit<span class="text-red">.</span>
+                </a>
                 <ul class="nav-links">
                     <li><a href="../index.html#tools">Tools</a></li>
                     <li><a href="../index.html#guides">Guides</a></li>
+                    <li><a href="../about.html">About</a></li>
                 </ul>
+                <div class="flex items-center gap-4">
+                    <a href="../index.html#tools" class="btn btn-outline btn-sm">All Tools</a>
+                    <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+                </div>
             </nav>
-            <a href="../index.html#tools" class="btn btn-primary">All Tools</a>
         </div>
     </header>
 
-    <main class="container section">
-        <div class="content-area">
-            <h1>YouTube Thumbnail Compressor</h1>
-            <p>Reduce your thumbnail file size instantly while maintaining high visual quality. YouTube has a 2MB limit for thumbnails—ensure yours fits perfectly.</p>
+    <main class="section bg-surface">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 3rem;">
+                <h1>Thumbnail Compressor</h1>
+                <p>Reduce image file size without losing quality. Perfect for the YouTube 2MB limit.</p>
+            </div>
 
-            <div class="tool-workspace">
-                <div class="drop-zone" id="drop-zone">
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <div class="file-drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">⬇️</div>
-                    <h3>Drag & Drop your Thumbnail here</h3>
-                    <p>or click to browse (JPG, PNG)</p>
-                    <input type="file" id="file-input" accept="image/jpeg, image/png" hidden>
+                    <h3 style="margin-bottom: 0.5rem;">Drag & Drop your Thumbnail here</h3>
+                    <p style="margin-bottom: 0;">or click to browse (JPG, PNG)</p>
+                    <input type="file" id="file-input" accept="image/jpeg, image/png" class="file-input-hidden">
                 </div>
 
-                <div class="controls" id="controls" style="display: none;">
-                    <div class="form-group" style="flex: 1;">
-                        <label for="quality">Compression Level: <span id="quality-val">80</span>%</label>
-                        <input type="range" id="quality" min="10" max="100" value="80">
+                <div id="controls" style="display: none; margin-top: 2rem; border-top: 1px solid var(--ct-border); padding-top: 2rem;">
+                    <div class="grid grid-2 gap-8 items-center">
+                        <div class="form-group">
+                            <label for="quality">Compression Level: <span id="quality-val" class="text-red">80</span>%</label>
+                            <input type="range" id="quality" min="10" max="100" value="80">
+                        </div>
+                        
+                        <div class="text-center bg-surface" style="padding: 1.5rem; border-radius: var(--radius-md);">
+                            <div class="flex justify-between" style="margin-bottom: 0.5rem;">
+                                <span class="text-muted">Original Size:</span>
+                                <strong id="original-size">0 KB</strong>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-muted">New Size:</span>
+                                <strong id="compressed-size" class="text-red">0 KB</strong>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group" style="flex: 1; text-align: center;">
-                        <p>Original: <span id="original-size">0 KB</span></p>
-                        <p>Compressed: <span id="compressed-size">0 KB</span></p>
-                    </div>
-                    <a id="download-btn" class="btn btn-primary" download="thumbnail-compressed.jpg">Download Compressed Image</a>
-                </div>
 
-                <div class="canvas-container" id="preview-container" style="display: none;">
-                    <img id="preview-img" style="max-width: 100%; border-radius: 4px;" />
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <a id="download-btn" class="btn btn-primary btn-lg" download="thumbnail-compressed.jpg">
+                            Download Compressed Image
+                        </a>
+                    </div>
+                    
+                    <div style="margin-top: 2rem; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--ct-border);">
+                         <img id="preview-img" style="width: 100%; display: block;" />
+                    </div>
                 </div>
             </div>
 
-            <!-- Ad Placeholder -->
-            <div class="ad-banner">In-Content Ad Placeholder</div>
-
-            <article>
-                <h2>Why Compress Your YouTube Thumbnails?</h2>
-                <p>YouTube imposes a strict <strong>2MB file size limit</strong> on custom thumbnails. High-resolution images, especially those exported from Photoshop or Canva with complex layers, often exceed this limit. Our tool helps you reduce the file size significantly without a noticeable drop in visual quality.</p>
-
-                <h3>How to Use This Tool</h3>
-                <ol>
-                    <li>Click the upload area or drag and drop your thumbnail image.</li>
-                    <li>Adjust the compression slider to find the perfect balance between size and quality.</li>
-                    <li>Observe the real-time size calculation.</li>
-                    <li>Click "Download" to save your optimized thumbnail.</li>
-                </ol>
-
-                <h3>Tips for High-CTR Thumbnails</h3>
-                <p>While technical optimization is crucial, the content of your thumbnail drives clicks. Ensure your text is readable on mobile devices, use high-contrast colors, and include an expressive face if possible. Compressing your image ensures it loads instantly for users on slower connections, preventing a blank placeholder from appearing.</p>
-
-                <h3>Supported Formats</h3>
-                <p>This tool currently supports JPEG and PNG formats. It converts PNGs to high-quality JPEGs to achieve maximum compression, as JPEGs are generally smaller and perfectly suitable for YouTube thumbnails.</p>
-            </article>
+            <!-- Content Block -->
+            <div class="container" style="max-width: 800px; margin-top: 4rem;">
+                <div class="grid grid-2">
+                    <div>
+                        <h2>Why Compress?</h2>
+                        <p>YouTube imposes a strict <strong>2MB limit</strong> on custom thumbnails. High-resolution images often exceed this.</p>
+                    </div>
+                    <div>
+                         <h3>How it works</h3>
+                         <ul class="features-list">
+                            <li><span class="check-icon">✓</span> Runs locally in browser</li>
+                            <li><span class="check-icon">✓</span> No quality loss visible</li>
+                            <li><span class="check-icon">✓</span> Instant download</li>
+                         </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
+    <!-- Footer -->
     <footer>
-        <div class="container footer-bottom">
-            &copy; 2026 CreatorToolkit. All rights reserved.
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="../index.html" class="logo" style="margin-bottom: 1rem;">
+                        CreatorToolkit<span class="text-red">.</span>
+                    </a>
+                    <p>Empowering creators with free tools.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="../terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 Creator Toolkit. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
@@ -87,23 +128,44 @@
         const qualityInput = document.getElementById('quality');
         const qualityVal = document.getElementById('quality-val');
         const controls = document.getElementById('controls');
-        const previewContainer = document.getElementById('preview-container');
         const previewImg = document.getElementById('preview-img');
         const originalSize = document.getElementById('original-size');
         const compressedSize = document.getElementById('compressed-size');
         const downloadBtn = document.getElementById('download-btn');
+        const dropZone = document.getElementById('drop-zone');
 
         let currentFile = null;
 
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                currentFile = e.target.files[0];
-                originalSize.textContent = (currentFile.size / 1024).toFixed(2) + ' KB';
-                controls.style.display = 'flex';
-                previewContainer.style.display = 'flex';
-                compressImage();
+        // Drag and drop handlers
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+             dropZone.classList.remove('dragover');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
             }
         });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            currentFile = file;
+            originalSize.textContent = (currentFile.size / 1024).toFixed(2) + ' KB';
+            controls.style.display = 'block';
+            compressImage();
+        }
 
         qualityInput.addEventListener('input', (e) => {
             qualityVal.textContent = e.target.value;
@@ -129,7 +191,7 @@
                     previewImg.src = dataUrl;
                     downloadBtn.href = dataUrl;
 
-                    // Calculate rough size
+                    // Calculate rough size (base64 length * 3/4)
                     const head = 'data:image/jpeg;base64,';
                     const size = Math.round((dataUrl.length - head.length) * 3 / 4);
                     compressedSize.textContent = (size / 1024).toFixed(2) + ' KB';
@@ -138,6 +200,26 @@
             };
             reader.readAsDataURL(currentFile);
         }
+        
+        // Mobile menu
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            const nav = document.querySelector('.nav-links');
+            const isHidden = getComputedStyle(nav).display === 'none';
+            if(isHidden) {
+                nav.style.display = 'flex';
+                nav.style.flexDirection = 'column';
+                nav.style.position = 'absolute';
+                nav.style.top = '72px';
+                nav.style.left = '0';
+                nav.style.width = '100%';
+                nav.style.background = 'white';
+                nav.style.padding = '1.5rem';
+                nav.style.borderBottom = '1px solid var(--ct-border)';
+                nav.style.zIndex = '999';
+            } else {
+                nav.style.display = ''; 
+            }
+        });
     </script>
 </body>
 </html>

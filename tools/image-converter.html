@@ -6,81 +6,116 @@
     <title>JPG/PNG/WebP Image Converter - CreatorToolkit</title>
     <meta name="description" content="Convert your images to JPG, PNG, or WebP formats for free online. Optimize your YouTube channel art and thumbnails with correct formats.">
     <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <div class="container nav-wrapper">
-            <a href="/" class="logo"><span>✦</span> CreatorToolkit</a>
+        <div class="container">
             <nav>
+                <a href="../index.html" class="logo">
+                    CreatorToolkit<span class="text-red">.</span>
+                </a>
                 <ul class="nav-links">
                     <li><a href="../index.html#tools">Tools</a></li>
                     <li><a href="../index.html#guides">Guides</a></li>
+                    <li><a href="../about.html">About</a></li>
                 </ul>
+                <div class="flex items-center gap-4">
+                    <a href="../index.html#tools" class="btn btn-outline btn-sm">All Tools</a>
+                    <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+                </div>
             </nav>
-            <a href="../index.html#tools" class="btn btn-primary">All Tools</a>
         </div>
     </header>
 
-    <main class="container section">
-        <div class="content-area">
-            <h1>Image Format Converter</h1>
-            <p>Convert your images between JPG, PNG, and WebP formats instantly. No server uploads—100% private and secure.</p>
+    <main class="section bg-surface">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 3rem;">
+                <h1>Image Converter</h1>
+                <p>Convert images between JPG, PNG, and WebP instantly. Secure and private.</p>
+            </div>
 
-            <div class="tool-workspace">
-                <div class="drop-zone" id="drop-zone">
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <div class="file-drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">🔄</div>
-                    <h3>Drag & Drop an Image</h3>
-                    <p>Supported: JPG, PNG, WebP</p>
-                    <input type="file" id="file-input" accept="image/jpeg, image/png, image/webp" hidden>
+                    <h3 style="margin-bottom: 0.5rem;">Drag & Drop Image</h3>
+                    <p style="margin-bottom: 0;">JPG, PNG, or WebP</p>
+                    <input type="file" id="file-input" accept="image/jpeg, image/png, image/webp" class="file-input-hidden">
                 </div>
 
-                <div class="controls" id="controls" style="display: none; justify-content: center; gap: 2rem;">
-                    <div class="form-group">
-                        <label for="format">Convert to:</label>
-                        <select id="format">
-                            <option value="image/jpeg">JPG (Best for Photos)</option>
-                            <option value="image/png">PNG (Best for Graphics)</option>
-                            <option value="image/webp">WebP (Modern & Small)</option>
-                        </select>
+                <div id="controls" style="display: none; margin-top: 2rem; border-top: 1px solid var(--ct-border); padding-top: 2rem;">
+                    <div class="grid grid-2 gap-8 items-end">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="format">Convert to Format:</label>
+                            <select id="format">
+                                <option value="image/jpeg">JPG (Best for Photos/Thumbnails)</option>
+                                <option value="image/png">PNG (Best for Transparency)</option>
+                                <option value="image/webp">WebP (Modern & Fast)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <a id="download-btn" class="btn btn-primary" style="width: 100%;">
+                                Convert & Download
+                            </a>
+                        </div>
                     </div>
-                    <div class="form-group" style="display: flex; align-items: flex-end;">
-                        <a id="download-btn" class="btn btn-primary">Convert & Download</a>
+
+                    <div style="margin-top: 2rem; text-align: center; background: var(--ct-surface); padding: 1rem; border-radius: var(--radius-lg);">
+                        <img id="preview-img" style="max-height: 300px; max-width: 100%; display: inline-block; box-shadow: var(--shadow-md); border-radius: 4px;" />
+                        <p class="text-muted" style="margin-top: 1rem; font-size: 0.9rem;">Preview of original image</p>
                     </div>
-                </div>
-                
-                <div class="canvas-container" id="preview-container" style="display: none;">
-                    <img id="preview-img" style="max-height: 400px; max-width: 100%;" />
                 </div>
             </div>
 
-            <!-- Ad Placeholder -->
-            <div class="ad-banner">In-Content Ad Placeholder</div>
-
-            <article>
-                <h2>Choosing the Right Image Format for YouTube</h2>
-                <p>Understanding image formats is key to maintaining a professional channel appearance. Here is a breakdown of when to use each format:</p>
-
-                <h3>JPG (JPEG)</h3>
-                <p><strong>Best for:</strong> Thumbnails, Channel Banners, and Profile Pictures.</p>
-                <p>JPGs use lossy compression, meaning they discard some data to keep file sizes small. They are perfect for photographs or complex images with many colors (like thumbnails with faces). YouTube recommends JPGs for thumbnails to stay under the 2MB limit.</p>
-
-                <h3>PNG</h3>
-                <p><strong>Best for:</strong> Logos, Overlays, and Graphics with Text.</p>
-                <p>PNGs use lossless compression. They keep every pixel perfect, which is essential for logos or text-heavy images where sharp lines matter. They also support transparency. However, file sizes can be large.</p>
-
-                <h3>WebP</h3>
-                <p><strong>Best for:</strong> Websites and Portfolios.</p>
-                <p>WebP is a modern format developed by Google that provides superior lossless and lossy compression for images on the web. It is often 26% smaller than PNGs and 25-34% smaller than comparable JPEG images.</p>
-
-                <h3>How This Tool Works</h3>
-                <p>Unlike other converters that upload your files to a cloud server, CreatorToolkit processes your images directly in your browser. This means your personal photos never leave your device, ensuring maximum privacy and speed.</p>
-            </article>
+            <!-- Content Block -->
+            <div class="container" style="max-width: 800px; margin-top: 4rem;">
+                <h2>Which format should I use?</h2>
+                <div class="grid grid-3" style="margin-top: 2rem;">
+                    <div class="card">
+                        <span class="badge" style="margin-bottom: 1rem;">JPG</span>
+                        <h3>Thumbnails</h3>
+                        <p style="font-size: 0.9rem;">Best for photos and complex images. Small file size.</p>
+                    </div>
+                    <div class="card">
+                        <span class="badge" style="margin-bottom: 1rem;">PNG</span>
+                        <h3>Logos/Text</h3>
+                        <p style="font-size: 0.9rem;">Best for sharp edges and transparency. Larger file size.</p>
+                    </div>
+                    <div class="card">
+                        <span class="badge" style="margin-bottom: 1rem;">WebP</span>
+                        <h3>Websites</h3>
+                        <p style="font-size: 0.9rem;">Modern format. Very small size but less compatibility.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
+    <!-- Footer -->
     <footer>
-        <div class="container footer-bottom">
-            &copy; 2026 CreatorToolkit. All rights reserved.
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="../index.html" class="logo" style="margin-bottom: 1rem;">
+                        CreatorToolkit<span class="text-red">.</span>
+                    </a>
+                    <p>Empowering creators with free tools.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="../terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 Creator Toolkit. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
@@ -89,22 +124,35 @@
         const fileInput = document.getElementById('file-input');
         const formatSelect = document.getElementById('format');
         const controls = document.getElementById('controls');
-        const previewContainer = document.getElementById('preview-container');
         const previewImg = document.getElementById('preview-img');
         const downloadBtn = document.getElementById('download-btn');
+        const dropZone = document.getElementById('drop-zone');
 
         let currentFile = null;
 
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                currentFile = e.target.files[0];
-                const url = URL.createObjectURL(currentFile);
-                previewImg.src = url;
-                controls.style.display = 'flex';
-                previewContainer.style.display = 'flex';
-                updateDownloadLink();
-            }
+        // Drag & Drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
         });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            currentFile = file;
+            const url = URL.createObjectURL(currentFile);
+            previewImg.src = url;
+            controls.style.display = 'block';
+            updateDownloadLink();
+        }
 
         formatSelect.addEventListener('change', updateDownloadLink);
 
@@ -112,9 +160,10 @@
             if (!currentFile) return;
 
             const format = formatSelect.value;
-            const ext = format.split('/')[1];
+            const ext = format.split('/')[1].replace('jpeg', 'jpg');
             
-            // Use Canvas to convert
+            downloadBtn.textContent = 'Processing...';
+            
             const img = new Image();
             img.onload = () => {
                 const canvas = document.createElement('canvas');
@@ -122,7 +171,6 @@
                 canvas.height = img.height;
                 const ctx = canvas.getContext('2d');
                 
-                // Fill white background for JPG conversions if transparency exists
                 if (format === 'image/jpeg') {
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -133,9 +181,30 @@
                 
                 downloadBtn.href = dataUrl;
                 downloadBtn.download = `converted-image.${ext}`;
+                downloadBtn.textContent = 'Convert & Download';
             };
             img.src = previewImg.src;
         }
+        
+        // Mobile menu
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            const nav = document.querySelector('.nav-links');
+            const isHidden = getComputedStyle(nav).display === 'none';
+            if(isHidden) {
+                nav.style.display = 'flex';
+                nav.style.flexDirection = 'column';
+                nav.style.position = 'absolute';
+                nav.style.top = '72px';
+                nav.style.left = '0';
+                nav.style.width = '100%';
+                nav.style.background = 'white';
+                nav.style.padding = '1.5rem';
+                nav.style.borderBottom = '1px solid var(--ct-border)';
+                nav.style.zIndex = '999';
+            } else {
+                nav.style.display = ''; 
+            }
+        });
     </script>
 </body>
 </html>

@@ -6,82 +6,148 @@
     <title>Free YouTube Description Generator - CreatorToolkit</title>
     <meta name="description" content="Generate SEO-optimized YouTube video descriptions. Fill in the blanks and get a professional description template ready to copy.">
     <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <div class="container nav-wrapper">
-            <a href="/" class="logo"><span>✦</span> CreatorToolkit</a>
+        <div class="container">
             <nav>
+                <a href="../index.html" class="logo">
+                    CreatorToolkit<span class="text-red">.</span>
+                </a>
                 <ul class="nav-links">
                     <li><a href="../index.html#tools">Tools</a></li>
                     <li><a href="../index.html#guides">Guides</a></li>
+                    <li><a href="../about.html">About</a></li>
                 </ul>
+                <div class="flex items-center gap-4">
+                    <a href="../index.html#tools" class="btn btn-outline btn-sm">All Tools</a>
+                    <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+                </div>
             </nav>
-            <a href="../index.html#tools" class="btn btn-primary">All Tools</a>
         </div>
     </header>
 
-    <main class="container section">
-        <div class="content-area">
-            <h1>YouTube Description Generator</h1>
-            <p>Don't leave your description blank. A structured description helps YouTube understand your video and rank it higher in search results.</p>
+    <main class="section bg-surface">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 3rem;">
+                <h1>YouTube Description Generator</h1>
+                <p>Create professional, SEO-friendly video descriptions in seconds.</p>
+            </div>
 
-            <div class="tool-workspace">
-                <div class="grid grid-2">
-                    <div>
-                        <div class="form-group">
-                            <label>Video Topic / Keyword</label>
-                            <input type="text" id="desc-topic" placeholder="e.g. iPhone 16 Review">
-                        </div>
-                        <div class="form-group">
-                            <label>Brief Summary (1-2 sentences)</label>
-                            <textarea id="desc-summary" rows="3" placeholder="In this video, I review the new iPhone 16 and tell you if it's worth the upgrade."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Timestamps (Optional)</label>
-                            <textarea id="desc-timestamps" rows="4" placeholder="0:00 Intro&#10;1:30 Unboxing&#10;5:00 Camera Test&#10;8:45 Verdict"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Social Links</label>
+            <div class="grid grid-2" style="max-width: 1200px; margin: 0 auto; gap: 2rem; align-items: start;">
+                
+                <!-- Input Column -->
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem;">Video Details</h3>
+                    
+                    <div class="form-group">
+                        <label>Main Keyword / Topic</label>
+                        <input type="text" id="desc-topic" placeholder="e.g. iPhone 16 Review">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Brief Summary (Hook)</label>
+                        <textarea id="desc-summary" rows="3" placeholder="In this video, I review the new iPhone 16..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Timestamps (Optional)</label>
+                        <textarea id="desc-timestamps" rows="4" placeholder="0:00 Intro&#10;1:30 Unboxing&#10;5:00 Verdict"></textarea>
+                        <p class="text-muted" style="font-size: 0.8rem; margin-top: 0.5rem;">One per line. Example: 0:00 Intro</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Social Media Links</label>
+                        <div class="grid grid-2 gap-2" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
                             <input type="text" id="desc-instagram" placeholder="Instagram URL">
-                            <input type="text" id="desc-twitter" placeholder="Twitter URL" style="margin-top: 0.5rem;">
+                            <input type="text" id="desc-twitter" placeholder="Twitter URL">
                         </div>
-                        <div class="form-group">
-                            <label>Affiliate / Product Links</label>
-                            <textarea id="desc-links" rows="3" placeholder="Buy it here: https://amazon.com/..."></textarea>
-                        </div>
-                        <button id="generate-desc-btn" class="btn btn-primary" style="width: 100%;">Generate Description</button>
                     </div>
+                    
+                    <div class="form-group">
+                        <label>Affiliate / Product Links</label>
+                        <textarea id="desc-links" rows="3" placeholder="Buy it here: https://amazon.com/..."></textarea>
+                    </div>
+                    
+                    <button id="generate-desc-btn" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                        Generate Description ✨
+                    </button>
+                </div>
 
-                    <div>
-                        <label>Result</label>
-                        <textarea id="final-desc" rows="20" style="width: 100%; height: 500px; font-family: monospace; background: var(--surface);" readonly></textarea>
-                        <button id="copy-desc-btn" class="btn btn-outline" style="width: 100%; margin-top: 1rem;">Copy to Clipboard</button>
+                <!-- Output Column -->
+                <div class="card bg-surface" style="border: 2px solid var(--ct-border);">
+                    <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
+                        <h3 style="margin-bottom: 0;">Result</h3>
+                        <span class="badge">SEO Ready</span>
                     </div>
+                    
+                    <textarea id="final-desc" style="width: 100%; height: 500px; font-family: monospace; background: white; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--ct-border); resize: none;" readonly placeholder="Your generated description will appear here..."></textarea>
+                    
+                    <button id="copy-desc-btn" class="btn btn-outline" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                        Copy to Clipboard
+                    </button>
                 </div>
             </div>
 
-            <!-- Ad Placeholder -->
-            <div class="ad-banner">In-Content Ad Placeholder</div>
-
-            <article>
-                <h2>Why YouTube Descriptions Matter for SEO</h2>
-                <p>The first 200 characters of your description are crucial. They appear in search results and help viewers decide whether to click. Additionally, YouTube's algorithm scans your description for keywords to understand the context of your video.</p>
-
-                <h3>Anatomy of a Perfect Description</h3>
-                <ul>
-                    <li><strong>The Hook:</strong> State clearly what the video is about in the first sentence using your main keyword.</li>
-                    <li><strong>Timestamps:</strong> Essential for long videos. They create "chapters" in the progress bar and appear in Google Search.</li>
-                    <li><strong>Links:</strong> Direct traffic to your other social platforms, products, or affiliate offers.</li>
-                    <li><strong>Hashtags:</strong> Add up to 3 hashtags at the bottom. These appear above your video title on mobile.</li>
-                </ul>
-            </article>
+            <!-- Content Block -->
+            <div class="container" style="max-width: 800px; margin-top: 4rem;">
+                <h2>Anatomy of a Perfect Description</h2>
+                <div class="grid grid-2" style="margin-top: 2rem;">
+                    <div>
+                        <ul class="features-list">
+                            <li>
+                                <span class="check-icon">✓</span>
+                                <div><strong>The Hook:</strong> First 2 sentences are crucial for SEO.</div>
+                            </li>
+                            <li>
+                                <span class="check-icon">✓</span>
+                                <div><strong>Timestamps:</strong> Create chapters for better navigation.</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <ul class="features-list">
+                            <li>
+                                <span class="check-icon">✓</span>
+                                <div><strong>Links:</strong> Drive traffic to your other socials/products.</div>
+                            </li>
+                            <li>
+                                <span class="check-icon">✓</span>
+                                <div><strong>Hashtags:</strong> Add up to 3 relevant tags at the end.</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
+    <!-- Footer -->
     <footer>
-        <div class="container footer-bottom">
-            &copy; 2026 CreatorToolkit. All rights reserved.
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="../index.html" class="logo" style="margin-bottom: 1rem;">
+                        CreatorToolkit<span class="text-red">.</span>
+                    </a>
+                    <p>Empowering creators with free tools.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="../terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 Creator Toolkit. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
@@ -103,52 +169,34 @@
 
             // Hook
             if(summary) {
-                output += `${summary}
-
-`;
+                output += `${summary}\n\n`;
             } else if(topic) {
-                output += `In this video, we're talking about ${topic}. If you want to learn more about ${topic}, watch until the end!
-
-`;
+                output += `In this video, we're talking about ${topic}. If you want to learn more about ${topic}, watch until the end!\n\n`;
             }
 
             // CTA
-            output += `🔔 Subscribe for more videos like this: https://www.youtube.com/channel/YOUR_CHANNEL_ID?sub_confirmation=1
-
-`;
+            output += `🔔 Subscribe for more videos like this: https://www.youtube.com/channel/YOUR_CHANNEL_ID?sub_confirmation=1\n\n`;
 
             // Timestamps
             if(timestamps) {
-                output += `TIMESTAMPS:
-${timestamps}
-
-`;
+                output += `TIMESTAMPS:\n${timestamps}\n\n`;
             }
 
             // Links
             if(links) {
-                output += `RESOURCES & LINKS:
-${links}
-
-`;
+                output += `RESOURCES & LINKS:\n${links}\n\n`;
             }
 
             // Socials
             if(insta || twitter) {
-                output += `CONNECT WITH ME:
-`;
-                if(insta) output += `📸 Instagram: ${insta}
-`;
-                if(twitter) output += `🐦 Twitter: ${twitter}
-`;
-                output += `
-`;
+                output += `CONNECT WITH ME:\n`;
+                if(insta) output += `📸 Instagram: ${insta}\n`;
+                if(twitter) output += `🐦 Twitter: ${twitter}\n`;
+                output += `\n`;
             }
 
             // Disclaimer
-            output += `DISCLAIMER: This description contains affiliate links. If you click on one of the product links, I’ll receive a small commission. This supports the channel and allows us to continue to make videos like this.
-
-`;
+            output += `DISCLAIMER: This description contains affiliate links. If you click on one of the product links, I’ll receive a small commission. This supports the channel and allows us to continue to make videos like this.\n\n`;
 
             // Hashtags
             if(topic) {
@@ -162,8 +210,36 @@ ${links}
         copyBtn.addEventListener('click', () => {
             finalDesc.select();
             document.execCommand('copy');
+            const originalText = copyBtn.textContent;
             copyBtn.textContent = "Copied!";
-            setTimeout(() => copyBtn.textContent = "Copy to Clipboard", 2000);
+            copyBtn.classList.remove('btn-outline');
+            copyBtn.classList.add('btn-primary');
+            
+            setTimeout(() => {
+                copyBtn.textContent = originalText;
+                copyBtn.classList.add('btn-outline');
+                copyBtn.classList.remove('btn-primary');
+            }, 2000);
+        });
+        
+        // Mobile menu
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            const nav = document.querySelector('.nav-links');
+            const isHidden = getComputedStyle(nav).display === 'none';
+            if(isHidden) {
+                nav.style.display = 'flex';
+                nav.style.flexDirection = 'column';
+                nav.style.position = 'absolute';
+                nav.style.top = '72px';
+                nav.style.left = '0';
+                nav.style.width = '100%';
+                nav.style.background = 'white';
+                nav.style.padding = '1.5rem';
+                nav.style.borderBottom = '1px solid var(--ct-border)';
+                nav.style.zIndex = '999';
+            } else {
+                nav.style.display = ''; 
+            }
         });
     </script>
 </body>
