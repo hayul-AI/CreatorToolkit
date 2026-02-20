@@ -3,149 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="All-in-one toolkit for YouTube creators. Boost your channel with our thumbnail, title, and keyword tools.">
-    <title>Creator Toolkit - The Ultimate YouTube Studio</title>
+    <meta name="description" content="Free YouTube creator tools. Boost your channel with our thumbnail maker, title generator, and SEO keyword tools. No sign-up required.">
+    <title>Creator Toolkit - Free YouTube Tools & SEO Guides</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+
+    <!-- Header -->
     <header>
         <nav class="container">
             <a href="index.html" class="logo">
-                <strong>Creator Toolkit</strong>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="24" height="24" rx="6" fill="#4F46E5"/>
+                    <path d="M10 8L16 12L10 16V8Z" fill="white"/>
+                </svg>
+                CreatorToolkit
             </a>
             <div class="nav-links">
                 <a href="#tools">Tools</a>
                 <a href="#guides">Guides</a>
+                <a href="about.html">About</a>
                 <a href="contact.html">Contact</a>
             </div>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
         </nav>
     </header>
 
     <main>
+        <!-- Hero Section -->
         <section class="hero">
             <div class="container">
-                <h1>The Ultimate YouTube Studio</h1>
-                <p class="subtitle">Everything you need to create, optimize, and grow your channel.</p>
-                <a href="#tools" class="btn btn-primary">Explore Tools</a>
-                <div class="hero-image-container">
-                    <img src="assets/hero-banner.png" alt="Dashboard of Creator Toolkit" class="hero-image">
+                <span class="badge">✨ v1.0 Now Live</span>
+                <h1>Supercharge Your YouTube Channel Growth</h1>
+                <p>100% free tools to design better thumbnails, write viral titles, and master SEO. No credit card required.</p>
+                <div class="hero-cta">
+                    <a href="#tools" class="btn btn-primary">Start Creating</a>
+                    <a href="#guides" class="btn btn-outline">Read Guides</a>
                 </div>
             </div>
         </section>
 
+        <!-- Tools Grid (AdSense-Ready: Cards are clear, distinct content blocks) -->
         <section id="tools" class="section">
             <div class="container">
-                <div class="section-header">
-                    <h2>Creator Tools</h2>
-                    <p>A suite of powerful, easy-to-use tools to level up your content.</p>
+                <div class="flex flex-col items-center" style="text-align: center; margin-bottom: 3rem;">
+                    <h2>Popular Tools</h2>
+                    <p style="max-width: 600px;">Everything you need to optimize your content workflow.</p>
                 </div>
                 
                 <div class="grid grid-3">
                     <!-- Thumbnail Tools -->
                     <div class="card">
-                        <div class="card-icon">🖼️</div>
+                        <div class="tool-icon">🖼️</div>
                         <h3>Thumbnail Maker</h3>
-                        <p>Design click-worthy thumbnails in minutes with our easy-to-use editor.</p>
-                        <a href="tools/thumbnail-maker.html" class="btn btn-outline" style="width: 100%">Open Tool</a>
+                        <p>Drag-and-drop editor to create high-CTR thumbnails in seconds. Pre-made templates included.</p>
+                        <div style="margin-top: auto; padding-top: 1rem;">
+                            <a href="tools/thumbnail-maker.html" class="btn btn-primary" style="width: 100%">Launch Tool</a>
+                        </div>
                     </div>
 
                     <div class="card">
-                        <div class="card-icon">⚡</div>
+                        <div class="tool-icon">⚡</div>
                         <h3>Thumbnail Compressor</h3>
-                        <p>Reduce image file size without losing quality for faster loads.</p>
-                        <a href="tools/thumbnail-compressor.html" class="btn btn-outline" style="width: 100%">Open Tool</a>
+                        <p>Compress PNG/JPG thumbnails to under 2MB without losing visual quality.</p>
+                        <div style="margin-top: auto; padding-top: 1rem;">
+                            <a href="tools/thumbnail-compressor.html" class="btn btn-outline" style="width: 100%">Launch Tool</a>
+                        </div>
                     </div>
                     
                     <div class="card">
-                        <div class="card-icon">🔄</div>
+                        <div class="tool-icon">🔄</div>
                         <h3>Image Converter</h3>
-                        <p>Convert your images to SEO-friendly JPG format instantly.</p>
-                        <a href="tools/image-converter.html" class="btn btn-outline" style="width: 100%">Open Tool</a>
+                        <p>Convert WebP or PNG images to YouTube-compatible JPG format instantly.</p>
+                        <div style="margin-top: auto; padding-top: 1rem;">
+                            <a href="tools/image-converter.html" class="btn btn-outline" style="width: 100%">Launch Tool</a>
+                        </div>
                     </div>
+                    
                     <div class="card">
-                        <div class="card-icon">✂️</div>
+                        <div class="tool-icon">✂️</div>
                         <h3>Background Remover</h3>
-                        <p>Remove image backgrounds with a single click.</p>
-                        <a href="tools/background-remover.html" class="btn btn-outline" style="width: 100%">Open Tool</a>
+                        <p>AI-powered tool to remove backgrounds from portraits and product shots.</p>
+                        <div style="margin-top: auto; padding-top: 1rem;">
+                            <a href="tools/background-remover.html" class="btn btn-outline" style="width: 100%">Launch Tool</a>
+                        </div>
                     </div>
 
                     <!-- SEO Tools -->
                     <div class="card">
-                        <div class="card-icon">✍️</div>
+                        <div class="tool-icon">🔥</div>
                         <h3>Title Generator</h3>
-                        <p>Generate viral video titles based on proven formulas and power words.</p>
-                        <a href="tools/title-generator.html" class="btn btn-outline" style="width: 100%">Open Tool</a>
+                        <p>Get viral video title ideas based on psychological triggers and high-performing keywords.</p>
+                        <div style="margin-top: auto; padding-top: 1rem;">
+                            <a href="tools/title-generator.html" class="btn btn-outline" style="width: 100%">Launch Tool</a>
+                        </div>
                     </div>
 
                     <div class="card">
-                        <div class="card-icon">📝</div>
+                        <div class="tool-icon">📝</div>
                         <h3>Description Generator</h3>
-                        <p>Create SEO-optimized video descriptions that help you rank in search.</p>
-                        <a href="tools/description-generator.html" class="btn btn-outline" style="width: 100%">Open Tool</a>
+                        <p>Generate SEO-optimized video descriptions with timestamps and social links.</p>
+                        <div style="margin-top: auto; padding-top: 1rem;">
+                            <a href="tools/description-generator.html" class="btn btn-outline" style="width: 100%">Launch Tool</a>
+                        </div>
                     </div>
 
                     <div class="card">
-                        <div class="card-icon">🔑</div>
+                        <div class="tool-icon">🔑</div>
                         <h3>Keyword Generator</h3>
-                        <p>Find the best keywords to target and grow your audience.</p>
-                        <a href="tools/keyword-generator.html" class="btn btn-outline" style="width: 100%">Open Tool</a>
+                        <p>Discover low-competition, high-volume tags to rank your videos higher in search.</p>
+                        <div style="margin-top: auto; padding-top: 1rem;">
+                            <a href="tools/keyword-generator.html" class="btn btn-outline" style="width: 100%">Launch Tool</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- Why Use Us (Content Density for SEO/AdSense) -->
+        <section class="section" style="background-color: white; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+            <div class="container">
+                <div class="grid grid-2">
+                    <div>
+                        <h2>Why Creators Trust Us</h2>
+                        <p>We build tools that solve real problems for YouTubers, streamers, and content creators.</p>
+                        <ul class="features-list">
+                            <li>
+                                <span class="check-icon">✓</span>
+                                <div>
+                                    <strong>100% Free Forever</strong>
+                                    <p style="font-size: 0.9rem; margin-bottom: 0;">No hidden fees or premium subscriptions.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="check-icon">✓</span>
+                                <div>
+                                    <strong>Privacy First</strong>
+                                    <p style="font-size: 0.9rem; margin-bottom: 0;">Most tools run locally in your browser. Your data stays with you.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="check-icon">✓</span>
+                                <div>
+                                    <strong>Fast & Responsive</strong>
+                                    <p style="font-size: 0.9rem; margin-bottom: 0;">Works on desktop, tablet, and mobile devices.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="background: var(--background); padding: 2rem; border-radius: var(--radius-lg);">
+                        <h3>Did you know?</h3>
+                        <p>Thumbnails and Titles account for over 80% of a video's performance. Our tools are specifically designed to improve your Click-Through Rate (CTR).</p>
+                        <a href="#guides" class="btn btn-outline">Learn more in our Guides</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Guides Section -->
         <section id="guides" class="section">
             <div class="container">
-                <div class="section-header">
+                <div class="flex flex-col items-center" style="text-align: center; margin-bottom: 3rem;">
                     <h2>Creator Academy</h2>
-                    <p>Master the art of YouTube with our expert guides.</p>
+                    <p style="max-width: 600px;">Deep dives into YouTube growth strategies.</p>
                 </div>
                 
-                <div class="grid grid-2">
-                    <div class="card">
-                        <h3>📈 How YouTube SEO Works</h3>
-                        <p>Understand the ranking factors that matter in 2026.</p>
-                        <a href="guides/youtube-seo-guide.html">Read Article &rarr;</a>
-                    </div>
-                    <div class="card">
-                        <h3>👁️ How Thumbnails Affect CTR</h3>
-                        <p>Why CTR is the most important metric and how to improve it.</p>
-                        <a href="guides/thumbnail-ctr-guide.html">Read Article &rarr;</a>
-                    </div>
-                    <div class="card">
-                        <h3>📐 Best Thumbnail Sizes</h3>
-                        <p>Technical specifications for crisp, high-quality thumbnails.</p>
-                        <a href="guides/best-thumbnail-sizes.html">Read Article &rarr;</a>
-                    </div>
-                    <div class="card">
-                        <h3>🤖 YouTube Algorithm Basics</h3>
-                        <p>Demystifying the recommendation system.</p>
-                        <a href="guides/youtube-algorithm-basics.html">Read Article &rarr;</a>
-                    </div>
-                    <div class="card">
-                        <h3>🔥 How to Write Viral Titles</h3>
-                        <p>The psychology behind titles that get clicked.</p>
-                        <a href="guides/viral-titles-guide.html">Read Article &rarr;</a>
-                    </div>
+                <div class="grid grid-3">
+                    <article class="card" style="padding: 0; overflow: hidden;">
+                        <div style="height: 200px; background: #e0e7ff; display: flex; align-items: center; justify-content: center; font-size: 3rem;">📈</div>
+                        <div style="padding: var(--spacing-lg);">
+                            <span class="badge">SEO</span>
+                            <h3 style="font-size: 1.25rem;">YouTube SEO Guide 2026</h3>
+                            <p style="font-size: 0.95rem;">Master the ranking factors that actually matter this year.</p>
+                            <a href="guides/youtube-seo-guide.html" style="color: var(--primary); font-weight: 600;">Read Article &rarr;</a>
+                        </div>
+                    </article>
+
+                    <article class="card" style="padding: 0; overflow: hidden;">
+                        <div style="height: 200px; background: #fee2e2; display: flex; align-items: center; justify-content: center; font-size: 3rem;">👁️</div>
+                        <div style="padding: var(--spacing-lg);">
+                            <span class="badge" style="background: #fee2e2; color: #ef4444;">Analytics</span>
+                            <h3 style="font-size: 1.25rem;">Understanding CTR</h3>
+                            <p style="font-size: 0.95rem;">Why Click-Through Rate is your most important metric.</p>
+                            <a href="guides/thumbnail-ctr-guide.html" style="color: var(--primary); font-weight: 600;">Read Article &rarr;</a>
+                        </div>
+                    </article>
+
+                    <article class="card" style="padding: 0; overflow: hidden;">
+                        <div style="height: 200px; background: #dcfce7; display: flex; align-items: center; justify-content: center; font-size: 3rem;">🔥</div>
+                        <div style="padding: var(--spacing-lg);">
+                            <span class="badge" style="background: #dcfce7; color: #10b981;">Viral</span>
+                            <h3 style="font-size: 1.25rem;">Writing Viral Titles</h3>
+                            <p style="font-size: 0.95rem;">The psychology behind titles that get millions of views.</p>
+                            <a href="guides/viral-titles-guide.html" style="color: var(--primary); font-weight: 600;">Read Article &rarr;</a>
+                        </div>
+                    </article>
                 </div>
             </div>
         </section>
     </main>
 
+    <!-- Footer (Essential for AdSense: Privacy, Terms, Contact) -->
     <footer>
         <div class="container">
-            <div class="footer-links">
-                <a href="about.html">About Us</a>
-                <a href="contact.html">Contact</a>
-                <a href="privacy-policy.html">Privacy Policy</a>
-                <a href="terms.html">Terms of Service</a>
-                <a href="disclaimer.html">Disclaimer</a>
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html" class="logo" style="margin-bottom: 1rem; display: inline-flex;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="24" height="24" rx="6" fill="#4F46E5"/>
+                            <path d="M10 8L16 12L10 16V8Z" fill="white"/>
+                        </svg>
+                        CreatorToolkit
+                    </a>
+                    <p style="font-size: 0.9rem;">Empowering creators with free, high-quality tools for channel growth.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Tools</h4>
+                    <ul>
+                        <li><a href="tools/thumbnail-maker.html">Thumbnail Maker</a></li>
+                        <li><a href="tools/title-generator.html">Title Generator</a></li>
+                        <li><a href="tools/keyword-generator.html">Keyword Tool</a></li>
+                        <li><a href="tools/image-converter.html">Image Converter</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#guides">SEO Guides</a></li>
+                        <li><a href="#guides">Algorithm Tips</a></li>
+                        <li><a href="#guides">Best Practices</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal & Company</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="disclaimer.html">Disclaimer</a></li>
+                    </ul>
+                </div>
             </div>
-            <p>&copy; 2024 Creator Toolkit. All rights reserved.</p>
+            <div class="copyright">
+                <p>&copy; 2026 Creator Toolkit. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
     <script src="main.js"></script>
+    <script>
+        // Simple Mobile Menu Toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            const nav = document.querySelector('.nav-links');
+            nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+            if(nav.style.display === 'flex') {
+                nav.style.flexDirection = 'column';
+                nav.style.position = 'absolute';
+                nav.style.top = '70px';
+                nav.style.left = '0';
+                nav.style.width = '100%';
+                nav.style.background = 'white';
+                nav.style.padding = '1rem';
+                nav.style.borderBottom = '1px solid var(--border)';
+            }
+        });
+    </script>
 </body>
 </html>
