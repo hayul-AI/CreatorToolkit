@@ -1,9 +1,40 @@
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     setupGlobalDragAndDrop();
     setupMobileMenu();
 });
 
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const theme = savedTheme || systemTheme;
+    
+    document.documentElement.setAttribute('data-theme', theme);
+    updateThemeToggleUI(theme);
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeToggleUI(newTheme);
+}
+
+function updateThemeToggleUI(theme) {
+    const toggles = document.querySelectorAll('.theme-toggle');
+    toggles.forEach(btn => {
+        btn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
+        btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+    });
+}
+
+// Ensure theme toggle works globally
+window.toggleTheme = toggleTheme;
+
 function setupGlobalDragAndDrop() {
+    /* ... existing code ... */
     const dropZones = document.querySelectorAll('.file-drop-zone');
     
     dropZones.forEach(zone => {
@@ -48,15 +79,13 @@ function setupGlobalDragAndDrop() {
 }
 
 function setupMobileMenu() {
+    /* ... existing code ... */
     const btn = document.querySelector('.mobile-menu-btn');
     const nav = document.querySelector('.nav-links');
     
     if(btn && nav) {
-        // Remove existing listeners (if any inline ones exist, this adds a new one)
-        // Ideally we'd replace the node, but simple addition is fine for now as long as logic is idempotent
-        
         btn.addEventListener('click', (e) => {
-            e.stopImmediatePropagation(); // Stop other inline scripts if possible
+            e.stopImmediatePropagation(); 
             
             const isHidden = getComputedStyle(nav).display === 'none';
             
@@ -67,13 +96,13 @@ function setupMobileMenu() {
                 nav.style.top = '72px';
                 nav.style.left = '0';
                 nav.style.width = '100%';
-                nav.style.background = 'white';
+                nav.style.background = 'var(--ct-bg)';
                 nav.style.padding = '1.5rem';
                 nav.style.borderBottom = '1px solid var(--ct-border)';
                 nav.style.zIndex = '999';
                 nav.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
             } else {
-                nav.style.display = ''; // Clear inline style to revert to CSS
+                nav.style.display = ''; 
             }
         });
     }
