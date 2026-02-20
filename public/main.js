@@ -1,9 +1,4 @@
-// Main JavaScript
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Mobile Menu Toggle (To be implemented with UI)
-    console.log('CreatorToolkit initialized');
-
     // Shared functionality for file upload tools
     setupDragAndDrop();
 });
@@ -33,7 +28,6 @@ function setupDragAndDrop() {
             
             if (e.dataTransfer.files.length && input) {
                 input.files = e.dataTransfer.files;
-                // Trigger change event manually
                 const event = new Event('change');
                 input.dispatchEvent(event);
             }
