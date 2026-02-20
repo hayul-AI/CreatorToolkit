@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashtag Generator - CreatorToolkit</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>CreatorToolkit</h1>
+            <p>Free Optimization Tools for Content Creators</p>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="title-checker.html">Title Checker</a></li>
+                    <li><a href="tag-generator.html">Tag Generator</a></li>
+                    <li><a href="hashtag-generator.html">Hashtag Generator</a></li>
+                    <li><a href="upload-time.html">Upload Time</a></li>
+                    <li><a href="thumbnail-checker.html">Thumbnail Checker</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="tool-page">
+        <div class="container">
+            <div class="tool-container">
+                <h2>YouTube Hashtag Generator</h2>
+                <div class="form-group">
+                    <label for="video-title">Enter your video title:</label>
+                    <input type="text" id="video-title" placeholder="e.g. How to grow on YouTube in 2024">
+                </div>
+                <button id="generate-hashtags" class="btn-primary">Generate Hashtags</button>
+
+                <div id="result-area" class="result-container" style="display: none;">
+                    <h3>Generated Hashtags (15):</h3>
+                    <div id="hashtag-list" class="hashtag-list"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <ul>
+                <li><a href="about.html">About</a></li>
+                <li><a href="privacy.html">Privacy Policy</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <p>Contact: <a href="mailto:hotplmedia@gmail.com">hotplmedia@gmail.com</a></p>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        const titleInput = document.getElementById('video-title');
+        const generateBtn = document.getElementById('generate-hashtags');
+        const resultArea = document.getElementById('result-area');
+        const hashtagList = document.getElementById('hashtag-list');
+
+        const genericHashtags = [
+            'youtube', 'creator', 'trending', 'viral', 'video', 
+            'shorts', 'contentcreator', 'youtubechannel', 'subscribe', 'growth'
+        ];
+
+        const stopWords = ['a', 'an', 'the', 'in', 'on', 'at', 'for', 'to', 'of', 'and', 'with', 'by', 'is', 'how', 'why'];
+
+        generateBtn.addEventListener('click', () => {
+            const title = titleInput.value.trim();
+            if (!title) return;
+
+            hashtagList.innerHTML = '';
+            const hashtags = new Set();
+            
+            const words = title.toLowerCase().replace(/[^a-z0-9 ]/g, '').split(' ');
+            
+            words.forEach(word => {
+                if (word.length > 2 && !stopWords.includes(word) && hashtags.size < 15) {
+                    hashtags.add(word);
+                }
+            });
+
+            // Fill up with generic ones if needed
+            genericHashtags.forEach(tag => {
+                if (hashtags.size < 15) {
+                    hashtags.add(tag);
+                }
+            });
+
+            Array.from(hashtags).forEach(tag => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'hashtag';
+                tagEl.textContent = `#${tag}`;
+                hashtagList.appendChild(tagEl);
+            });
+
+            resultArea.style.display = 'block';
+        });
+    </script>
+</body>
+</html>

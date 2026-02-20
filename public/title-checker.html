@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title Checker - CreatorToolkit</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>CreatorToolkit</h1>
+            <p>Free Optimization Tools for Content Creators</p>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="title-checker.html">Title Checker</a></li>
+                    <li><a href="tag-generator.html">Tag Generator</a></li>
+                    <li><a href="hashtag-generator.html">Hashtag Generator</a></li>
+                    <li><a href="upload-time.html">Upload Time</a></li>
+                    <li><a href="thumbnail-checker.html">Thumbnail Checker</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="tool-page">
+        <div class="container">
+            <div class="tool-container">
+                <h2>YouTube Title Checker</h2>
+                <div class="form-group">
+                    <label for="video-title">Enter your video title:</label>
+                    <textarea id="video-title" rows="3" placeholder="How to bake a cake in 10 minutes..."></textarea>
+                    <div id="char-count" class="char-count">0 / 100 characters</div>
+                    <div id="title-feedback" class="feedback"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <ul>
+                <li><a href="about.html">About</a></li>
+                <li><a href="privacy.html">Privacy Policy</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <p>Contact: <a href="mailto:hotplmedia@gmail.com">hotplmedia@gmail.com</a></p>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        const titleInput = document.getElementById('video-title');
+        const charCountDisplay = document.getElementById('char-count');
+        const feedbackDisplay = document.getElementById('title-feedback');
+
+        titleInput.addEventListener('input', () => {
+            const length = titleInput.value.length;
+            charCountDisplay.textContent = `${length} / 100 characters`;
+
+            if (length > 60) {
+                feedbackDisplay.innerHTML = '<p class="warning">Warning: Titles over 60 characters may be truncated in search results.</p>';
+                charCountDisplay.style.color = '#dc3545';
+            } else if (length > 0) {
+                feedbackDisplay.innerHTML = '<p class="success">Good length! Your title is optimized for most devices.</p>';
+                charCountDisplay.style.color = '#28a745';
+            } else {
+                feedbackDisplay.innerHTML = '';
+                charCountDisplay.style.color = 'var(--secondary-color)';
+            }
+        });
+    </script>
+</body>
+</html>

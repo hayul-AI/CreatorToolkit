@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag Generator - CreatorToolkit</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>CreatorToolkit</h1>
+            <p>Free Optimization Tools for Content Creators</p>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="title-checker.html">Title Checker</a></li>
+                    <li><a href="tag-generator.html">Tag Generator</a></li>
+                    <li><a href="hashtag-generator.html">Hashtag Generator</a></li>
+                    <li><a href="upload-time.html">Upload Time</a></li>
+                    <li><a href="thumbnail-checker.html">Thumbnail Checker</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="tool-page">
+        <div class="container">
+            <div class="tool-container">
+                <h2>YouTube Tag Generator</h2>
+                <div class="form-group">
+                    <label for="keyword">Enter a primary keyword:</label>
+                    <input type="text" id="keyword" placeholder="e.g. Cooking, Gaming, Tech">
+                </div>
+                <button id="generate-tags" class="btn-primary">Generate Tags</button>
+
+                <div id="result-area" class="result-container" style="display: none;">
+                    <h3>Generated Tags (20):</h3>
+                    <div id="tag-list" class="tag-list"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <ul>
+                <li><a href="about.html">About</a></li>
+                <li><a href="privacy.html">Privacy Policy</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <p>Contact: <a href="mailto:hotplmedia@gmail.com">hotplmedia@gmail.com</a></p>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        const keywordInput = document.getElementById('keyword');
+        const generateBtn = document.getElementById('generate-tags');
+        const resultArea = document.getElementById('result-area');
+        const tagList = document.getElementById('tag-list');
+
+        const modifiers = [
+            'tutorial', 'best', 'review', 'tips', 'tricks', 'guide', '2024', '2025',
+            'how to', 'for beginners', 'walkthrough', 'unboxing', 'explained',
+            'top 10', 'latest', 'comparison', 'vs', 'easy', 'pro', 'hacks'
+        ];
+
+        generateBtn.addEventListener('click', () => {
+            const keyword = keywordInput.value.trim();
+            if (!keyword) return;
+
+            tagList.innerHTML = '';
+            const tags = new Set();
+            tags.add(keyword);
+
+            modifiers.forEach(mod => {
+                if (tags.size < 20) {
+                    tags.add(`${keyword} ${mod}`);
+                }
+            });
+
+            // If still less than 20, add some prefix modifiers
+            const prefixModifiers = ['best', 'how to', 'easy', 'pro'];
+            prefixModifiers.forEach(mod => {
+                if (tags.size < 20) {
+                    tags.add(`${mod} ${keyword}`);
+                }
+            });
+
+            Array.from(tags).slice(0, 20).forEach(tag => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'tag';
+                tagEl.textContent = tag;
+                tagList.appendChild(tagEl);
+            });
+
+            resultArea.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
