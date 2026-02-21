@@ -1,38 +1,46 @@
 /* Enhanced Main Styles - CreatorToolkit 2026 */
 
-/* Link Base Styles */
-@import url('/assets/styles/base.css');
+/* CSS Reset & Base */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-    /* Colors */
+    /* Light Mode Tokens */
     --brand-red: #E11D48;
     --brand-red-hover: #BE123C;
     --brand-red-soft: #FFF1F2;
-    --slate-50: #F8FAFC;
-    --slate-100: #F1F5F9;
-    --slate-200: #E2E8F0;
-    --slate-600: #475569;
-    --slate-900: #0F172A;
+    --bg-primary: #ffffff;
+    --bg-secondary: #F8FAFC;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --border-color: #E2E8F0;
     
-    /* Transitions */
     --trans-fast: 180ms cubic-bezier(0.4, 0, 0.2, 1);
-    
-    /* Shadows */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    
-    /* Radius */
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     --radius-md: 12px;
     --radius-lg: 16px;
 }
 
+/* Dark Mode Tokens */
+html.dark {
+    --bg-primary: #0F172A;
+    --bg-secondary: #1E293B;
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --border-color: #334155;
+    --brand-red-soft: rgba(225, 29, 72, 0.1);
+}
+
 body {
     font-family: 'Inter', sans-serif;
-    color: var(--slate-900);
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
     line-height: 1.6;
-    background-color: #fff;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+ul, li { list-style: none; }
+a { text-decoration: none; color: inherit; }
 
 .container {
     max-width: 1140px;
@@ -40,121 +48,38 @@ body {
     padding: 0 1.5rem;
 }
 
-/* Hero Section */
-.hero-section {
-    padding: 8rem 0 4rem;
-    text-align: center;
-    background: radial-gradient(circle at top, var(--brand-red-soft) 0%, #fff 70%);
-}
-
-.badge-premium {
-    display: inline-flex;
+/* Button System */
+.btn-primary, .btn-outline {
+    display: inline-flex; /* 바(bar) 현상 방지 */
     align-items: center;
-    padding: 0.5rem 1rem;
-    background: white;
-    border: 1px solid var(--slate-200);
-    border-radius: 100px;
-    font-size: 0.875rem;
+    justify-content: center;
+    height: 44px;
+    padding: 0 1.25rem;
+    border-radius: var(--radius-md);
     font-weight: 700;
-    color: var(--brand-red);
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 2rem;
-}
-
-/* Popular Tools Grid System */
-.popular-tools-section {
-    padding: 6rem 0;
-    background-color: var(--slate-50);
-}
-
-.tools-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    margin-top: 4rem;
-}
-
-/* Tool Card Styling */
-.tool-card {
-    display: flex;
-    flex-direction: column;
-    background: #ffffff;
-    border: 1px solid var(--slate-200);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
     transition: var(--trans-fast);
-    min-height: 280px;
-    position: relative;
-    box-shadow: var(--shadow-sm);
+    border: none;
+    white-space: nowrap;
+    width: fit-content;
 }
 
-.tool-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--brand-red);
-}
-
-.tool-badge {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--brand-red);
-    background: var(--brand-red-soft);
-    padding: 4px 12px;
-    border-radius: 6px;
-    text-transform: uppercase;
-    margin-bottom: 1.25rem;
-    align-self: flex-start;
-}
-
-.tool-title {
-    font-size: 1.35rem;
-    font-weight: 800;
-    color: var(--slate-900);
-    margin-bottom: 0.75rem;
-}
-
-.tool-desc {
-    font-size: 0.95rem;
-    color: var(--slate-600);
-    margin-bottom: 2rem;
-}
-
-/* Buttons */
 .btn-primary {
     background-color: var(--brand-red) !important;
     color: #ffffff !important;
-    height: 48px;
-    padding: 0 1.5rem;
-    border-radius: var(--radius-md);
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    transition: var(--trans-fast);
-    text-decoration: none;
-    margin-top: auto;
 }
 
 .btn-primary:hover {
     background-color: var(--brand-red-hover) !important;
-    transform: scale(1.02);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
 }
 
 .btn-outline {
-    background: white;
-    border: 2px solid var(--slate-200);
-    color: var(--slate-900);
-    height: 48px;
-    padding: 0 1.5rem;
-    border-radius: var(--radius-md);
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--trans-fast);
+    background: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    color: var(--text-primary);
 }
 
 .btn-outline:hover {
@@ -162,47 +87,7 @@ body {
     color: var(--brand-red);
 }
 
-/* Ad Slot CLS Fix */
-.ad-container {
-    min-height: 120px;
-    background: var(--slate-100);
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 3rem 0;
-    overflow: hidden;
-}
-
-.ad-container::before {
-    content: 'Advertisement';
-    font-size: 0.7rem;
-    color: var(--slate-600);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-
-/* Form Elements */
-input, textarea, select {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--slate-200);
-    font-family: inherit;
-    transition: var(--trans-fast);
-}
-
-input:focus, textarea:focus {
-    outline: none;
-    border-color: var(--brand-red);
-    box-shadow: 0 0 0 4px var(--brand-red-soft);
-}
-
-@media (max-width: 1024px) {
-    .tools-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 768px) {
-    .tools-grid { grid-template-columns: 1fr; }
-    .hero-section { padding: 5rem 0 3rem; }
-}
+/* Layout Stability */
+.hero-section { background: var(--bg-secondary); }
+.popular-tools-section { background: var(--bg-secondary); }
+.tool-card { background: var(--bg-primary); border-color: var(--border-color); }
