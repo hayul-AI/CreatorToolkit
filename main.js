@@ -94,6 +94,7 @@ function registerWebComponents() {
                             <li><a href="/tools/video-analyzer.html" class="${activePath.includes('video-analyzer') ? 'active' : ''}">Analyzer</a></li>
                             <li><a href="/tools/earnings-calculator.html" class="${activePath.includes('earnings') ? 'active' : ''}">Earnings</a></li>
                             <li><a href="/tools/thumbnail-copy-generator.html" class="${activePath.includes('thumbnail-copy') ? 'active' : ''}">Copy Gen</a></li>
+                            <li><a href="/tools/description-generator.html" class="${activePath.includes('description-generator') ? 'active' : ''}">Desc Gen</a></li>
                             <li><a href="/index.html#guides" class="${activePath.includes('guides') ? 'active' : ''}">Guides</a></li>
                             <li><a href="/about.html" class="${activePath === '/about.html' ? 'active' : ''}">About</a></li>
                         </ul>

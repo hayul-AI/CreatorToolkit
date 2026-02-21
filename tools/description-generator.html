@@ -3,246 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free YouTube Description Generator - CreatorToolkit</title>
-    <meta name="description" content="Generate SEO-optimized YouTube video descriptions. Fill in the blanks and get a professional description template ready to copy.">
-    <link rel="stylesheet" href="/style.css">
-    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
+    <title>YouTube Description Generator - CreatorToolkit</title>
+    <meta name="description" content="Generate SEO-optimized YouTube descriptions instantly using our local template engine. Perfect for ranking and CTR.">
+    <link rel="stylesheet" href="/style.css?v=20260221">
+    <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-</head>
-<body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <nav>
-                <a href="/index.html" class="logo">
-                    CreatorToolkit<span class="text-red">.</span>
-                </a>
-                <ul class="nav-links">
-                    <li><a href="/index.html#tools">Tools</a></li>
-                    <li><a href="/index.html#guides">Guides</a></li>
-                    <li><a href="/about.html">About</a></li>
-                </ul>
-                <div class="flex items-center gap-4">
-                    <a href="/index.html#tools" class="btn btn-outline btn-sm">All Tools</a>
-                    <button class="mobile-menu-btn" aria-label="Menu">☰</button>
-                </div>
-            </nav>
-        </div>
-    </header>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .desc-gen-grid { display: grid; grid-template-columns: 420px 1fr; gap: 2.5rem; align-items: start; max-width: 1200px; margin: 0 auto; }
+        .card-premium { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 20px; padding: 2rem; box-shadow: var(--shadow-sm); }
+        .output-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .char-counter { font-size: 0.75rem; font-weight: 700; color: var(--brand-red); background: var(--brand-red-soft); padding: 4px 10px; border-radius: 100px; }
+        .hashtag-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); }
+        .hashtag-pill { background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); }
+        
+        .radio-group { display: flex; gap: 8px; margin-top: 0.5rem; }
+        .radio-group label { flex: 1; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .radio-group input { display: none; }
+        .radio-group input:checked + label { background: var(--brand-red); border-color: var(--brand-red); color: white; }
 
-    <main class="section bg-surface">
+        @media (max-width: 1024px) { .desc-gen-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body class="bg-secondary">
+    <creator-header></creator-header>
+
+    <main style="padding: 5rem 0;">
         <div class="container">
-            <div class="text-center" style="margin-bottom: 3rem;">
-                <h1>YouTube Description Generator</h1>
-                <p>Create professional, SEO-friendly video descriptions in seconds.</p>
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h1 style="font-size: 3rem; letter-spacing: -0.02em; margin-bottom: 1rem;">Description Generator</h1>
+                <p style="color: var(--text-secondary); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Generate SEO-friendly YouTube descriptions (~500 chars) instantly.</p>
             </div>
 
-            <div class="grid grid-2" style="max-width: 1200px; margin: 0 auto; gap: 2rem; align-items: start;">
-                
-                <!-- Input Column -->
-                <div class="card">
-                    <h3 style="margin-bottom: 1.5rem;">Video Details</h3>
-                    
-                    <div class="form-group">
-                        <label>Main Keyword / Topic</label>
-                        <input type="text" id="desc-topic" placeholder="e.g. iPhone 16 Review">
+            <div class="desc-gen-grid">
+                <!-- Control Panel -->
+                <div class="card-premium">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Category</label>
+                        <select id="cat-select" style="width: 100%;">
+                            <option value="">Select Category...</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Education">Education / Knowledge</option>
+                            <option value="Tech">Tech / How-To</option>
+                            <option value="Gaming">Gaming</option>
+                            <option value="Music">Music</option>
+                            <option value="Lifestyle">Lifestyle / Hobby</option>
+                            <option value="Commentary">Commentary / Opinion</option>
+                        </select>
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Brief Summary (Hook)</label>
-                        <textarea id="desc-summary" rows="3" placeholder="In this video, I review the new iPhone 16..."></textarea>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Video Title</label>
+                        <input type="text" id="title-input" placeholder="Paste your YouTube title here..." style="width: 100%;">
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Timestamps (Optional)</label>
-                        <textarea id="desc-timestamps" rows="4" placeholder="0:00 Intro&#10;1:30 Unboxing&#10;5:00 Verdict"></textarea>
-                        <p class="text-muted" style="font-size: 0.8rem; margin-top: 0.5rem;">One per line. Example: 0:00 Intro</p>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Target Keywords</label>
+                        <input type="text" id="kw-input" placeholder="ex) lofi study, focus, relax" style="width: 100%;">
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Social Media Links</label>
-                        <div class="grid grid-2 gap-2" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
-                            <input type="text" id="desc-instagram" placeholder="Instagram URL">
-                            <input type="text" id="desc-twitter" placeholder="Twitter URL">
+
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">CTA Style</label>
+                        <div class="radio-group">
+                            <input type="radio" name="cta" id="cta-soft" value="soft" checked>
+                            <label for="cta-soft">Soft</label>
+                            <input type="radio" name="cta" id="cta-std" value="standard">
+                            <label for="cta-std">Standard</label>
+                            <input type="radio" name="cta" id="cta-strong" value="strong">
+                            <label for="cta-strong">Strong</label>
                         </div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Affiliate / Product Links</label>
-                        <textarea id="desc-links" rows="3" placeholder="Buy it here: https://amazon.com/..."></textarea>
-                    </div>
-                    
-                    <button id="generate-desc-btn" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
-                        Generate Description ✨
-                    </button>
+
+                    <button onclick="handleGenerate()" class="btn-primary" style="width: 100%; height: 52px; font-size: 1rem; margin: 0;">Generate Description ✨</button>
                 </div>
 
-                <!-- Output Column -->
-                <div class="card bg-surface" style="border: 2px solid var(--ct-border);">
-                    <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
-                        <h3 style="margin-bottom: 0;">Result</h3>
-                        <span class="badge">SEO Ready</span>
-                    </div>
-                    
-                    <textarea id="final-desc" style="width: 100%; height: 500px; font-family: monospace; background: white; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--ct-border); resize: none;" readonly placeholder="Your generated description will appear here..."></textarea>
-                    
-                    <button id="copy-desc-btn" class="btn btn-outline" style="width: 100%; justify-content: center; margin-top: 1rem;">
-                        Copy to Clipboard
-                    </button>
-                </div>
-            </div>
+                <!-- Output Panel -->
+                <div id="output-area">
+                    <div class="card-premium" style="min-height: 480px; display: flex; flex-direction: column;">
+                        <div class="output-header">
+                            <h3 style="margin:0; font-size: 1.1rem;">Generated Result</h3>
+                            <div class="char-counter" id="char-count">0 chars</div>
+                        </div>
+                        
+                        <textarea id="output-text" style="flex: 1; width: 100%; padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color); font-size: 0.95rem; line-height: 1.6; resize: none; background: var(--bg-secondary); font-family: inherit;" placeholder="Your description will appear here..."></textarea>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 1rem;">
+                            <button onclick="copyText('output-text')" class="btn-outline" style="height: 44px; font-size: 0.9rem;">📋 Copy Description</button>
+                            <button onclick="copyAll()" class="btn-primary" style="height: 44px; font-size: 0.9rem; margin: 0;">🔥 Copy Everything</button>
+                        </div>
 
-            <!-- Content Block -->
-            <div class="container" style="max-width: 800px; margin-top: 4rem;">
-                <h2>Anatomy of a Perfect Description</h2>
-                <div class="grid grid-2" style="margin-top: 2rem;">
-                    <div>
-                        <ul class="features-list">
-                            <li>
-                                <span class="check-icon">✓</span>
-                                <div><strong>The Hook:</strong> First 2 sentences are crucial for SEO.</div>
-                            </li>
-                            <li>
-                                <span class="check-icon">✓</span>
-                                <div><strong>Timestamps:</strong> Create chapters for better navigation.</div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <ul class="features-list">
-                            <li>
-                                <span class="check-icon">✓</span>
-                                <div><strong>Links:</strong> Drive traffic to your other socials/products.</div>
-                            </li>
-                            <li>
-                                <span class="check-icon">✓</span>
-                                <div><strong>Hashtags:</strong> Add up to 3 relevant tags at the end.</div>
-                            </li>
-                        </ul>
+                        <div class="hashtag-container" id="hashtag-root" style="display: none;">
+                            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-secondary);">Suggested Hashtags</span>
+                                <button onclick="copyHashtags()" class="btn-outline" style="height: 28px; padding: 0 10px; font-size: 0.7rem; border-radius: 6px; margin: 0;">Copy Tags</button>
+                            </div>
+                            <div id="hashtag-list" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <a href="/index.html" class="logo" style="margin-bottom: 1rem;">
-                        CreatorToolkit<span class="text-red">.</span>
-                    </a>
-                    <p>Empowering creators with free tools.</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><a href="/privacy-policy.html">Privacy Policy</a></li>
-                        <li><a href="/terms.html">Terms of Service</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2026 Creator Toolkit. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    <div class="up-toast" id="copy-toast" style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #0f172a; color: white; padding: 12px 24px; border-radius: 100px; font-weight: 600; display: none; z-index: 2000;">Copied! 📋</div>
 
-    <script src="/main.js"></script>
+    <creator-footer></creator-footer>
+
+    <script src="/main.js?v=20260221"></script>
     <script>
-        const generateBtn = document.getElementById('generate-desc-btn');
-        const copyBtn = document.getElementById('copy-desc-btn');
-        const finalDesc = document.getElementById('final-desc');
+        const STORAGE_KEYS = {
+            cat: 'descgen.category',
+            title: 'descgen.title',
+            kw: 'descgen.keywords',
+            cta: 'descgen.cta',
+            output: 'descgen.output'
+        };
 
-        generateBtn.addEventListener('click', () => {
-            const topic = document.getElementById('desc-topic').value;
-            const summary = document.getElementById('desc-summary').value;
-            const timestamps = document.getElementById('desc-timestamps').value;
-            const insta = document.getElementById('desc-instagram').value;
-            const twitter = document.getElementById('desc-twitter').value;
-            const links = document.getElementById('desc-links').value;
+        const TEMPLATES = {
+            Entertainment: [
+                "Welcome back! Today we are looking at {title}. This video is packed with amazing moments and reactions that you don't want to miss. We put a lot of effort into highlighting the best parts of {keywords} for you. Whether you're here for the laughs or the intense energy, this session has something for everyone. Make sure to watch until the end for the surprise twist! Our goal is to bring you the highest quality entertainment every single day. Let us know your favorite part in the comments below!"
+            ],
+            Education: [
+                "In this lesson, we deep dive into {title}. Understanding the core concepts of {keywords} is essential for anyone looking to master this field. We break down complex topics into simple, easy-to-follow steps so you can learn effectively. This comprehensive guide covers everything from the fundamentals to advanced techniques. We believe that knowledge should be accessible to everyone, and this video is a step towards that. Join our community of learners and start your journey today!"
+            ],
+            Tech: [
+                "Solving problems with {title} just got easier! In this tutorial, I'll show you how to set up and optimize {keywords} like a pro. Many people struggle with the initial configuration, but we've simplified the entire process for you. From installation to the final result, every step is clearly explained. Make sure you have your tools ready as we go through this together. If you encounter any issues, feel free to reach out. Technology is meant to empower us, and this workflow is a perfect example."
+            ],
+            Gaming: [
+                "Leveling up in {title}! Today we are exploring new builds and strategies for {keywords}. The current meta is shifting, and staying ahead of the competition is key. Watch as we navigate through challenging levels and showcase some insane high-skill gameplay. We also share some hidden secrets that most players overlook. Whether you're a casual gamer or a competitive pro, there's a lot to learn from this session. Don't forget to join our Discord for more gaming tips and community events!"
+            ],
+            Music: [
+                "Immerse yourself in the sound of {title}. This collection features the best of {keywords}, carefully curated to create the perfect atmosphere. Whether you're studying, working, or just relaxing at home, these tracks will help you find your flow. We focus on high-fidelity audio and seamless transitions to provide a premium listening experience. Let the melodies of {keywords} guide your productivity and peace of mind. Subscribe for your daily dose of high-quality music and ambient vibes."
+            ],
+            Lifestyle: [
+                "Sharing my journey with {title}. In this video, I take you through my daily routine and how {keywords} plays a major role in my life. It's all about finding balance and pursuing what you love every single day. I'm also sharing some personal tips and tricks that have helped me stay consistent and motivated. Hopefully, this inspires you to start your own routine and find joy in the little things. Life is a beautiful adventure, and I'm glad to have you along for the ride."
+            ],
+            Commentary: [
+                "Let's talk about {title}. There has been a lot of discussion lately regarding {keywords}, and I wanted to share my perspective on the matter. We'll analyze the different viewpoints and look at the underlying facts that often get ignored. This video aims to provide a balanced and thoughtful take on current trends. I'm curious to hear what you think about this development. Is this the future, or just a passing phase? Join the conversation in the comments and let's discuss this together."
+            ]
+        };
 
-            let output = "";
+        const FILLERS = [
+            "We strive to provide valuable content that makes a difference in your creative workflow.",
+            "Our community is growing every day, and your support means the world to us.",
+            "Stay tuned for more updates and deep dives into the topics you care about most.",
+            "Every like and share helps us reach more creators just like you."
+        ];
 
-            // Hook
-            if(summary) {
-                output += `${summary}\n\n`;
-            } else if(topic) {
-                output += `In this video, we're talking about ${topic}. If you want to learn more about ${topic}, watch until the end!\n\n`;
-            }
-
-            // CTA
-            output += `🔔 Subscribe for more videos like this: https://www.youtube.com/channel/YOUR_CHANNEL_ID?sub_confirmation=1\n\n`;
-
-            // Timestamps
-            if(timestamps) {
-                output += `TIMESTAMPS:\n${timestamps}\n\n`;
-            }
-
-            // Links
-            if(links) {
-                output += `RESOURCES & LINKS:\n${links}\n\n`;
-            }
-
-            // Socials
-            if(insta || twitter) {
-                output += `CONNECT WITH ME:\n`;
-                if(insta) output += `📸 Instagram: ${insta}\n`;
-                if(twitter) output += `🐦 Twitter: ${twitter}\n`;
-                output += `\n`;
-            }
-
-            // Disclaimer
-            output += `DISCLAIMER: This description contains affiliate links. If you click on one of the product links, I’ll receive a small commission. This supports the channel and allows us to continue to make videos like this.\n\n`;
-
-            // Hashtags
-            if(topic) {
-                const tag = topic.replace(/\s+/g, '').toLowerCase();
-                output += `#${tag} #youtube #creator`;
-            }
-
-            finalDesc.value = output;
+        document.addEventListener('DOMContentLoaded', () => {
+            const sr = (id) => document.getElementById(id);
+            sr('cat-select').value = localStorage.getItem(STORAGE_KEYS.cat) || '';
+            sr('title-input').value = localStorage.getItem(STORAGE_KEYS.title) || '';
+            sr('kw-input').value = localStorage.getItem(STORAGE_KEYS.kw) || '';
+            sr('output-text').value = localStorage.getItem(STORAGE_KEYS.output) || '';
+            const savedCta = localStorage.getItem(STORAGE_KEYS.cta);
+            if (savedCta) document.querySelector(`input[name="cta"][value="${savedCta}"]`).checked = true;
+            updateCounter();
         });
 
-        copyBtn.addEventListener('click', () => {
-            finalDesc.select();
-            document.execCommand('copy');
-            const originalText = copyBtn.textContent;
-            copyBtn.textContent = "Copied!";
-            copyBtn.classList.remove('btn-outline');
-            copyBtn.classList.add('btn-primary');
+        function handleGenerate() {
+            const cat = document.getElementById('cat-select').value;
+            const title = document.getElementById('title-input').value.trim();
+            let kws = document.getElementById('kw-input').value.trim();
+            const ctaType = document.querySelector('input[name="cta"]:checked').value;
+
+            if (!cat || !title) return alert('Category and Title are required');
+
+            // Save inputs
+            localStorage.setItem(STORAGE_KEYS.cat, cat);
+            localStorage.setItem(STORAGE_KEYS.title, title);
+            localStorage.setItem(STORAGE_KEYS.kw, kws);
+            localStorage.setItem(STORAGE_KEYS.cta, ctaType);
+
+            // Keyword Extraction if empty
+            if (!kws) {
+                kws = title.split(' ').filter(w => w.length > 3).slice(0, 2).join(', ');
+            }
+
+            // Get Base Template
+            const pool = TEMPLATES[cat] || TEMPLATES.Entertainment;
+            let output = pool[Math.floor(Math.random() * pool.length)];
+            output = output.replace(/{title}/g, title).replace(/{keywords}/g, kws);
+
+            // Add CTA
+            const ctaMap = {
+                soft: "\n\nIf you enjoyed this, feel free to subscribe for more.",
+                standard: "\n\nThanks for watching! Please LIKE and SUBSCRIBE if you found this helpful. See you in the next one!",
+                strong: "\n\n🚀 Join our mission! SUBSCRIBE now and turn on NOTIFICATIONS so you never miss a viral update. Leave a COMMENT if you agree!"
+            };
+            output += ctaMap[ctaType];
+
+            // Length Balancer (Target 450-550)
+            while (output.length < 450) {
+                output += " " + FILLERS[Math.floor(Math.random() * FILLERS.length)];
+            }
+            if (output.length > 550) {
+                const sentences = output.split('. ');
+                while (output.length > 550 && sentences.length > 3) {
+                    sentences.splice(sentences.length - 2, 1); // Remove from near end
+                    output = sentences.join('. ') + (output.endsWith('.') ? '' : '.');
+                }
+            }
+
+            const final = output.trim();
+            document.getElementById('output-text').value = final;
+            localStorage.setItem(STORAGE_KEYS.output, final);
+            updateCounter();
+            generateHashtags(title + " " + kws);
+        }
+
+        function generateHashtags(text) {
+            const words = text.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/);
+            const unique = [...new Set(words)].filter(w => w.length > 3).slice(0, 5);
+            const tags = unique.map(w => '#' + w);
             
-            setTimeout(() => {
-                copyBtn.textContent = originalText;
-                copyBtn.classList.add('btn-outline');
-                copyBtn.classList.remove('btn-primary');
-            }, 2000);
-        });
-        
-        // Mobile menu
-        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
-            const nav = document.querySelector('.nav-links');
-            const isHidden = getComputedStyle(nav).display === 'none';
-            if(isHidden) {
-                nav.style.display = 'flex';
-                nav.style.flexDirection = 'column';
-                nav.style.position = 'absolute';
-                nav.style.top = '72px';
-                nav.style.left = '0';
-                nav.style.width = '100%';
-                nav.style.background = 'white';
-                nav.style.padding = '1.5rem';
-                nav.style.borderBottom = '1px solid var(--ct-border)';
-                nav.style.zIndex = '999';
-            } else {
-                nav.style.display = ''; 
-            }
-        });
+            const root = document.getElementById('hashtag-root');
+            const list = document.getElementById('hashtag-list');
+            root.style.display = 'block';
+            list.innerHTML = tags.map(t => `<span class="hashtag-pill">${t}</span>`).join('');
+        }
+
+        function updateCounter() {
+            const txt = document.getElementById('output-text').value;
+            document.getElementById('char-count').innerText = `${txt.length} chars`;
+        }
+
+        function copyText(id) {
+            const val = document.getElementById(id).value;
+            if(!val) return;
+            navigator.clipboard.writeText(val).then(() => showToast());
+        }
+
+        function copyHashtags() {
+            const tags = Array.from(document.querySelectorAll('.hashtag-pill')).map(el => el.innerText).join(' ');
+            if(!tags) return;
+            navigator.clipboard.writeText(tags).then(() => showToast());
+        }
+
+        function copyAll() {
+            const desc = document.getElementById('output-text').value;
+            const tags = Array.from(document.querySelectorAll('.hashtag-pill')).map(el => el.innerText).join(' ');
+            navigator.clipboard.writeText(desc + "\n\n" + tags).then(() => showToast());
+        }
+
+        function showToast() {
+            const t = document.getElementById('copy-toast');
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 2000);
+        }
+
+        document.getElementById('output-text').oninput = updateCounter;
     </script>
-<link rel="stylesheet" href="/assets/upload-panel.css">
-    <script defer src="/assets/upload-panel.js"></script>
 </body>
 </html>
