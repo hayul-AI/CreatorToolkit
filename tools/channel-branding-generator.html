@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Channel Branding Generator - CreatorToolkit</title>
-    <meta name="description" content="Generate SEO-optimized YouTube channel names and professional descriptions instantly. Local AI branding engine.">
+    <meta name="description" content="Generate SEO-optimized YouTube channel names, professional descriptions, keywords, and hashtags instantly. Local AI branding engine.">
     <link rel="stylesheet" href="/style.css?v=20260221">
     <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,19 +16,26 @@
         
         .name-suggestion-item { 
             background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; 
-            padding: 12px 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
-            transition: 0.2s;
+            padding: 14px 18px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+            transition: 0.2s; cursor: pointer; width: 100%; text-align: left;
         }
-        .name-suggestion-item:hover { border-color: var(--brand-red); transform: translateX(4px); }
-        .name-suggestion-item.selected { border: 2px solid var(--brand-red); background: var(--brand-red-soft); }
+        .name-suggestion-item:hover { border-color: var(--brand-red); background: var(--bg-primary); }
+        .name-suggestion-item.active { border: 2px solid var(--brand-red); background: var(--brand-red-soft); box-shadow: var(--shadow-sm); }
         
-        .name-text { font-weight: 800; font-size: 1.05rem; color: var(--text-primary); }
+        .name-text { font-weight: 800; font-size: 1.1rem; color: var(--text-primary); }
         
-        .output-box { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
-        .char-counter { font-size: 0.75rem; font-weight: 700; color: var(--brand-red); background: var(--brand-red-soft); padding: 2px 8px; border-radius: 100px; }
+        .output-section { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+        .section-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+        .char-counter { font-size: 0.75rem; font-weight: 700; color: var(--brand-red); background: var(--brand-red-soft); padding: 2px 10px; border-radius: 100px; }
 
-        .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 1rem; }
-        .tag-pill { background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); }
+        .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
+        .chip { 
+            background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 8px 14px; 
+            border-radius: 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); 
+            display: flex; align-items: center; transition: 0.2s; cursor: pointer;
+        }
+        .chip:hover { border-color: var(--brand-red); color: var(--brand-red); transform: translateY(-1px); }
+        .chip.tag { color: var(--brand-red); font-weight: 700; background: var(--brand-red-soft); border-color: transparent; }
 
         .radio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 0.5rem; }
         .radio-item { position: relative; }
@@ -49,7 +56,7 @@
         <div class="container">
             <div style="text-align: center; margin-bottom: 4rem;">
                 <h1 style="font-size: 3rem; letter-spacing: -0.02em; margin-bottom: 1rem;">Branding Generator</h1>
-                <p style="color: var(--text-secondary); font-size: 1.1rem;">Build your YouTube identity with SEO-optimized names and profiles.</p>
+                <p style="color: var(--text-secondary); font-size: 1.1rem;">Professional SEO identity suite: Names, Descriptions, Keywords & Tags.</p>
             </div>
 
             <div class="branding-grid">
@@ -70,16 +77,7 @@
 
                     <div class="form-group" style="margin-bottom: 1.5rem;">
                         <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Concept Keywords</label>
-                        <input type="text" id="keyword-input" placeholder="ex) lofi jazz, daily news, plant care" style="width: 100%;">
-                    </div>
-
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Language</label>
-                        <div class="radio-grid">
-                            <div class="radio-item"><input type="radio" name="lang" id="lang-ko" value="ko"><label for="lang-ko">Korean</label></div>
-                            <div class="radio-item"><input type="radio" name="lang" id="lang-en" value="en"><label for="lang-en">English</label></div>
-                            <div class="radio-item"><input type="radio" name="lang" id="lang-mix" value="mixed" checked><label for="lang-mix">Mixed</label></div>
-                        </div>
+                        <input type="text" id="keyword-input" placeholder="ex) lofi jazz, daily news, coding" style="width: 100%;">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 2rem;">
@@ -92,34 +90,50 @@
                         </div>
                     </div>
 
-                    <button onclick="generateNames()" class="btn-primary" style="width: 100%; height: 52px; font-size: 1rem; margin: 0;">Generate Branding 🚀</button>
+                    <button onclick="generateNames()" class="btn-primary" style="width: 100%; height: 52px; font-size: 1rem; margin: 0;">Generate Brand Assets 🚀</button>
                 </div>
 
                 <!-- Results Output -->
                 <div id="results-area">
                     <div id="placeholder" style="text-align: center; padding: 5rem 0; color: var(--text-secondary); opacity: 0.5;">
-                        <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🎨</span>
-                        <h3>Start creating your brand identity</h3>
+                        <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">💎</span>
+                        <h3>Select a name to generate full brand assets</h3>
                     </div>
 
                     <div id="names-root" style="display: none;">
-                        <h3 style="margin-bottom: 1.5rem;">Suggested Names (Pick One)</h3>
+                        <h3 style="margin-bottom: 1.5rem;">Suggested Names</h3>
                         <div id="names-list" style="margin-bottom: 2.5rem;"></div>
 
-                        <div class="output-box" id="desc-box" style="display: none;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                                <h3 style="margin:0;">Channel Description</h3>
-                                <div class="char-counter" id="char-count">0 chars</div>
-                            </div>
-                            <textarea id="desc-output" style="width: 100%; height: 220px; padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border-color); font-size: 0.95rem; line-height: 1.6; resize: none; background: var(--bg-primary); font-family: inherit;"></textarea>
-                            <div style="display: flex; gap: 10px; margin-top: 1rem;">
-                                <button onclick="copyText('desc-output')" class="btn-outline" style="flex: 1; height: 46px;">📋 Copy Description</button>
-                                <button onclick="generateDescription()" class="btn-primary" style="flex: 1; height: 46px; margin: 0;">✨ Regenerate Description</button>
+                        <div id="brand-assets-box" style="display: none;">
+                            <!-- A) Description -->
+                            <div class="output-section">
+                                <div class="section-title-row">
+                                    <h3 style="margin:0;">Channel Description</h3>
+                                    <div class="char-counter" id="char-count">0 chars</div>
+                                </div>
+                                <textarea id="desc-output" style="width: 100%; height: 200px; padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border-color); font-size: 0.95rem; line-height: 1.6; resize: none; background: var(--bg-primary); font-family: inherit;"></textarea>
+                                <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                                    <button onclick="copyText('desc-output')" class="btn-outline" style="flex: 1; height: 46px;">📋 Copy Description</button>
+                                    <button onclick="regenerateDescription()" class="btn-primary" style="flex: 1; height: 46px; margin: 0;">✨ Regenerate</button>
+                                </div>
                             </div>
 
-                            <div style="margin-top: 2rem;">
-                                <h4 style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase;">Suggested Tags & Keywords</h4>
-                                <div class="tag-cloud" id="tag-list"></div>
+                            <!-- B) Keywords -->
+                            <div class="output-section">
+                                <div class="section-title-row">
+                                    <h3 style="margin:0; font-size: 1.1rem;">Suggested Keywords (8)</h3>
+                                    <button onclick="copyKeywords()" class="btn-outline" style="height:32px; font-size:0.75rem; margin:0; padding:0 12px;">Copy All</button>
+                                </div>
+                                <div class="chip-container" id="kw-list"></div>
+                            </div>
+
+                            <!-- C) Hashtags -->
+                            <div class="output-section">
+                                <div class="section-title-row">
+                                    <h3 style="margin:0; font-size: 1.1rem;">Suggested Hashtags (5)</h3>
+                                    <button onclick="copyHashtags()" class="btn-outline" style="height:32px; font-size:0.75rem; margin:0; padding:0 12px;">Copy All</button>
+                                </div>
+                                <div class="chip-container" id="tag-list"></div>
                             </div>
                         </div>
                     </div>
@@ -134,180 +148,211 @@
 
     <script src="/main.js?v=20260221"></script>
     <script>
-        const CATEGORY_MAP = {
-            Entertainment: { en: ['Spotlight', 'Vibe', 'Clips', 'Moments', 'Pop', 'Now', 'Reel', 'Lounge'], ko: ['공간', '상자', '하이라이트', '다이어리', '순간', '나우', '팝'] },
-            Education: { en: ['Academy', 'Class', 'Primer', 'Lab', 'Notes', 'Explained', 'Wiki', 'Coach'], ko: ['학당', '노트', '연구소', '위키', '교실', '백과', '가이드'] },
-            Tech: { en: ['Toolkit', 'Build', 'HowTo', 'Setup', 'Dev', 'Manual', 'Core', 'Logic'], ko: ['키트', '조립', '매뉴얼', '정석', '코어', '랩', '시스템'] },
-            Gaming: { en: ['Arena', 'Plays', 'Meta', 'Ranked', 'Quest', 'GG', 'Hub', 'Arcade'], ko: ['투기장', '퀘스트', '랭커', '메타', '아카이브', '플레이'] },
-            Music: { en: ['Groove', 'Beats', 'Sound', 'Session', 'Waves', 'Piano', 'Melody'], ko: ['선율', '비트', '그루브', '소리', '감성', '플레이리스트'] },
-            Lifestyle: { en: ['Daily', 'Routine', 'Craft', 'Home', 'Cozy', 'Diary', 'Habit'], ko: ['일상', '루틴', '일기', '공방', '코지', '아지트', '생활'] },
-            Commentary: { en: ['Insight', 'Digest', 'Signals', 'Lens', 'Talk', 'Brief', 'View'], ko: ['통찰', '시선', '다이제스트', '토크', '노트', '브리핑'] }
+        const SUFFIXES = {
+            Entertainment: ['Spotlight', 'Vibe', 'Clips', 'Moments', 'Now', 'Reel', 'Lounge', 'Vault', 'Daily', 'Zone'],
+            Education: ['Academy', 'Class', 'Primer', 'Lab', 'Notes', 'Wiki', 'Coach', 'Growth', 'Portal', 'Smart'],
+            Tech: ['Toolkit', 'Build', 'HowTo', 'Setup', 'Dev', 'Manual', 'Core', 'Digital', 'Works', 'Flow'],
+            Gaming: ['Arena', 'Plays', 'Meta', 'Ranked', 'Quest', 'Hub', 'Arcade', 'Level', 'Pro', 'Empire'],
+            Music: ['Groove', 'Beats', 'Sound', 'Session', 'Waves', 'Piano', 'Melody', 'Flow', 'Pure', 'Studio'],
+            Lifestyle: ['Daily', 'Routine', 'Craft', 'Home', 'Cozy', 'Diary', 'Habit', 'Life', 'Living', 'Way'],
+            Commentary: ['Insight', 'Digest', 'Signals', 'Lens', 'Talk', 'Brief', 'View', 'Voice', 'Report', 'Point']
+        };
+
+        const EXPANSION_DICT = {
+            Music: ['lofi', 'chill', 'jazz', 'piano', 'beats', 'cafe ambience', 'no vocals', 'focus', 'relaxing', 'study beats', 'background music', 'atmosphere', 'radio', 'playlist', 'instrumental', 'sleep', 'deep work', 'vibe', 'session', 'ambient'],
+            Tech: ['tutorial', 'setup', 'review', 'build', 'code', 'software', 'hardware', 'unboxing', 'tips', 'tricks', 'how to', 'beginner guide', 'pro tips', 'troubleshooting', 'tech news', 'workflow', 'dev', 'engineering', 'gadgets', 'ai'],
+            Gaming: ['walkthrough', 'gameplay', 'build', 'meta', 'ranked', 'quest', 'arena', 'stream', 'highlights', 'esports', 'tips', 'boss fight', 'secrets', 'speedrun', 'level up', 'pro', 'multiplayer', 'rpg', 'fps', 'mods'],
+            Education: ['lesson', 'explained', 'course', 'academy', 'whiteboard', 'facts', 'science', 'history', 'math', 'summary', 'classroom', 'growth', 'skill', 'learning', 'knowledge', 'primer', 'handbook', 'tips', 'study', 'expert'],
+            Entertainment: ['funny', 'reaction', 'moments', 'challenge', 'vlogs', 'compilation', 'viral', 'comedy', 'parody', 'shorts', 'clips', 'pop culture', 'movies', 'celebrities', 'satire', 'trending', 'fails', 'win', 'top 10', 'stories'],
+            Lifestyle: ['routine', 'vlog', 'home', 'decor', 'craft', 'diy', 'minimalism', 'healthy', 'workout', 'food', 'travel', 'diary', 'morning', 'aesthetic', 'life hacks', 'hobby', 'slow living', 'journaling', 'tips', 'motivation'],
+            Commentary: ['review', 'opinion', 'essay', 'discussion', 'analysis', 'verdict', 'drama', 'news', 'report', 'debate', 'truth', 'insights', 'breakdown', 'summary', 'deep dive', 'culture', 'response', 'trends', 'critique', 'politics']
         };
 
         const STORAGE_KEYS = {
             cat: 'branding.category',
             kw: 'branding.keywords',
-            lang: 'branding.lang',
             tone: 'branding.tone',
             name: 'branding.selectedName',
-            desc: 'branding.desc'
+            desc: 'branding.descOutput',
+            kwsJson: 'branding.suggestedKeywords',
+            tagsJson: 'branding.suggestedHashtags'
         };
 
-        let selectedName = "";
+        let currentName = "";
 
         document.addEventListener('DOMContentLoaded', () => {
             const sr = (id) => document.getElementById(id);
             sr('cat-select').value = localStorage.getItem(STORAGE_KEYS.cat) || 'Entertainment';
             sr('keyword-input').value = localStorage.getItem(STORAGE_KEYS.kw) || '';
-            const savedLang = localStorage.getItem(STORAGE_KEYS.lang);
-            if(savedLang) document.querySelector(`input[name="lang"][value="${savedLang}"]`).checked = true;
             const savedTone = localStorage.getItem(STORAGE_KEYS.tone);
             if(savedTone) document.querySelector(`input[name="tone"][value="${savedTone}"]`).checked = true;
+
+            const prevName = localStorage.getItem(STORAGE_KEYS.name);
+            if(prevName) {
+                currentName = prevName;
+                generateNames(false); // Restore UI
+                restoreAssets();
+            }
         });
 
-        function generateNames() {
+        function generateNames(isNew = true) {
             const cat = document.getElementById('cat-select').value;
             const concept = document.getElementById('keyword-input').value.trim();
-            const lang = document.querySelector('input[name="lang"]:checked').value;
-            
-            if (!concept) return alert('Please enter keywords or a concept');
+            if (!concept) return alert('Enter keywords');
 
-            localStorage.setItem(STORAGE_KEYS.cat, cat);
-            localStorage.setItem(STORAGE_KEYS.kw, concept);
-            localStorage.setItem(STORAGE_KEYS.lang, lang);
-
-            const baseWord = concept.split(' ')[0];
-            const cleanBase = baseWord.charAt(0).toUpperCase() + baseWord.slice(1);
-            
-            let names = new Set();
-            const enPool = CATEGORY_MAP[cat].en;
-            const koPool = CATEGORY_MAP[cat].ko;
-
-            while (names.size < 10) {
-                let name = "";
-                const randomEn = enPool[Math.floor(Math.random() * enPool.length)];
-                const randomKo = koPool[Math.floor(Math.random() * koPool.length)];
-
-                if (lang === 'en') {
-                    name = Math.random() > 0.5 ? `${cleanBase} ${randomEn}` : `${randomEn} ${cleanBase}`;
-                } else if (lang === 'ko') {
-                    name = `${cleanBase}${randomKo}`;
-                } else {
-                    name = Math.random() > 0.5 ? `${cleanBase} ${randomEn}` : `${cleanBase}${randomKo}`;
-                }
-
-                // Length normalization (10-20ish)
-                if (name.length > 22) name = name.substring(0, 20);
-                if (name.length < 8) name = name + " Channel";
-
-                names.add(name);
+            if(isNew) {
+                localStorage.setItem(STORAGE_KEYS.cat, cat);
+                localStorage.setItem(STORAGE_KEYS.kw, concept);
+                currentName = "";
             }
 
-            renderNameList(Array.from(names));
-        }
+            const base = concept.split(' ')[0].charAt(0).toUpperCase() + concept.split(' ')[0].slice(1).toLowerCase();
+            let names = new Set();
+            const pool = SUFFIXES[cat];
 
-        function renderNameList(list) {
+            while(names.size < 10) {
+                const suffix = pool[Math.floor(Math.random() * pool.length)];
+                let n = Math.random() > 0.5 ? `${base} ${suffix}` : `${suffix} ${base}`;
+                if(n.length > 22) n = n.substring(0, 20);
+                names.add(n);
+            }
+
             document.getElementById('placeholder').style.display = 'none';
-            const root = document.getElementById('names-root');
-            root.style.display = 'block';
+            document.getElementById('names-root').style.display = 'block';
             const container = document.getElementById('names-list');
             container.innerHTML = '';
 
-            list.forEach(name => {
+            Array.from(names).forEach(name => {
                 const item = document.createElement('div');
-                item.className = 'name-suggestion-item';
-                item.innerHTML = `
-                    <span class="name-text">${name}</span>
-                    <div style="display:flex; gap:8px;">
-                        <button onclick="copyValue('${name.replace(/'/g, "'")}')" class="btn-outline" style="height:32px; font-size:0.75rem; margin:0; padding:0 10px;">Copy</button>
-                        <button onclick="selectName('${name.replace(/'/g, "'")}', this)" class="btn-primary" style="height:32px; font-size:0.75rem; margin:0; padding:0 12px;">Use</button>
-                    </div>
-                `;
+                item.className = `name-suggestion-item ${name === currentName ? 'active' : ''}`;
+                item.innerHTML = `<span class="name-text">${name}</span><span style="font-size:0.8rem; opacity:0.5;">Select Assets →</span>`;
+                item.onclick = () => selectBrand(name, item);
                 container.appendChild(item);
             });
         }
 
-        function selectName(name, btn) {
-            selectedName = name;
+        function selectBrand(name, el) {
+            currentName = name;
             localStorage.setItem(STORAGE_KEYS.name, name);
-            document.querySelectorAll('.name-suggestion-item').forEach(el => el.classList.remove('selected'));
-            btn.closest('.name-suggestion-item').classList.add('selected');
+            document.querySelectorAll('.name-suggestion-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
             
-            document.getElementById('desc-box').style.display = 'block';
-            generateDescription();
-            window.scrollTo({ top: document.getElementById('desc-box').offsetTop - 100, behavior: 'smooth' });
+            document.getElementById('brand-assets-box').style.display = 'block';
+            
+            const cat = document.getElementById('cat-select').value;
+            const concept = document.getElementById('keyword-input').value;
+            const tone = document.querySelector('input[name="tone"]:checked').value;
+
+            generateFullAssets(name, cat, concept, tone);
+            window.scrollTo({ top: document.getElementById('brand-assets-box').offsetTop - 100, behavior: 'smooth' });
         }
 
-        function generateDescription() {
-            if (!selectedName) return;
+        function generateFullAssets(name, cat, concept, tone) {
+            // 1. Description
+            const desc = buildDescription(name, cat, concept, tone);
+            document.getElementById('desc-output').value = desc;
+            localStorage.setItem(STORAGE_KEYS.desc, desc);
+            updateCharCount();
+
+            // 2. Keywords
+            const keywords = buildKeywords(cat, concept);
+            renderChips('kw-list', keywords);
+            localStorage.setItem(STORAGE_KEYS.kwsJson, JSON.stringify(keywords));
+
+            // 3. Hashtags
+            const hashtags = buildHashtags(keywords, cat);
+            renderChips('tag-list', hashtags, true);
+            localStorage.setItem(STORAGE_KEYS.tagsJson, JSON.stringify(hashtags));
+        }
+
+        function buildDescription(name, cat, kw, tone) {
+            const hook = {
+                safe: `Welcome to ${name}. We provide high-quality ${kw} content for our community.`,
+                energetic: `Get ready for the best ${kw} action on ${name}! Smash subscribe for more!`,
+                calm: `Discover a peaceful space for ${kw} at ${name}. A curated experience for you.`,
+                premium: `The official home of premium ${kw}. Welcome to the ${name} channel.`
+            }[tone];
+
+            const body = `Our channel is dedicated to exploring ${cat} through the lens of ${kw}. We bring you unique perspectives, in-depth analysis, and consistent updates to keep you informed and entertained. Join us as we grow this community together.`;
+            const cta = tone === 'energetic' ? "Don't miss out - subscribe and turn on notifications!" : "Subscribe to stay updated with our latest releases.";
+            
+            let res = `${hook}\n\n${body}\n\n${cta}`;
+            while(res.length < 450) res += " We value every subscriber and look forward to hearing your thoughts in the comments.";
+            return res.length > 550 ? res.substring(0, 547) + "..." : res;
+        }
+
+        function buildKeywords(cat, concept) {
+            const dict = EXPANSION_DICT[cat];
+            const base = concept.toLowerCase().split(/[\s,]+/)[0];
+            const seeds = [...new Set(dict.sort(() => 0.5 - Math.random()))];
+            
+            return [
+                base, seeds[0], // Head
+                `${base} ${seeds[1]}`, `${seeds[2]} ${base}`, `${seeds[3]} guide`, // Mid
+                `${base} for beginners 2026`, `best ${base} ${cat} tips`, `how to master ${base}` // Long
+            ].slice(0, 8);
+        }
+
+        function buildHashtags(kws, cat) {
+            const baseTag = "#" + { Music: 'lofi', Tech: 'howto', Education: 'learning', Gaming: 'gaming', Lifestyle: 'lifestyle', Commentary: 'commentary', Entertainment: 'entertainment' }[cat];
+            const derived = kws.slice(0, 4).map(k => "#" + k.replace(/\s+/g, '').toLowerCase());
+            return [...new Set([baseTag, ...derived])].slice(0, 5);
+        }
+
+        function renderChips(id, items, isTag = false) {
+            const container = document.getElementById(id);
+            container.innerHTML = items.map(item => `<div class="chip ${isTag ? 'tag' : ''}" onclick="addKeywordToInput('${item}')">${item}</div>`).join('');
+        }
+
+        function addKeywordToInput(val) {
+            const input = document.getElementById('keyword-input');
+            const clean = val.replace(/^#/, '');
+            if(!input.value.includes(clean)) {
+                input.value += (input.value ? ", " : "") + clean;
+            }
+        }
+
+        function restoreAssets() {
+            document.getElementById('brand-assets-box').style.display = 'block';
+            document.getElementById('desc-output').value = localStorage.getItem(STORAGE_KEYS.desc) || "";
+            renderChips('kw-list', JSON.parse(localStorage.getItem(STORAGE_KEYS.kwsJson) || "[]"));
+            renderChips('tag-list', JSON.parse(localStorage.getItem(STORAGE_KEYS.tagsJson) || "[]"), true);
+            updateCharCount();
+        }
+
+        function regenerateDescription() {
+            if(!currentName) return;
             const cat = document.getElementById('cat-select').value;
             const kw = document.getElementById('keyword-input').value;
             const tone = document.querySelector('input[name="tone"]:checked').value;
-
-            const intros = {
-                safe: `Welcome to ${selectedName}! We are dedicated to bringing you the best ${kw} content.`,
-                energetic: `Ready to level up? ${selectedName} is your go-to source for high-energy ${kw} action!`,
-                calm: `Find your peace at ${selectedName}. A curated space for thoughtful ${kw} explorations.`,
-                premium: `Discover the gold standard of ${kw}. Welcome to the official ${selectedName} experience.`
-            };
-
-            const values = [
-                `Our channel focuses on quality and consistency in the ${cat} niche.`,
-                `We believe that ${kw} can truly change your perspective and workflow.`,
-                `Every video is designed to provide maximum value to our community.`,
-                `Join thousands of subscribers who are passionate about ${kw} and growth.`
-            ];
-
-            const ctas = {
-                safe: `Subscribe to stay updated with our weekly releases.`,
-                energetic: `HIT THAT SUBSCRIBE BUTTON and join the notification squad!`,
-                calm: `If you appreciate our content, consider subscribing for a quieter journey.`,
-                premium: `Join our exclusive circle of viewers by subscribing today.`
-            };
-
-            let output = `${intros[tone]}
-
-${values.join(' ')}
-
-${ctas[tone]}`;
-            
-            // Length Padding
-            const filler = " Whether you are a beginner or a seasoned pro, our goal is to build a community where everyone can learn and share their passion for this amazing topic.";
-            while (output.length < 450) output += filler;
-            if (output.length > 550) output = output.substring(0, 547) + "...";
-
-            const textarea = document.getElementById('desc-output');
-            textarea.value = output;
+            const desc = buildDescription(currentName, cat, kw, tone);
+            document.getElementById('desc-output').value = desc;
+            localStorage.setItem(STORAGE_KEYS.desc, desc);
             updateCharCount();
-            generateTags(kw);
-            localStorage.setItem(STORAGE_KEYS.desc, output);
         }
 
-        function generateTags(kw) {
-            const tags = kw.toLowerCase().split(/\s+/).filter(w => w.length > 2).slice(0, 5);
-            const list = document.getElementById('tag-list');
-            list.innerHTML = tags.map(t => `<span class="tag-pill">#${t}</span>`).join('') + 
-                             `<span class="tag-pill">#${document.getElementById('cat-select').value.toLowerCase()}</span>`;
+        function copyKeywords() {
+            const kws = JSON.parse(localStorage.getItem(STORAGE_KEYS.kwsJson) || "[]").join(', ');
+            navigator.clipboard.writeText(kws).then(() => showToast());
         }
 
-        function updateCharCount() {
-            const val = document.getElementById('desc-output').value;
-            document.getElementById('char-count').innerText = `${val.length} chars`;
-        }
-
-        function copyValue(val) {
-            navigator.clipboard.writeText(val).then(() => showToast());
+        function copyHashtags() {
+            const tags = JSON.parse(localStorage.getItem(STORAGE_KEYS.tagsJson) || "[]").join(' ');
+            navigator.clipboard.writeText(tags).then(() => showToast());
         }
 
         function copyText(id) {
-            const val = document.getElementById(id).value;
-            navigator.clipboard.writeText(val).then(() => showToast());
+            navigator.clipboard.writeText(document.getElementById(id).value).then(() => showToast());
         }
 
         function showToast() {
             const t = document.getElementById('copy-toast');
             t.style.display = 'block';
             setTimeout(() => t.style.display = 'none', 2000);
+        }
+
+        function updateCharCount() {
+            document.getElementById('char-count').innerText = `${document.getElementById('desc-output').value.length} chars`;
         }
 
         document.getElementById('desc-output').oninput = updateCharCount;
