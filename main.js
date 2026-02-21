@@ -90,13 +90,11 @@ function registerWebComponents() {
                     
                     <nav class="nav-center">
                         <ul class="nav-links-list">
-                            <li><a href="/index.html#tools" class="${activePath.includes('tools') && !activePath.includes('earnings') ? 'active' : ''}">Tools</a></li>
-                            <li><a href="/tools/earnings-calculator.html" class="${activePath.includes('earnings') ? 'active' : ''}">Earnings</a></li>
-                            <li><a href="/tools/thumbnail-copy-generator.html" class="${activePath.includes('thumbnail-copy') ? 'active' : ''}">Copy Gen</a></li>
-                            <li><a href="/tools/description-generator.html" class="${activePath.includes('description-generator') ? 'active' : ''}">Desc Gen</a></li>
-                            <li><a href="/tools/channel-branding-generator.html" class="${activePath.includes('channel-branding') ? 'active' : ''}">Branding</a></li>
-                            <li><a href="/index.html#guides" class="${activePath.includes('guides') ? 'active' : ''}">Guides</a></li>
+                            <li><a href="/tools.html" class="${activePath.includes('tools') ? 'active' : ''}">Tools</a></li>
+                            <li><a href="/guides.html" class="${activePath.includes('guides') ? 'active' : ''}">Guides</a></li>
                             <li><a href="/about.html" class="${activePath === '/about.html' ? 'active' : ''}">About</a></li>
+                            <li><a href="/privacy.html" class="${activePath === '/privacy.html' ? 'active' : ''}">Privacy</a></li>
+                            <li><a href="/terms.html" class="${activePath === '/terms.html' ? 'active' : ''}">Terms</a></li>
                         </ul>
                     </nav>
 
@@ -104,7 +102,7 @@ function registerWebComponents() {
                         <button class="theme-toggle" onclick="toggleTheme()">
                             <span class="theme-icon">${icon}</span><span class="theme-label">${text}</span>
                         </button>
-                        <a href="/index.html#tools" class="btn-primary start-btn">Start Creating</a>
+                        <a href="/tools.html" class="btn-primary start-btn">Start Creating</a>
                         <button class="mobile-menu-btn">☰</button>
                     </div>
                 </div>
@@ -188,8 +186,10 @@ function registerWebComponents() {
                             <p style="margin-top:1rem; color:var(--text-secondary);">Master the algorithm with AI tools.</p>
                         </div>
                         <div class="footer-links">
-                            <a href="/privacy-policy.html">Privacy</a>
+                            <a href="/privacy.html">Privacy</a>
                             <a href="/terms.html">Terms</a>
+                            <a href="/about.html">About</a>
+                            <a href="/guides.html">Guides</a>
                         </div>
                     </div>
                 </div>
