@@ -6,15 +6,16 @@
     <title>Thumbnail Editor - CreatorToolkit</title>
     <link rel="stylesheet" href="/assets/styles/base.css">
     <link rel="stylesheet" href="/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=Montserrat:wght@900&family=Poppins:wght@900&family=Roboto:wght@900&family=Impact&family=Noto+Sans+KR:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=Montserrat:wght@400;900&family=Poppins:wght@400;900&family=Roboto:wght@400;900&family=Anton&family=Bebas+Neue&family=Oswald:wght@400;700&family=Open+Sans:wght@800&family=Playfair+Display:wght@900&family=Space+Grotesk:wght@700&family=Manrope:wght@800&family=Noto+Sans+KR:wght@400;900&family=Nanum+Gothic:wght@800&family=Gowun+Dodum&display=swap" rel="stylesheet">
     <style>
         .tool-layout { display: grid; grid-template-columns: 1fr 380px; gap: 2rem; align-items: start; }
         .workspace-premium { 
-            background: var(--slate-900); border-radius: var(--radius-lg); 
+            background: #1e293b; border-radius: var(--radius-lg); 
             display: flex; align-items: center; justify-content: center; 
-            position: relative; overflow: hidden; height: 600px; border: 4px solid var(--slate-800);
+            position: relative; overflow: auto; height: 600px; border: 4px solid var(--slate-800);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
         }
-        .canvas-container { position: relative; width: 1280px; height: 720px; background: #000; zoom: 0.4; }
+        .canvas-container { position: relative; width: 1280px; height: 720px; background: #000; zoom: 0.4; box-shadow: 0 0 30px rgba(0,0,0,0.3); }
         #bg-preview { width: 100%; height: 100%; object-fit: cover; }
         
         @media (max-width: 1024px) {
@@ -23,10 +24,43 @@
             .canvas-container { zoom: 0.25; }
         }
 
-        .sidebar-premium { position: sticky; top: 100px; }
-        .text-layer { position: absolute; cursor: move; user-select: none; white-space: nowrap; padding: 10px; border: 2px solid transparent; }
-        .text-layer.selected { border: 2px dashed var(--brand-red); background: rgba(225, 29, 72, 0.1); }
+        .sidebar-premium { position: sticky; top: 100px; max-height: calc(100vh - 120px); overflow-y: auto; padding-right: 4px; }
+        .sidebar-premium::-webkit-scrollbar { width: 6px; }
+        .sidebar-premium::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 10px; }
+
+        /* Layers UI */
+        .text-layer { 
+            position: absolute; cursor: move; user-select: none; white-space: nowrap; 
+            padding: 10px; border: 2px solid transparent; transform-origin: center center;
+        }
+        .text-layer.selected { border: 2px dashed var(--brand-red); background: rgba(225, 29, 72, 0.05); }
+
+        /* Resizer Handles */
+        .resizer { position: absolute; width: 10px; height: 10px; background: var(--brand-red); border: 2px solid white; border-radius: 50%; display: none; z-index: 10; }
+        .text-layer.selected .resizer { display: block; }
+        .resizer.nw { top: -5px; left: -5px; cursor: nw-resize; }
+        .resizer.ne { top: -5px; right: -5px; cursor: ne-resize; }
+        .resizer.sw { bottom: -5px; left: -5px; cursor: sw-resize; }
+        .resizer.se { bottom: -5px; right: -5px; cursor: se-resize; }
         
+        .rotator { 
+            position: absolute; top: -35px; left: 50%; transform: translateX(-50%); 
+            width: 24px; height: 24px; background: white; border: 2px solid var(--brand-red); 
+            border-radius: 50%; display: none; cursor: crosshair; z-index: 10;
+            align-items: center; justify-content: center; font-size: 12px;
+        }
+        .text-layer.selected .rotator { display: flex; }
+
+        /* Drop Zone UI */
+        .bg-upload-zone {
+            border: 2px dashed var(--slate-300); border-radius: 12px; padding: 2rem 1rem;
+            text-align: center; cursor: pointer; transition: all 0.2s; background: var(--slate-50);
+            position: relative; margin-bottom: 1rem;
+        }
+        .bg-upload-zone:hover { border-color: var(--brand-red); background: var(--brand-red-soft); }
+        .bg-upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+        .bg-file-name { font-size: 0.75rem; color: var(--slate-500); margin-top: 0.5rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+
         #export-canvas { display: none; }
     </style>
 </head>
@@ -35,13 +69,13 @@
 
     <main class="section bg-soft">
         <div class="container">
-            <div style="margin-bottom: 3rem;">
-                <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Thumbnail Editor</h1>
-                <p>Create professional, high-CTR thumbnails directly in your browser.</p>
+            <div style="margin-bottom: 3rem; display: flex; justify-content: space-between; align-items: flex-end;">
+                <div>
+                    <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; letter-spacing: -0.02em;">Thumbnail Maker</h1>
+                    <p style="color: var(--slate-600);">Professional layer-based editor for high-CTR thumbnails.</p>
+                </div>
+                <div class="badge-premium" style="margin-bottom: 0;">2026 Pro Edition</div>
             </div>
-
-            <!-- Top Ad Slot -->
-            <div class="ad-slot ad-728x90 ad-responsive" style="margin-bottom: 2rem;"></div>
 
             <div class="tool-layout">
                 <!-- Left: Workspace -->
@@ -54,30 +88,54 @@
 
                 <!-- Right: Sidebar -->
                 <aside class="sidebar-premium">
-                    <div class="card-premium" style="padding: 1.5rem;">
-                        <div class="form-group">
-                            <label class="label-premium">Background Image</label>
-                            <input type="file" id="bg-upload" class="input-premium" accept="image/*">
+                    <div class="card-premium" style="padding: 1.5rem; border-radius: 20px;">
+                        <!-- Background Image Section -->
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label class="label-premium" style="display:flex; justify-content:space-between;">Background Image <small style="opacity:0.6;">1280x720 Rec.</small></label>
+                            <div class="bg-upload-zone" id="drop-zone">
+                                <span style="font-size: 1.5rem; display: block; margin-bottom: 0.5rem;">🖼️</span>
+                                <p style="font-size: 0.85rem; font-weight: 700;">Drop image here or click</p>
+                                <span class="bg-file-name" id="file-name">No file selected</span>
+                                <input type="file" id="bg-upload" accept="image/*">
+                            </div>
                         </div>
 
-                        <div id="edit-panel" style="display:none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--slate-200);">
+                        <div id="edit-panel" style="display:none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--slate-200); animation: fadeIn 0.3s ease;">
                             <div class="form-group">
                                 <label class="label-premium">Text Content</label>
-                                <input type="text" id="input-text" class="input-premium">
+                                <input type="text" id="input-text" class="input-premium" placeholder="Enter viral text...">
                             </div>
 
                             <div class="form-group">
                                 <label class="label-premium">Font Style</label>
-                                <select id="input-font" class="input-premium" style="margin-bottom: 0.75rem;">
-                                    <option value="Impact">Impact (Viral)</option>
-                                    <option value="Inter">Inter</option>
-                                    <option value="Montserrat">Montserrat</option>
-                                    <option value="Poppins">Poppins</option>
-                                    <option value="Noto Sans KR">Noto Sans KR</option>
+                                <select id="input-font" class="input-premium" style="margin-bottom: 0.75rem; font-weight: 700;">
+                                    <optgroup label="Viral (Bold)">
+                                        <option value="Impact">Impact (System)</option>
+                                        <option value="Anton">Anton (Viral)</option>
+                                        <option value="Bebas Neue">Bebas Neue</option>
+                                        <option value="Montserrat">Montserrat Black</option>
+                                        <option value="Poppins">Poppins Black</option>
+                                    </optgroup>
+                                    <optgroup label="Modern">
+                                        <option value="Inter">Inter</option>
+                                        <option value="Roboto">Roboto</option>
+                                        <option value="Space Grotesk">Space Grotesk</option>
+                                        <option value="Manrope">Manrope</option>
+                                    </optgroup>
+                                    <optgroup label="Classic/KR">
+                                        <option value="Noto Sans KR">Noto Sans KR</option>
+                                        <option value="Nanum Gothic">Nanum Gothic</option>
+                                        <option value="Gowun Dodum">Gowun Dodum</option>
+                                        <option value="Playfair Display">Playfair Display</option>
+                                    </optgroup>
                                 </select>
+                                <p style="font-size: 0.65rem; color: var(--slate-500); margin-bottom: 0.75rem;">* All fonts are free/open-license (Google Fonts)</p>
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                                    <input type="number" id="input-size" class="input-premium" value="120">
-                                    <input type="color" id="input-color" class="input-premium" style="height:44px; padding:2px;">
+                                    <div style="position:relative;">
+                                        <span style="position:absolute; left:12px; top:12px; font-size:0.7rem; font-weight:800; opacity:0.4;">SIZE</span>
+                                        <input type="number" id="input-size" class="input-premium" value="120" style="padding-left:45px;">
+                                    </div>
+                                    <input type="color" id="input-color" class="input-premium" style="height:44px; padding:4px; border-radius:12px; cursor:pointer;">
                                 </div>
                             </div>
 
@@ -118,42 +176,89 @@
         let selectedId = null;
         const root = document.getElementById('layers-root');
         const bgImg = document.getElementById('bg-preview');
+        const zoom = 0.4;
 
-        document.getElementById('bg-upload').onchange = (e) => {
-            const file = e.target.files[0];
+        // Background Upload Logic
+        const bgInput = document.getElementById('bg-upload');
+        const fileNameDisp = document.getElementById('file-name');
+        
+        bgInput.onchange = (e) => handleBgFile(e.target.files[0]);
+        
+        function handleBgFile(file) {
             if(file) {
+                fileNameDisp.innerText = file.name;
                 const reader = new FileReader();
                 reader.onload = (f) => bgImg.src = f.target.result;
                 reader.readAsDataURL(file);
             }
+        }
+
+        // Drag & Drop for Background
+        const dropZone = document.getElementById('drop-zone');
+        dropZone.ondragover = (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--brand-red)'; };
+        dropZone.ondragleave = () => { dropZone.style.borderColor = ''; };
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '';
+            handleBgFile(e.dataTransfer.files[0]);
         };
 
         function addTextLayer() {
             const id = Date.now();
             layers.push({
-                id, text: 'VIRAL TITLE', x: 100, y: 100,
-                size: 120, font: 'Impact', color: '#ffffff',
-                bold: true, italic: false, strokeColor: '#000000', strokeWidth: 8,
-                zIndex: layers.length
+                id, text: 'VIRAL TITLE', x: 200, y: 200,
+                size: 100, font: 'Anton', color: '#ffffff',
+                bold: true, italic: false, strokeColor: '#000000', strokeWidth: 10,
+                rotation: 0, zIndex: layers.length
             });
             render();
             selectLayer(id);
         }
 
-        function render() {
+        async function render() {
             root.innerHTML = '';
-            layers.sort((a,b) => a.zIndex - b.zIndex).forEach(l => {
+            for (const l of layers.sort((a,b) => a.zIndex - b.zIndex)) {
+                const isSelected = l.id === selectedId;
                 const div = document.createElement('div');
-                div.className = `text-layer ${l.id === selectedId ? 'selected' : ''}`;
+                div.className = `text-layer ${isSelected ? 'selected' : ''}`;
+                div.id = `layer-${l.id}`;
                 div.innerText = l.text;
+                
+                // Ensure font is loaded before measuring or rendering
+                await document.fonts.load(`${l.size}px "${l.font}"`);
+
                 div.style.cssText = `
-                    left:${l.x}px; top:${l.y}px; font-size:${l.size}px; font-family:'${l.font}';
-                    color:${l.color}; font-weight:${l.bold?'900':'400'}; font-style:${l.italic?'italic':'normal'};
-                    -webkit-text-stroke:${l.strokeWidth}px ${l.strokeColor}; z-index:${l.zIndex};
+                    left:${l.x}px; top:${l.y}px; font-size:${l.size}px; font-family:'${l.font}', Impact, sans-serif;
+                    color:${l.color}; font-weight:900;
+                    -webkit-text-stroke:${l.strokeWidth}px ${l.strokeColor}; 
+                    z-index:${l.zIndex};
+                    transform: rotate(${l.rotation}deg);
                 `;
-                div.onmousedown = (e) => { selectLayer(l.id); startDrag(e, l); };
+
+                if (isSelected) {
+                    // Add Resizers
+                    ['nw','ne','sw','se'].forEach(pos => {
+                        const resizer = document.createElement('div');
+                        resizer.className = `resizer ${pos}`;
+                        resizer.onmousedown = (e) => { e.stopPropagation(); startResize(e, l, pos); };
+                        div.appendChild(resizer);
+                    });
+
+                    // Add Rotator
+                    const rotator = document.createElement('div');
+                    rotator.className = 'rotator';
+                    rotator.innerHTML = '🔄';
+                    rotator.onmousedown = (e) => { e.stopPropagation(); startRotate(e, l); };
+                    div.appendChild(rotator);
+                }
+
+                div.onmousedown = (e) => { 
+                    if(e.target.className.includes('resizer') || e.target.className.includes('rotator')) return;
+                    selectLayer(l.id); 
+                    startDrag(e, l); 
+                };
                 root.appendChild(div);
-            });
+            }
         }
 
         function selectLayer(id) {
@@ -174,11 +279,45 @@
         function startDrag(e, l) {
             const startX = e.clientX; const startY = e.clientY;
             const initX = l.x; const initY = l.y;
-            const zoom = 0.4; 
 
             function move(ev) {
                 l.x = initX + (ev.clientX - startX) / zoom;
                 l.y = initY + (ev.clientY - startY) / zoom;
+                render();
+            }
+            function stop() { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop); }
+            window.addEventListener('mousemove', move);
+            window.addEventListener('mouseup', stop);
+        }
+
+        function startResize(e, l, pos) {
+            const startX = e.clientX;
+            const initSize = l.size;
+            const initX = l.x;
+            const initY = l.y;
+
+            function move(ev) {
+                const diff = (ev.clientX - startX) / zoom;
+                const newSize = pos.includes('e') ? initSize + diff : initSize - diff;
+                l.size = Math.max(20, Math.min(500, newSize));
+                render();
+            }
+            function stop() { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop); }
+            window.addEventListener('mousemove', move);
+            window.addEventListener('mouseup', stop);
+        }
+
+        function startRotate(e, l) {
+            const el = document.getElementById(`layer-${l.id}`);
+            const rect = el.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            function move(ev) {
+                const angle = Math.atan2(ev.clientY - centerY, ev.clientX - centerX);
+                let deg = angle * (180 / Math.PI) + 90;
+                if(ev.shiftKey) deg = Math.round(deg / 15) * 15;
+                l.rotation = deg;
                 render();
             }
             function stop() { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop); }
@@ -203,24 +342,49 @@
         function changeZ(v) { const l = layers.find(x => x.id === selectedId); if(l) { l.zIndex += v; render(); } }
         function deleteLayer() { layers = layers.filter(x => x.id !== selectedId); selectedId = null; render(); selectLayer(null); }
 
-        function exportPNG() {
+        async function exportPNG() {
             const canvas = document.getElementById('export-canvas');
             const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0,0,1280,720);
             ctx.drawImage(bgImg, 0, 0, 1280, 720);
-            layers.sort((a,b) => a.zIndex - b.zIndex).forEach(l => {
-                ctx.font = `${l.italic?'italic ':''}${l.bold?'900 ':'400 '}${l.size}px ${l.font}`;
-                ctx.textBaseline = 'top';
+
+            for (const l of layers.sort((a,b) => a.zIndex - b.zIndex)) {
+                await document.fonts.load(`${l.size}px "${l.font}"`);
+                ctx.save();
+                
+                // Set font style
+                ctx.font = `900 ${l.size}px "${l.font}", Impact, sans-serif`;
+                ctx.textBaseline = 'middle';
+                ctx.textAlign = 'center';
+
+                // Measure text for proper centering during rotation
+                const metrics = ctx.measureText(l.text);
+                const textWidth = metrics.width;
+                const textHeight = l.size * 0.8; // Approximate height
+
+                // Transform: Move to center of text layer position
+                ctx.translate(l.x + textWidth/2, l.y + textHeight/2);
+                ctx.rotate(l.rotation * Math.PI / 180);
+
                 if(l.strokeWidth > 0) {
                     ctx.strokeStyle = l.strokeColor;
                     ctx.lineWidth = l.strokeWidth * 2;
-                    ctx.strokeText(l.text, l.x, l.y);
+                    ctx.lineJoin = 'round';
+                    ctx.strokeText(l.text, 0, 0);
                 }
+                
                 ctx.fillStyle = l.color;
-                ctx.fillText(l.text, l.x, l.y);
-            });
+                ctx.fillText(l.text, 0, 0);
+                
+                ctx.restore();
+            }
+
             const link = document.createElement('a');
-            link.download = 'thumbnail.png';
-            link.href = canvas.toDataURL();
+            link.download = `thumbnail-${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png', 1.0);
             link.click();
         }
     </script>

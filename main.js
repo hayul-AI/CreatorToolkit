@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function initTheme() {
     const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-    updateThemeToggleUI(savedTheme);
+    // Ensure UI is updated after web components might have rendered
+    setTimeout(() => updateThemeToggleUI(savedTheme), 0);
 }
 
 function toggleTheme() {
@@ -20,7 +21,9 @@ function toggleTheme() {
 function updateThemeToggleUI(theme) {
     const toggles = document.querySelectorAll('.theme-toggle');
     toggles.forEach(btn => {
-        btn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
+        const icon = theme === 'dark' ? '☀️' : '🌙';
+        const text = theme === 'dark' ? 'Light' : 'Dark';
+        btn.innerHTML = `<span class="theme-icon">${icon}</span><span class="theme-label">${text}</span>`;
     });
 }
 
@@ -41,19 +44,27 @@ function registerWebComponents() {
     class CreatorHeader extends HTMLElement {
         connectedCallback() {
             const activePath = window.location.pathname;
+            const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            const icon = currentTheme === 'dark' ? '☀️' : '🌙';
+            const text = currentTheme === 'dark' ? 'Light' : 'Dark';
+
             this.innerHTML = `
             <header class="header-main">
                 <div class="container header-container">
                     <nav class="nav-main">
                         <a href="/index.html" class="logo">CreatorToolkit<span class="text-red">.</span></a>
+                        
                         <ul class="nav-links">
                             <li><a href="/index.html#tools" class="${activePath.includes('tools') ? 'active' : ''}">Tools</a></li>
                             <li><a href="/index.html#guides" class="${activePath.includes('guides') ? 'active' : ''}">Guides</a></li>
                             <li><a href="/about.html" class="${activePath === '/about.html' ? 'active' : ''}">About</a></li>
                         </ul>
+
                         <div class="nav-actions">
-                            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
-                            <a href="/index.html#tools" class="btn-primary" style="height:38px;">Start Creating</a>
+                            <button class="theme-toggle" onclick="toggleTheme()">
+                                <span class="theme-icon">${icon}</span><span class="theme-label">${text}</span>
+                            </button>
+                            <a href="/index.html#tools" class="btn-primary start-btn">Start Creating</a>
                             <button class="mobile-menu-btn">☰</button>
                         </div>
                     </nav>
@@ -64,26 +75,47 @@ function registerWebComponents() {
                     height: 72px; background: var(--bg-primary); border-bottom: 1px solid var(--border-color); 
                     position: sticky; top: 0; z-index: 1000; display: flex; align-items: center;
                 }
+                .header-container { width: 100%; }
                 .nav-main { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-                .logo { font-size: 1.4rem; font-weight: 800; color: var(--text-primary); }
+                .logo { font-size: 1.4rem; font-weight: 800; color: var(--text-primary); flex-shrink: 0; }
                 .text-red { color: var(--brand-red); }
+                
                 .nav-links { display: flex; gap: 2rem; list-style: none; margin: 0; padding: 0; }
                 .nav-links a { color: var(--text-secondary); font-weight: 600; font-size: 0.95rem; transition: 0.2s; }
                 .nav-links a:hover, .nav-links a.active { color: var(--brand-red); }
-                .nav-actions { display: flex; align-items: center; gap: 1rem; }
+                
+                .nav-actions { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+                
                 .theme-toggle { 
-                    background: var(--bg-secondary); border: none; width: 38px; height: 38px; 
-                    border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-                    font-size: 1.1rem; color: var(--text-primary);
+                    display: inline-flex; align-items: center; gap: 8px;
+                    background: var(--bg-secondary); border: 1px solid var(--border-color); 
+                    height: 40px; padding: 0 14px; border-radius: 999px; cursor: pointer; 
+                    transition: all 0.2s; color: var(--text-primary); font-weight: 600; font-size: 13px;
                 }
+                .theme-toggle:hover { background: var(--border-color); box-shadow: var(--shadow-sm); }
+                .theme-icon { font-size: 16px; line-height: 1; }
+
+                .start-btn { height: 40px; font-size: 13px; }
+
                 .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.5rem; color: var(--text-primary); cursor: pointer; }
+
+                @media (max-width: 1024px) {
+                    .nav-links { gap: 1.25rem; }
+                }
+
                 @media (max-width: 768px) {
                     .nav-links { display: none; }
-                    .mobile-menu-btn { display: block; }
+                    .mobile-menu-btn { display: block; order: 3; }
                     .nav-links.active { 
                         display: flex; flex-direction: column; position: absolute; top: 72px; left: 0; width: 100%; 
                         background: var(--bg-primary); padding: 2rem; border-bottom: 1px solid var(--border-color); gap: 1.5rem;
                     }
+                }
+
+                @media (max-width: 480px) {
+                    .theme-label { display: none; }
+                    .theme-toggle { padding: 0 10px; width: 40px; justify-content: center; }
+                    .start-btn { display: none; }
                 }
             </style>
             `;
