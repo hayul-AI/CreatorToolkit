@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTR YouTube Title Generator - CreatorToolkit</title>
+    <title>Video Title Generator - CreatorToolkit</title>
     <meta name="description" content="Generate high-CTR, SEO-optimized YouTube titles instantly using our local psychological trigger engine.">
     <link rel="stylesheet" href="/style.css?v=20260221">
     <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
@@ -32,45 +32,49 @@
     <main style="padding: 5rem 0;">
         <div class="container">
             <div style="text-align: center; margin-bottom: 4rem;">
-                <h1 style="font-size: 3rem; letter-spacing: -0.02em; margin-bottom: 1rem;">CTR Title Generator</h1>
-                <p style="color: var(--text-secondary); font-size: 1.1rem;">AI-powered psychological triggers for maximum video growth.</p>
+                <h1 style="font-size: 3rem; letter-spacing: -0.02em; margin-bottom: 1rem;">Video Title Generator</h1>
+                <p style="color: var(--text-secondary); font-size: 1.1rem;">Professional psychological triggers for maximum video growth.</p>
             </div>
 
             <div class="generator-container">
                 <!-- Control Panel -->
                 <div class="input-card">
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Video Topic</label>
-                        <input type="text" id="topic-input" placeholder="e.g. Lo-fi study music, beginner guitar" style="width: 100%;">
-                    </div>
-
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Video Style</label>
-                        <select id="style-select" style="width: 100%;">
-                            <option value="Tutorial">Tutorial</option>
-                            <option value="Review">Review</option>
-                            <option value="Documentary">Documentary</option>
-                            <option value="Music">Music/Relaxing</option>
-                            <option value="Educational">Educational</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group" style="margin-bottom: 2rem;">
-                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Hook Intensity</label>
-                        <div class="radio-set">
-                            <input type="radio" name="intensity" id="int-safe" value="safe">
-                            <label for="int-safe">Safe</label>
-                            <input type="radio" name="intensity" id="int-balanced" value="balanced" checked>
-                            <label for="int-balanced">Balanced</label>
-                            <input type="radio" name="intensity" id="int-aggressive" value="aggressive">
-                            <label for="int-aggressive">Aggressive</label>
+                    <form id="generator-form" onsubmit="handleGenerate(event)">
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Video Topic</label>
+                            <input type="text" id="topic-input" placeholder="e.g. Lo-fi study music, beginner guitar" style="width: 100%;">
                         </div>
-                    </div>
 
-                    <button onclick="handleGenerate()" class="btn-primary" style="width: 100%; height: 52px; font-size: 1rem; margin: 0;">Analyze & Generate 🚀</button>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Video Style</label>
+                            <select id="style-select" style="width: 100%;">
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Education / Knowledge">Education / Knowledge</option>
+                                <option value="Tech / How-To">Tech / How-To</option>
+                                <option value="Gaming">Gaming</option>
+                                <option value="Music">Music</option>
+                                <option value="Lifestyle / Hobby">Lifestyle / Hobby</option>
+                                <option value="Commentary / Opinion">Commentary / Opinion</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 2rem;">
+                            <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Hook Intensity</label>
+                            <div class="radio-set">
+                                <input type="radio" name="intensity" id="int-safe" value="safe">
+                                <label for="int-safe">Safe</label>
+                                <input type="radio" name="intensity" id="int-balanced" value="balanced" checked>
+                                <label for="int-balanced">Balanced</label>
+                                <input type="radio" name="intensity" id="int-aggressive" value="aggressive">
+                                <label for="int-aggressive">Aggressive</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="width: 100%; height: 52px; font-size: 1rem; margin: 0;">Generate Ideas 🚀</button>
+                    </form>
                 </div>
 
-                <!-- AI Results Area -->
+                <!-- Results Area -->
                 <div id="ai-results-root">
                     <div id="ai-assistant-placeholder" style="text-align: center; padding: 5rem 0; color: var(--text-secondary); opacity: 0.5;">
                         <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🤖</span>
@@ -88,44 +92,52 @@
     <script src="/assets/js/aiEngine.js?v=20260221"></script>
     <script src="/main.js?v=20260221"></script>
     <script>
-        function handleGenerate() {
+        function handleGenerate(event) {
+            if (event) event.preventDefault();
+            
             const topic = document.getElementById('topic-input').value.trim();
-            if (!topic) return alert('Enter a topic');
+            if (!topic) {
+                document.getElementById('topic-input').focus();
+                return;
+            }
 
             const root = document.getElementById('ai-results-root');
             root.innerHTML = `
                 <div class="ai-panel">
                     <div class="ai-header">
-                        <h3 style="margin:0;">AI Suggestions</h3>
+                        <h3 style="margin:0;">Suggestions</h3>
                         <span class="ai-status analyzing">Analyzing topic...</span>
                     </div>
                     <div class="ai-gauge-container"><div class="ai-gauge-fill" id="ai-main-gauge"></div></div>
                     <ul id="ai-tips-summary" style="margin:0; padding:0; list-style:none; display:none;"></ul>
                 </div>
-                <div id="titles-list" class="results-container"></div>
+                <div id="titleResults" class="results-container"></div>
             `;
 
-            // Fake analysis delay
+            const progressBar = document.getElementById('ai-main-gauge');
+            const statusBadge = document.querySelector('.ai-status');
+
+            // Local simulation delay
             setTimeout(() => {
                 const style = document.getElementById('style-select').value;
                 const intensity = document.querySelector('input[name="intensity"]:checked').value;
                 
-                const titles = aiEngine.generateTitles(topic, style, intensity);
+                const titles = aiEngine.generateTitles(topic, style, intensity, 10);
                 const bestTitle = titles[0];
                 const score = aiEngine.scoreTitle(bestTitle, topic);
                 const tips = aiEngine.getTips(bestTitle, score);
 
-                // Update Assistant Panel
-                document.querySelector('.ai-status').className = 'ai-status ready';
-                document.querySelector('.ai-status').innerText = 'Ready';
-                document.getElementById('ai-main-gauge').style.width = `${score}%`;
+                // Update Panel
+                statusBadge.className = 'ai-status ready';
+                statusBadge.innerText = 'Done';
+                progressBar.style.width = `${score}%`;
                 
                 const tipsList = document.getElementById('ai-tips-summary');
                 tipsList.style.display = 'block';
                 tipsList.innerHTML = tips.map(t => `<li style="margin-bottom:8px; font-size:0.9rem; color:var(--text-secondary);">• ${t}</li>`).join('');
 
-                // Render Cards
-                const list = document.getElementById('titles-list');
+                // Render Results
+                const list = document.getElementById('titleResults');
                 titles.forEach((t, i) => {
                     const cardScore = aiEngine.scoreTitle(t, topic);
                     const card = document.createElement('div');
@@ -140,7 +152,7 @@
                     `;
                     list.appendChild(card);
                 });
-            }, 400);
+            }, 300);
         }
 
         function copyTitle(text, btn) {
@@ -149,7 +161,10 @@
                 btn.innerText = 'Saved!';
                 const toast = document.getElementById('copy-toast');
                 toast.style.display = 'block';
-                setTimeout(() => { btn.innerText = original; toast.style.display = 'none'; }, 2000);
+                setTimeout(() => { 
+                    btn.innerText = original; 
+                    toast.style.display = 'none'; 
+                }, 2000);
             });
         }
     </script>
