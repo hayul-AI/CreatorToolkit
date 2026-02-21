@@ -302,3 +302,135 @@ body.is-home .bottom-nav {
   box-shadow: 0 14px 24px rgba(225, 29, 72, 0.28);
   transform: scale(1.02);
 }
+
+/* =========================================================
+   PATCH: Global Form Readability Upgrade (Inputs too small)
+   - 목적: 입력칸/글씨 크기 통일 + 가독성 개선
+   - 방식: 전역(main 영역) 범위에만 적용하여 안전하게 패치
+   ========================================================= */
+
+:root{
+  /* 사이트 전체 폼 규격(필요시 숫자만 조절) */
+  --ctk-font-base: 16px;
+  --ctk-font-label: 15px;
+  --ctk-font-input: 16px;
+  --ctk-control-height: 46px;
+  --ctk-control-radius: 12px;
+  --ctk-control-padding-x: 14px;
+  --ctk-control-padding-y: 10px;
+  --ctk-focus-ring: 0 0 0 3px rgba(225, 29, 72, 0.18); /* 사이트 포인트 컬러에 맞춘 부드러운 링 */
+}
+
+/* 기본 텍스트 가독성(툴 페이지 본문) */
+main{
+  font-size: var(--ctk-font-base);
+  line-height: 1.55;
+}
+
+/* 라벨/설명 텍스트 */
+main :where(label, .label, .form-label){
+  font-size: var(--ctk-font-label);
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+/* 부가설명/헬퍼텍스트 */
+main :where(.helper, .help-text, .form-help, small){
+  font-size: 13px;
+  line-height: 1.45;
+  opacity: 0.85;
+}
+
+/* 입력 UI 통일: input/select/textarea */
+main :where(
+  input[type="text"],
+  input[type="url"],
+  input[type="number"],
+  input[type="email"],
+  input[type="search"],
+  input[type="password"],
+  textarea,
+  select
+){
+  width: 100%;
+  font-size: var(--ctk-font-input);
+  line-height: 1.35;
+  min-height: var(--ctk-control-height);
+  padding: var(--ctk-control-padding-y) var(--ctk-control-padding-x);
+  border-radius: var(--ctk-control-radius);
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  background: #fff;
+  outline: none;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+/* textarea는 높이 확보 */
+main textarea{
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* select는 클릭 영역 확보 */
+main select{
+  cursor: pointer;
+}
+
+/* placeholder 가독성 */
+main :where(input, textarea)::placeholder{
+  opacity: 0.55;
+}
+
+/* 포커스 상태(접근성 + 가독성) */
+main :where(input, textarea, select):focus{
+  border-color: rgba(225, 29, 72, 0.55);
+  box-shadow: var(--ctk-focus-ring);
+}
+
+/* disabled */
+main :where(input, textarea, select):disabled{
+  background: rgba(148, 163, 184, 0.12);
+  cursor: not-allowed;
+}
+
+/* 버튼도 입력 크기와 통일감 */
+main :where(button, .btn, .button){
+  font-size: 16px;
+  min-height: 46px;
+  padding: 12px 18px;
+  border-radius: 14px;
+}
+
+/* 라디오/토글 버튼 그룹(예: Hook Intensity Safe/Balanced/Aggressive) */
+main :where(.toggle-group, .segmented, .pill-group){
+  gap: 10px;
+}
+
+/* 작은 인풋이 남아있을 수 있는 특정 케이스 방어:
+   input이 inline 스타일/클래스로 width가 작은 경우가 많아서 "max-width" 강제는 하지 않고,
+   컨테이너에서 폭을 확보하도록 폼 row 간격만 개선 */
+main :where(.form-row, .field, .form-group){
+  margin-bottom: 14px;
+}
+
+/* 슬라이더(리텐션 등) 주변 텍스트 정리 */
+main input[type="range"]{
+  width: 100%;
+  min-height: 34px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* 모바일에서 더 크게(가독성 + 터치영역) */
+@media (max-width: 768px){
+  :root{
+    --ctk-font-base: 16px;
+    --ctk-font-label: 15px;
+    --ctk-font-input: 16px;
+    --ctk-control-height: 50px;
+  }
+  main textarea{
+    min-height: 140px;
+  }
+}
