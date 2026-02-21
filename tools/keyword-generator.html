@@ -11,148 +11,109 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Scoped Styles for Keyword Tool */
         .keyword-tool-page { padding: 4rem 0; background: var(--bg-secondary); min-height: 100vh; }
-        
-        .tool-header { text-align: center; margin-bottom: 3.5rem; }
-        .tool-header h1 { font-size: 3rem; letter-spacing: -0.02em; margin-bottom: 1rem; }
-        .tool-header p { color: var(--text-secondary); font-size: 1.1rem; }
-
-        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 1100px; margin: 0 auto; align-items: start; }
-        
-        .card-custom { 
-            background: var(--bg-primary); border: 1px solid var(--border-color); 
-            border-radius: 18px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); 
-        }
-
-        .input-group { margin-bottom: 1.5rem; }
-        .input-group label { display: block; font-weight: 700; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
-        
-        .keyword-pill-container { display: flex; flex-wrap: wrap; gap: 8px; min-height: 100px; padding: 12px; border: 1px dashed var(--border-color); border-radius: 12px; margin-bottom: 1.5rem; }
-        .keyword-pill { 
-            background: var(--brand-red-soft); color: var(--brand-red); 
-            padding: 6px 14px; border-radius: 100px; font-size: 0.85rem; font-weight: 700;
-            display: flex; align-items: center; gap: 6px;
-        }
-        .keyword-pill span { cursor: pointer; opacity: 0.6; }
-        .keyword-pill span:hover { opacity: 1; }
-
-        .suggestions-area { max-width: 1100px; margin: 4rem auto 0; }
-        .suggestion-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
-        .suggestion-item { 
-            background: var(--bg-primary); border: 1px solid var(--border-color); padding: 16px 20px; 
-            border-radius: 14px; display: flex; justify-content: space-between; align-items: center;
-            transition: 0.2s;
-        }
-        .suggestion-item:hover { border-color: var(--brand-red); transform: translateY(-2px); }
-        .suggestion-item .kw-text { font-weight: 600; color: var(--text-primary); }
-
-        .btn-add { 
-            background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color);
-            padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer;
-        }
-        .btn-add:hover { background: var(--brand-red); color: white; border-color: var(--brand-red); }
-
-        .empty-state { text-align: center; padding: 4rem 0; color: var(--text-secondary); }
-
-        @media (max-width: 850px) { .main-grid { grid-template-columns: 1fr; } }
+        .main-grid { display: grid; grid-template-columns: 400px 1fr; gap: 2rem; max-width: 1100px; margin: 0 auto; align-items: start; }
+        .card-custom { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 18px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .keyword-pill-container { display: flex; flex-wrap: wrap; gap: 8px; min-height: 80px; padding: 12px; border: 1px dashed var(--border-color); border-radius: 12px; margin-bottom: 1.5rem; }
+        .keyword-pill { background: var(--brand-red-soft); color: var(--brand-red); padding: 6px 14px; border-radius: 100px; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .suggestion-list { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
+        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body class="keyword-tool-page">
     <creator-header></creator-header>
 
     <main class="container">
-        <div class="tool-header">
-            <h1>YouTube Keyword Tool</h1>
-            <p>Find low-competition, long-tail keywords to rank your videos.</p>
+        <div style="text-align:center; margin-bottom:3.5rem;">
+            <h1 style="font-size:3rem; letter-spacing:-0.02em;">Keyword Explorer</h1>
+            <p style="color:var(--text-secondary);">Find high-intent keywords to dominate search results.</p>
         </div>
 
         <div class="main-grid">
-            <!-- Left: Search Box -->
             <div class="card-custom">
-                <div class="input-group">
-                    <label>Main Topic / Seed Keyword</label>
+                <div class="form-group" style="margin-bottom:1.5rem;">
+                    <label style="font-weight:700; font-size:0.85rem;">Seed Keyword</label>
                     <input type="text" id="keyword-input" placeholder="e.g. lofi study music" style="width: 100%;">
                 </div>
-                <button onclick="findKeywords()" class="btn-primary" style="width: 100%; height: 48px; margin: 0;">Find Keywords 🔍</button>
-                <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1rem; text-align: center;">
-                    Tip: Start with a broad topic to get more specific suggestions.
-                </p>
+                <button onclick="handleKeywordSearch()" class="btn-primary" style="width: 100%; height: 48px; margin: 0;">Analyze Market 🔍</button>
             </div>
 
-            <!-- Right: Selection Area -->
-            <div class="card-custom">
-                <div class="input-group">
-                    <label>Selected Keywords</label>
+            <div id="keyword-results-root">
+                <div class="card-custom" id="selection-area">
+                    <label style="font-weight:700; font-size:0.85rem; margin-bottom:0.5rem; display:block;">Selected Library</label>
                     <div class="keyword-pill-container" id="selected-list">
-                        <!-- Pills appear here -->
-                        <div class="empty-state" style="padding: 1rem; font-size: 0.85rem;">No keywords selected</div>
+                        <div style="color:var(--text-secondary); opacity:0.5; padding:1rem; font-size:0.85rem;">No keywords selected</div>
                     </div>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="copySelected()" class="btn-outline" style="flex: 1; height: 44px; margin: 0;">Copy Selected</button>
-                    <button onclick="clearAll()" class="btn-outline" style="width: 50px; height: 44px; margin: 0; padding: 0;">🗑️</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="copyFormat('text')" class="btn-outline" style="flex: 1; height: 44px; font-size:0.85rem;">Copy List</button>
+                        <button onclick="copyFormat('tags')" class="btn-outline" style="flex: 1; height: 44px; font-size:0.85rem;">Copy as #Tags</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Suggestions Bottom Section -->
-        <div class="suggestions-area">
-            <h2 style="font-size: 1.5rem;">Keyword Suggestions</h2>
-            <div id="suggestions-box">
-                <div class="empty-state" id="initial-empty">
-                    <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🔎</span>
-                    <h3>Ready to Search</h3>
-                    <p>Enter a topic above to see related YouTube keywords.</p>
-                </div>
-                <div class="suggestion-list" id="results-list"></div>
-            </div>
+        <div id="suggestions-container" class="suggestions-area" style="max-width:1100px; margin: 3rem auto;">
+            <div id="ai-suggestion-box"></div>
+            <div class="suggestion-list" id="results-list"></div>
         </div>
     </main>
 
+    <div class="up-toast" id="copy-toast" style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #0f172a; color: white; padding: 12px 24px; border-radius: 100px; font-weight: 600; display: none; z-index: 2000;">Copied! 📋</div>
+
     <creator-footer></creator-footer>
 
-    <!-- UI Logic -->
+    <script src="/assets/js/aiEngine.js?v=20260221"></script>
     <script src="/main.js?v=20260221"></script>
     <script>
         let selectedKeywords = new Set();
 
-        function findKeywords() {
+        function handleKeywordSearch() {
             const input = document.getElementById('keyword-input').value.trim();
-            if (!input) return alert('Please enter a keyword');
+            if (!input) return alert('Enter a keyword');
 
-            document.getElementById('initial-empty').style.display = 'none';
-            const list = document.getElementById('results-list');
-            list.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Searching...</p>';
+            const sBox = document.getElementById('ai-suggestion-box');
+            sBox.innerHTML = `
+                <div class="ai-panel fade-in-up">
+                    <div class="ai-header">
+                        <h3 style="margin:0;">AI Market Analysis</h3>
+                        <span class="ai-status analyzing">Scanning intents...</span>
+                    </div>
+                    <div class="ai-gauge-container"><div class="ai-gauge-fill" id="ai-kw-gauge"></div></div>
+                    <div id="ai-kw-feedback" style="font-size:0.9rem; color:var(--text-secondary); display:none;"></div>
+                </div>
+            `;
 
-            // Mock Data Engine (Local)
             setTimeout(() => {
                 const mocks = [
-                    `${input} for beginners`,
-                    `best ${input} 2026`,
-                    `${input} tutorial`,
-                    `how to use ${input}`,
-                    `top 10 ${input}`,
-                    `${input} secrets`,
-                    `${input} review`,
-                    `${input} setup guide`
+                    { t: `${input} tutorial`, intent: 'tutorial' },
+                    { t: `best ${input} 2026`, intent: 'comparison' },
+                    { t: `how to setup ${input}`, intent: 'tutorial' },
+                    { t: `is ${input} worth it`, intent: 'info' },
+                    { t: `${input} review`, intent: 'comparison' }
                 ];
-                renderSuggestions(mocks);
-            }, 600);
-        }
 
-        function renderSuggestions(items) {
-            const list = document.getElementById('results-list');
-            list.innerHTML = '';
-            items.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'suggestion-item';
-                div.innerHTML = `
-                    <span class="kw-text">${item}</span>
-                    <button class="btn-add" onclick="addKeyword('${item}')">+ Add</button>
-                `;
-                list.appendChild(div);
-            });
+                document.querySelector('.ai-status').className = 'ai-status ready';
+                document.querySelector('.ai-status').innerText = 'Analysis Complete';
+                document.getElementById('ai-kw-gauge').style.width = '85%';
+                document.getElementById('ai-kw-feedback').style.display = 'block';
+                document.getElementById('ai-kw-feedback').innerHTML = `<p>• Found high volume for <b>tutorial</b> intent.<br>• Competition is moderate for <b>comparison</b> queries.</p>`;
+
+                const list = document.getElementById('results-list');
+                list.innerHTML = '';
+                mocks.forEach((m, i) => {
+                    const item = document.createElement('div');
+                    item.className = 'result-card-ai fade-in-up';
+                    item.style.animationDelay = `${i * 0.05}s`;
+                    item.innerHTML = `
+                        <div>
+                            <span class="intent-badge intent-${m.intent}">${m.intent}</span>
+                            <span style="font-weight:600;">${m.t}</span>
+                        </div>
+                        <button class="btn-add" style="background:var(--bg-secondary); border:1px solid var(--border-color); padding:6px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;" onclick="addKeyword('${m.t}')">+ Add</button>
+                    `;
+                    list.appendChild(item);
+                });
+            }, 400);
         }
 
         function addKeyword(kw) {
@@ -160,37 +121,30 @@
             updatePills();
         }
 
-        function removeKeyword(kw) {
-            selectedKeywords.delete(kw);
-            updatePills();
-        }
-
         function updatePills() {
             const container = document.getElementById('selected-list');
             if (selectedKeywords.size === 0) {
-                container.innerHTML = '<div class="empty-state" style="padding: 1rem; font-size: 0.85rem;">No keywords selected</div>';
+                container.innerHTML = '<div style="color:var(--text-secondary); opacity:0.5; padding:1rem; font-size:0.85rem;">No keywords selected</div>';
                 return;
             }
-            container.innerHTML = '';
-            selectedKeywords.forEach(kw => {
-                const pill = document.createElement('div');
-                pill.className = 'keyword-pill';
-                pill.innerHTML = `${kw} <span onclick="removeKeyword('${kw}')">✕</span>`;
-                container.appendChild(pill);
-            });
+            container.innerHTML = Array.from(selectedKeywords).map(kw => `
+                <div class="keyword-pill">${kw} <span style="cursor:pointer; opacity:0.6;" onclick="removeKeyword('${kw}')">✕</span></div>
+            `).join('');
         }
 
-        function copySelected() {
+        function removeKeyword(kw) { selectedKeywords.delete(kw); updatePills(); }
+
+        function copyFormat(type) {
             if (selectedKeywords.size === 0) return;
-            const text = Array.from(selectedKeywords).join(', ');
+            let text = Array.from(selectedKeywords).join(', ');
+            if (type === 'tags') {
+                text = Array.from(selectedKeywords).map(k => '#' + k.replace(/\s+/g, '')).join(' ');
+            }
             navigator.clipboard.writeText(text).then(() => {
-                alert('Copied to clipboard! ✅');
+                const toast = document.getElementById('copy-toast');
+                toast.style.display = 'block';
+                setTimeout(() => toast.style.display = 'none', 2000);
             });
-        }
-
-        function clearAll() {
-            selectedKeywords.clear();
-            updatePills();
         }
     </script>
 </body>

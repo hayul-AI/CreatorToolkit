@@ -92,6 +92,139 @@ a { text-decoration: none; color: inherit; }
 .popular-tools-section { background: var(--bg-secondary); }
 .tool-card { background: var(--bg-primary); border-color: var(--border-color); }
 
+/* AI Assistant UI Components */
+.ai-panel {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.ai-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 4px; height: 100%;
+    background: var(--brand-red);
+}
+
+.ai-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.ai-status { 
+    font-size: 0.75rem; font-weight: 800; padding: 4px 12px; border-radius: 100px;
+    background: var(--bg-secondary); color: var(--text-secondary);
+    display: flex; align-items: center; gap: 6px;
+}
+.ai-status.analyzing { color: var(--brand-red); background: var(--brand-red-soft); }
+.ai-status.ready { color: #10b981; background: #ecfdf5; }
+
+.ai-gauge-container { height: 8px; background: var(--border-color); border-radius: 10px; margin: 1rem 0; overflow: hidden; }
+.ai-gauge-fill { 
+    height: 100%; width: 0; background: linear-gradient(90deg, var(--brand-red), #fb7185); 
+    transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); 
+}
+
+.quick-fix-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1.5rem; }
+.btn-quick-fix {
+    background: var(--bg-secondary); border: 1px solid var(--border-color);
+    padding: 8px 14px; border-radius: 10px; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+}
+.btn-quick-fix:hover { border-color: var(--brand-red); color: var(--brand-red); }
+
+/* Animation */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+
+.result-card-ai {
+    background: var(--bg-primary); border: 1px solid var(--border-color);
+    border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: all 0.2s;
+}
+.result-card-ai:hover { border-color: var(--brand-red); box-shadow: var(--shadow-sm); transform: translateX(4px); }
+
+/* Intent Badges */
+.intent-badge { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; margin-right: 6px; }
+.intent-tutorial { background: #dcfce7; color: #166534; }
+.intent-info { background: #e0f2fe; color: #075985; }
+.intent-comparison { background: #fef3c7; color: #92400e; }
+
+/* Dark mode adjustment for bottom nav */
+html.dark .bottom-nav {
+  background: rgba(15, 23, 42, 0.92);
+  border-top-color: #334155;
+}
+
+.bottom-nav__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bottom-nav__btn {
+  height: 46px;
+  padding: 0 20px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 14.5px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s ease;
+}
+
+.bottom-nav__btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--brand-red);
+}
+
+.bottom-nav__btn--ghost {
+  min-width: 120px;
+}
+
+.bottom-nav__btn--primary {
+  min-width: 120px;
+  background: var(--brand-red);
+  border-color: var(--brand-red);
+  color: #fff;
+}
+
+.bottom-nav__btn--primary:hover {
+  background: var(--brand-red-hover);
+  border-color: var(--brand-red-hover);
+  color: #fff;
+}
+
+/* Content padding to avoid overlap */
+body {
+  padding-bottom: 86px;
+}
+
+/* Hide on home page */
+body.is-home .bottom-nav {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .bottom-nav__btn { flex: 1; min-width: 0; padding: 0 10px; }
+}
+
 /* Popular Tools Section Redesign */
 .popular-tools { padding: 4rem 0 6rem; background: var(--bg-secondary); }
 .popular-tools__header { text-align: center; margin-bottom: 3.5rem; }

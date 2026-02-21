@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     setupMobileMenu();
     registerWebComponents();
+    injectBottomNav();
+    detectHomePage();
 });
 
 function initTheme() {
@@ -40,11 +42,41 @@ function setupMobileMenu() {
     }
 }
 
+function injectBottomNav() {
+    if (document.querySelector('.bottom-nav')) return;
+    
+    const nav = document.createElement('div');
+    nav.className = 'bottom-nav';
+    nav.setAttribute('role', 'navigation');
+    nav.innerHTML = `
+        <div class="bottom-nav__inner">
+            <button class="bottom-nav__btn bottom-nav__btn--ghost" id="btnBack" type="button">← Back</button>
+            <a class="bottom-nav__btn bottom-nav__btn--primary" id="btnHome" href="/">Home</a>
+        </div>
+    `;
+    document.body.appendChild(nav);
+
+    // Logic for Back button
+    const backBtn = document.getElementById('btnBack');
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            if (window.history.length > 1) window.history.back();
+            else window.location.href = "/";
+        });
+    }
+}
+
+function detectHomePage() {
+    const path = window.location.pathname.replace(/\/+$/, "");
+    if (path === "" || path === "/" || path.endsWith("/index.html")) {
+        document.body.classList.add("is-home");
+    }
+}
+
 function registerWebComponents() {
     class CreatorHeader extends HTMLElement {
         connectedCallback() {
             const activePath = window.location.pathname;
-            const isToolPage = activePath.includes('/tools/');
             const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
             const icon = currentTheme === 'dark' ? '☀️' : '🌙';
             const text = currentTheme === 'dark' ? 'Light' : 'Dark';
@@ -58,9 +90,10 @@ function registerWebComponents() {
                     
                     <nav class="nav-center">
                         <ul class="nav-links-list">
-                            <li><a href="/index.html#tools" class="${activePath.includes('tools') && !isToolPage && !activePath.includes('video-analyzer') && !activePath.includes('earnings') ? 'active' : ''}">Tools</a></li>
+                            <li><a href="/index.html#tools" class="${activePath.includes('tools') && !activePath.includes('video-analyzer') && !activePath.includes('earnings') ? 'active' : ''}">Tools</a></li>
                             <li><a href="/tools/video-analyzer.html" class="${activePath.includes('video-analyzer') ? 'active' : ''}">Analyzer</a></li>
                             <li><a href="/tools/earnings-calculator.html" class="${activePath.includes('earnings') ? 'active' : ''}">Earnings</a></li>
+                            <li><a href="/tools/thumbnail-copy-generator.html" class="${activePath.includes('thumbnail-copy') ? 'active' : ''}">Copy Gen</a></li>
                             <li><a href="/index.html#guides" class="${activePath.includes('guides') ? 'active' : ''}">Guides</a></li>
                             <li><a href="/about.html" class="${activePath === '/about.html' ? 'active' : ''}">About</a></li>
                         </ul>
@@ -75,11 +108,6 @@ function registerWebComponents() {
                     </div>
                 </div>
             </header>
-            ${isToolPage ? `
-            <div class="container" style="padding-top: 14px;">
-                <a href="/" class="back-home" id="global-back-btn">← Back to Home</a>
-            </div>
-            ` : ''}
             <style>
                 .site-header { 
                     height: 72px; background: var(--bg-primary); border-bottom: 1px solid var(--border-color); 
@@ -130,30 +158,6 @@ function registerWebComponents() {
 
                 .start-btn { height: 40px; font-size: 13px; padding: 0 16px; border-radius: 12px; }
 
-                /* Back Home Button */
-                .back-home {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 10px 16px;
-                    border-radius: 12px;
-                    border: 1px solid var(--border-color);
-                    background: var(--bg-primary);
-                    color: var(--text-primary);
-                    font-weight: 700;
-                    font-size: 14px;
-                    text-decoration: none;
-                    box-shadow: var(--shadow-sm);
-                    transition: all 0.15s ease;
-                    margin-bottom: 6px;
-                }
-                .back-home:hover {
-                    transform: translateY(-1px);
-                    box-shadow: var(--shadow-md);
-                    border-color: var(--brand-red);
-                    color: var(--brand-red);
-                }
-
                 .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.5rem; color: var(--text-primary); cursor: pointer; }
 
                 @media (max-width: 900px) {
@@ -169,19 +173,6 @@ function registerWebComponents() {
                 }
             </style>
             `;
-
-            // Back functionality
-            if (isToolPage) {
-                const backBtn = this.querySelector('#global-back-btn');
-                if (backBtn) {
-                    backBtn.onclick = (e) => {
-                        if (window.history.length > 1) {
-                            e.preventDefault();
-                            window.history.back();
-                        }
-                    };
-                }
-            }
         }
     }
 

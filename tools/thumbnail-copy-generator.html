@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thumbnail Copy Generator - CreatorToolkit</title>
+    <meta name="description" content="Generate short, high-CTR thumbnail phrases instantly. Pure local JS engine for high-performing YouTube content.">
+    <link rel="stylesheet" href="/style.css?v=20260221">
+    <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .copy-gen-grid { display: grid; grid-template-columns: 400px 1fr; gap: 2.5rem; align-items: start; max-width: 1100px; margin: 0 auto; }
+        .result-item { 
+            background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 16px; 
+            padding: 1.25rem; margin-bottom: 1rem; display: flex; justify-content: space-between; 
+            align-items: center; transition: all 0.2s; position: relative;
+        }
+        .result-item:hover { border-color: var(--brand-red); transform: translateX(4px); box-shadow: var(--shadow-sm); }
+        .result-item.top-pick { border: 2px solid var(--brand-red); background: var(--brand-red-soft); }
+        .top-pick-badge { position: absolute; top: -10px; left: 20px; background: var(--brand-red); color: white; font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; }
+        
+        .phrase-text { font-size: 1.2rem; font-weight: 800; color: var(--text-primary); flex: 1; }
+        
+        .control-card { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 20px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        
+        .style-radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem; }
+        .style-radio-group label { 
+            display: flex; align-items: center; justify-content: center; height: 40px; 
+            border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+        }
+        .style-radio-group input { display: none; }
+        .style-radio-group input:checked + label { background: var(--brand-red); border-color: var(--brand-red); color: white; }
+
+        @media (max-width: 968px) { .copy-gen-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body class="bg-secondary">
+    <creator-header></creator-header>
+
+    <main style="padding: 5rem 0;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h1 style="font-size: 3rem; letter-spacing: -0.02em; margin-bottom: 1rem;">Thumbnail Copy Generator</h1>
+                <p style="color: var(--text-secondary); font-size: 1.1rem;">Generate high-CTR, short phrases for your thumbnails.</p>
+            </div>
+
+            <div class="copy-gen-grid">
+                <!-- Inputs -->
+                <div class="control-card">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Main Topic</label>
+                        <input type="text" id="topic-input" placeholder="e.g. lofi study music, coding" style="width: 100%;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Phrase Type</label>
+                        <select id="type-select" style="width: 100%;">
+                            <option value="benefit">결과 제시형 (Benefit)</option>
+                            <option value="problem">문제 해결형 (Fix/Stop)</option>
+                            <option value="compare">비교형 (VS/OR)</option>
+                            <option value="list">리스트형 (Numbers)</option>
+                            <option value="curiosity">호기심 유발형 (Hook)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Tone</label>
+                        <div class="style-radio-group">
+                            <input type="radio" name="tone" id="tone-safe" value="safe">
+                            <label for="tone-safe">Safe</label>
+                            <input type="radio" name="tone" id="tone-balanced" value="balanced" checked>
+                            <label for="tone-balanced">Balanced</label>
+                            <input type="radio" name="intensity" id="tone-bold" value="bold" style="display:none;"> <!-- mapping dummy -->
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Case Style</label>
+                        <div class="style-radio-group">
+                            <input type="radio" name="casing" id="case-upper" value="upper" checked>
+                            <label for="case-upper">UPPERCASE</label>
+                            <input type="radio" name="casing" id="case-title" value="title">
+                            <label for="case-title">Title Case</label>
+                        </div>
+                    </div>
+
+                    <button onclick="generateCopy()" class="btn-primary" style="width: 100%; height: 52px; font-size: 1rem; margin: 0;">Generate Phrases 🚀</button>
+                </div>
+
+                <!-- Results -->
+                <div id="results-container">
+                    <div style="text-align: center; padding: 5rem 0; color: var(--text-secondary); opacity: 0.5;" id="placeholder">
+                        <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">✍️</span>
+                        <h3>Enter a topic to get started</h3>
+                    </div>
+                    <div id="results-header" style="display:none; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 0 0.5rem;">
+                        <span style="font-weight: 700; color: var(--text-secondary);">Generated Options (8)</span>
+                        <button onclick="copyAll()" class="btn-outline" style="height:32px; font-size:0.75rem; margin:0; padding: 0 12px;">Copy All</button>
+                    </div>
+                    <div id="results-list"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="up-toast" id="copy-toast" style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #0f172a; color: white; padding: 12px 24px; border-radius: 100px; font-weight: 600; display: none; z-index: 2000;">Copied! 📋</div>
+
+    <creator-footer></creator-footer>
+
+    <script src="/main.js?v=20260221"></script>
+    <script>
+        const FORBIDDEN = ["SHOCKING", "INSANE", "UNBELIEVABLE", "100% REAL", "GUARANTEED", "CLICK NOW"];
+        
+        const DICT = {
+            benefit: ["INSTANT", "FAST", "EASY", "SECRET", "ULTIMATE", "LEVEL UP", "RESULTS", "PRO", "BOOST", "FREE"],
+            problem: ["STOP", "FIX", "CAN'T", "NO MORE", "DON'T", "WRONG", "FAIL", "AVOID", "WASTE", "LOST"],
+            compare: ["VS", "OR", "BETTER", "BEST", "FINAL", "CHOICE", "WINNER", "REAL"],
+            states: ["FOCUS", "CALM", "GROWTH", "POWER", "SKILL", "MONEY", "SUCCESS"],
+            things: ["TIPS", "MISTAKES", "HACKS", "SECRETS", "GUIDE", "STEPS", "TRICKS"]
+        };
+
+        function toTitleCase(str) {
+            return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+
+        function filterText(text) {
+            let filtered = text;
+            FORBIDDEN.forEach(word => {
+                const regex = new RegExp(word, 'gi');
+                filtered = filtered.replace(regex, "");
+            });
+            // Length control: 3-6 words
+            const words = filtered.split(/\s+/).filter(w => w.length > 0);
+            if (words.length > 6) return words.slice(0, 6).join(' ');
+            return words.join(' ');
+        }
+
+        function generateCopy() {
+            const topic = document.getElementById('topic-input').value.trim();
+            const type = document.getElementById('type-select').value;
+            const casing = document.querySelector('input[name="casing"]:checked').value;
+
+            if (!topic) return alert('Please enter a topic');
+
+            document.getElementById('placeholder').style.display = 'none';
+            document.getElementById('results-header').style.display = 'flex';
+            const list = document.getElementById('results-list');
+            list.innerHTML = '';
+
+            const results = new Set();
+            const mainWord = topic.split(' ')[0].toUpperCase();
+
+            const templates = {
+                benefit: [
+                    `INSTANT ${mainWord}`, `DEEP ${mainWord}`, `${mainWord} MODE ON`, `${mainWord} BOOST`,
+                    `${topic} MADE EASY`, `PRO ${mainWord} TIPS`, `FAST ${mainWord} RESULTS`, `ULTIMATE ${mainWord}`,
+                    `${mainWord} LEVEL UP`, `FREE ${mainWord} GUIDE`
+                ],
+                problem: [
+                    `STOP ${mainWord} FAIL`, `FIX YOUR ${mainWord}`, `CAN'T ${mainWord}?`, `NO MORE ${mainWord}`,
+                    `STOP DOING ${mainWord}`, `AVOID ${mainWord} WASTE`, `DON'T DO ${mainWord}`, `${mainWord} MISTAKES`,
+                    `FIX ${mainWord} FAST`, `FAILING AT ${mainWord}?`
+                ],
+                compare: [
+                    `${mainWord} vs SILENCE`, `${mainWord} OR MONEY?`, `REAL ${mainWord} vs FAKE`, `BEST ${mainWord} 2026`,
+                    `${topic} OR NOTHING`, `BETTER ${mainWord} NOW`, `OLD ${mainWord} vs NEW`, `${mainWord} WINNER`
+                ],
+                list: [
+                    `5 ${mainWord} TIPS`, `3 ${mainWord} MISTAKES`, `TOP 7 ${mainWord}`, `10 ${mainWord} HACKS`,
+                    `5 SECRETS OF ${mainWord}`, `7 ${mainWord} STEPS`, `3 BETTER ${mainWord}`, `TOP 5 ${mainWord}`
+                ],
+                curiosity: [
+                    `DON'T SKIP ${mainWord}`, `YOU NEED ${mainWord}`, `WAIT... ${mainWord}?`, `THE ${mainWord} TRUTH`,
+                    `${mainWord} EXPLAINED`, `WHY ${mainWord} WORKS`, `SECRET ${mainWord} HOOK`, `STOP! ${mainWord}`
+                ]
+            };
+
+            const currentPool = templates[type] || templates.benefit;
+            
+            while (results.size < 8) {
+                let raw = currentPool[Math.floor(Math.random() * currentPool.length)];
+                let processed = filterText(raw);
+                if (casing === 'title') processed = toTitleCase(processed);
+                else processed = processed.toUpperCase();
+                
+                if (processed.split(' ').length >= 2) results.add(processed);
+                if (results.size >= 8) break;
+            }
+
+            Array.from(results).forEach((text, i) => {
+                const item = document.createElement('div');
+                item.className = `result-item ${i === 0 ? 'top-pick' : ''}`;
+                if (i === 0) item.innerHTML = '<span class="top-pick-badge">TOP PICK</span>';
+                
+                item.innerHTML += `
+                    <span class="phrase-text">${text}</span>
+                    <button onclick="copyOne('${text.replace(/'/g, "'")}', this)" class="btn-outline" style="height:36px; padding:0 12px; font-size:0.8rem; margin:0;">Copy</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function copyOne(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅';
+                showToast();
+                setTimeout(() => btn.innerText = original, 2000);
+            });
+        }
+
+        function copyAll() {
+            const all = Array.from(document.querySelectorAll('.phrase-text')).map(el => el.innerText).join('
+');
+            navigator.clipboard.writeText(all).then(() => showToast());
+        }
+
+        function showToast() {
+            const toast = document.getElementById('copy-toast');
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 2000);
+        }
+    </script>
+</body>
+</html>

@@ -14,14 +14,6 @@
         .generator-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 400px 1fr; gap: 2.5rem; align-items: start; }
         .input-card { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 20px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
         .results-container { display: flex; flex-direction: column; gap: 1rem; }
-        .title-card { 
-            background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.25rem;
-            display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; transition: 0.2s;
-        }
-        .title-card:hover { border-color: var(--brand-red); transform: translateX(4px); }
-        .title-info { flex: 1; }
-        .title-text { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; line-height: 1.4; }
-        .seo-badge { font-size: 0.75rem; font-weight: 800; color: var(--brand-red); background: var(--brand-red-soft); padding: 2px 10px; border-radius: 100px; display: inline-block; }
         
         .radio-set { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-top: 0.5rem; }
         .radio-set label { 
@@ -41,7 +33,7 @@
         <div class="container">
             <div style="text-align: center; margin-bottom: 4rem;">
                 <h1 style="font-size: 3rem; letter-spacing: -0.02em; margin-bottom: 1rem;">CTR Title Generator</h1>
-                <p style="color: var(--text-secondary); font-size: 1.1rem;">Generate high-performing YouTube titles with psychological SEO triggers.</p>
+                <p style="color: var(--text-secondary); font-size: 1.1rem;">AI-powered psychological triggers for maximum video growth.</p>
             </div>
 
             <div class="generator-container">
@@ -58,10 +50,8 @@
                             <option value="Tutorial">Tutorial</option>
                             <option value="Review">Review</option>
                             <option value="Documentary">Documentary</option>
-                            <option value="Relaxing">Relaxing/Music</option>
+                            <option value="Music">Music/Relaxing</option>
                             <option value="Educational">Educational</option>
-                            <option value="Entertainment">Entertainment</option>
-                            <option value="Shorts">Shorts/Quick Tips</option>
                         </select>
                     </div>
 
@@ -70,110 +60,96 @@
                         <div class="radio-set">
                             <input type="radio" name="intensity" id="int-safe" value="safe">
                             <label for="int-safe">Safe</label>
-                            
                             <input type="radio" name="intensity" id="int-balanced" value="balanced" checked>
                             <label for="int-balanced">Balanced</label>
-                            
                             <input type="radio" name="intensity" id="int-aggressive" value="aggressive">
                             <label for="int-aggressive">Aggressive</label>
                         </div>
                     </div>
 
-                    <button onclick="generateTitles()" class="btn-primary" style="width: 100%; height: 52px; font-size: 1rem; margin: 0;">Generate SEO Titles 🚀</button>
+                    <button onclick="handleGenerate()" class="btn-primary" style="width: 100%; height: 52px; font-size: 1rem; margin: 0;">Analyze & Generate 🚀</button>
                 </div>
 
-                <!-- Results Output -->
-                <div id="results-area" class="results-container">
-                    <div style="text-align: center; padding: 5rem 0; color: var(--text-secondary); opacity: 0.5;" id="placeholder">
-                        <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">💡</span>
-                        <h3>Enter a topic to generate ideas</h3>
+                <!-- AI Results Area -->
+                <div id="ai-results-root">
+                    <div id="ai-assistant-placeholder" style="text-align: center; padding: 5rem 0; color: var(--text-secondary); opacity: 0.5;">
+                        <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🤖</span>
+                        <h3>Ready to optimize your content</h3>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <div class="up-toast" id="copy-toast" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0f172a; color: white; padding: 12px 24px; border-radius: 100px; font-weight: 600; display: none; z-index: 2000;">Copied! 📋</div>
+    <div class="up-toast" id="copy-toast" style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #0f172a; color: white; padding: 12px 24px; border-radius: 100px; font-weight: 600; display: none; z-index: 2000;">Copied! 📋</div>
 
     <creator-footer></creator-footer>
 
+    <script src="/assets/js/aiEngine.js?v=20260221"></script>
     <script src="/main.js?v=20260221"></script>
     <script>
-        const POWER_WORDS = ['Best', 'Proven', 'Easy', 'Fast', 'Smart', 'Secret', 'Ultimate', 'Step-by-step'];
-        const EMOTION_TRIGGERS = ['Stop', 'Avoid', 'Mistake', 'Truth', 'Warning', 'Don\'t', 'Finally'];
-
-        function calculateSEOScore(title, keyword) {
-            let score = 0;
-            const tLow = title.toLowerCase();
-            const kLow = keyword.toLowerCase();
-
-            if (tLow.indexOf(kLow) !== -1 && tLow.indexOf(kLow) < title.length * 0.3) score += 25;
-            if (/\d+/.test(title)) score += 15;
-            const seoWords = ['how', 'why', 'guide', 'tips', 'secrets'];
-            if (seoWords.some(w => tLow.includes(w))) score += 15;
-            if (title.length >= 45 && title.length <= 60) score += 15;
-            if (POWER_WORDS.some(w => tLow.includes(w.toLowerCase()))) score += 10;
-            if (EMOTION_TRIGGERS.some(w => tLow.includes(w.toLowerCase()))) score += 10;
-            const words = tLow.split(' ');
-            if (new Set(words).size === words.length) score += 10;
-
-            return Math.min(100, score);
-        }
-
-        function generateTitles() {
+        function handleGenerate() {
             const topic = document.getElementById('topic-input').value.trim();
-            const intensity = document.querySelector('input[name="intensity"]:checked').value;
+            if (!topic) return alert('Enter a topic');
 
-            if (!topic) return alert('Please enter a topic');
-
-            const resultsArea = document.getElementById('results-area');
-            resultsArea.innerHTML = ''; 
-
-            const templates = [
-                { t: `${topic}: Beginner Guide (2026)`, level: ['safe', 'balanced'] },
-                { t: `Everything You Need to Know About ${topic}`, level: ['safe', 'balanced'] },
-                { t: `How to Get Better Results with ${topic} Fast`, level: ['balanced', 'aggressive'] },
-                { t: `7 Common ${topic} Mistakes Beginners Make`, level: ['balanced', 'aggressive'] },
-                { t: `The Hidden Truth About ${topic} Revealed`, level: ['aggressive'] },
-                { t: `Before You Try ${topic}, Watch This!`, level: ['balanced', 'aggressive'] },
-                { t: `${topic} Explained in Exactly 5 Minutes`, level: ['safe', 'balanced'] },
-                { t: `Stop Doing This in ${topic} (Do This Instead)`, level: ['aggressive'] },
-                { t: `The Only ${topic} Strategy That Actually Works`, level: ['balanced', 'aggressive'] },
-                { t: `Master ${topic}: 5 Proven Tips That Save Time`, level: ['safe', 'balanced'] },
-                { t: `Why Most Creators Fail at ${topic}`, level: ['aggressive'] },
-                { t: `My Secret ${topic} Workflow for 2026`, level: ['balanced'] },
-                { t: `${topic} Review: Is It Actually Worth It?`, level: ['safe', 'balanced'] },
-                { t: `10 ${topic} Hacks You Should Have Used Sooner`, level: ['balanced', 'aggressive'] }
-            ];
-
-            const filtered = templates.filter(temp => temp.level.includes(intensity));
-            const selected = filtered.sort(() => 0.5 - Math.random()).slice(0, 10);
-
-            selected.forEach(temp => {
-                const score = calculateSEOScore(temp.t, topic);
-                const card = document.createElement('div');
-                card.className = 'title-card';
-                card.innerHTML = `
-                    <div class="title-info">
-                        <div class="title-text">${temp.t}</div>
-                        <div class="seo-badge">SEO Score: ${score}/100</div>
+            const root = document.getElementById('ai-results-root');
+            root.innerHTML = `
+                <div class="ai-panel">
+                    <div class="ai-header">
+                        <h3 style="margin:0;">AI Suggestions</h3>
+                        <span class="ai-status analyzing">Analyzing topic...</span>
                     </div>
-                    <button class="btn-outline" style="height: 38px; padding: 0 12px; font-size: 0.8rem; margin: 0;" onclick="copyTitle('${temp.t.replace(/'/g, "\\'")}', this)">📋 Copy</button>
-                `;
-                resultsArea.appendChild(card);
-            });
+                    <div class="ai-gauge-container"><div class="ai-gauge-fill" id="ai-main-gauge"></div></div>
+                    <ul id="ai-tips-summary" style="margin:0; padding:0; list-style:none; display:none;"></ul>
+                </div>
+                <div id="titles-list" class="results-container"></div>
+            `;
+
+            // Fake analysis delay
+            setTimeout(() => {
+                const style = document.getElementById('style-select').value;
+                const intensity = document.querySelector('input[name="intensity"]:checked').value;
+                
+                const titles = aiEngine.generateTitles(topic, style, intensity);
+                const bestTitle = titles[0];
+                const score = aiEngine.scoreTitle(bestTitle, topic);
+                const tips = aiEngine.getTips(bestTitle, score);
+
+                // Update Assistant Panel
+                document.querySelector('.ai-status').className = 'ai-status ready';
+                document.querySelector('.ai-status').innerText = 'Ready';
+                document.getElementById('ai-main-gauge').style.width = `${score}%`;
+                
+                const tipsList = document.getElementById('ai-tips-summary');
+                tipsList.style.display = 'block';
+                tipsList.innerHTML = tips.map(t => `<li style="margin-bottom:8px; font-size:0.9rem; color:var(--text-secondary);">• ${t}</li>`).join('');
+
+                // Render Cards
+                const list = document.getElementById('titles-list');
+                titles.forEach((t, i) => {
+                    const cardScore = aiEngine.scoreTitle(t, topic);
+                    const card = document.createElement('div');
+                    card.className = 'result-card-ai fade-in-up';
+                    card.style.animationDelay = `${i * 0.05}s`;
+                    card.innerHTML = `
+                        <div class="title-info">
+                            <div style="font-weight:700; margin-bottom:6px;">${t}</div>
+                            <span class="seo-badge">Score: ${cardScore}/100</span>
+                        </div>
+                        <button class="btn-outline" style="height:36px; font-size:0.8rem; margin:0;" onclick="copyTitle('${t.replace(/'/g, "\\'")}', this)">Copy</button>
+                    `;
+                    list.appendChild(card);
+                });
+            }, 400);
         }
 
         function copyTitle(text, btn) {
             navigator.clipboard.writeText(text).then(() => {
-                const originalText = btn.innerText;
-                btn.innerText = '✅ Saved';
+                const original = btn.innerText;
+                btn.innerText = 'Saved!';
                 const toast = document.getElementById('copy-toast');
                 toast.style.display = 'block';
-                setTimeout(() => {
-                    btn.innerText = originalText;
-                    toast.style.display = 'none';
-                }, 2000);
+                setTimeout(() => { btn.innerText = original; toast.style.display = 'none'; }, 2000);
             });
         }
     </script>
