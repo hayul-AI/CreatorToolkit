@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Channel Branding Generator - CreatorToolkit</title>
+    <meta name="description" content="Generate SEO-optimized YouTube channel names and professional descriptions instantly. Local AI branding engine.">
+    <link rel="stylesheet" href="/style.css?v=20260221">
+    <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .branding-grid { display: grid; grid-template-columns: 400px 1fr; gap: 2.5rem; align-items: start; max-width: 1200px; margin: 0 auto; }
+        .card-premium { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 20px; padding: 2rem; box-shadow: var(--shadow-sm); }
+        
+        .name-suggestion-item { 
+            background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; 
+            padding: 12px 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+            transition: 0.2s;
+        }
+        .name-suggestion-item:hover { border-color: var(--brand-red); transform: translateX(4px); }
+        .name-suggestion-item.selected { border: 2px solid var(--brand-red); background: var(--brand-red-soft); }
+        
+        .name-text { font-weight: 800; font-size: 1.05rem; color: var(--text-primary); }
+        
+        .output-box { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+        .char-counter { font-size: 0.75rem; font-weight: 700; color: var(--brand-red); background: var(--brand-red-soft); padding: 2px 8px; border-radius: 100px; }
+
+        .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 1rem; }
+        .tag-pill { background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); }
+
+        .radio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 0.5rem; }
+        .radio-item { position: relative; }
+        .radio-item input { position: absolute; opacity: 0; }
+        .radio-item label { 
+            display: flex; align-items: center; justify-content: center; height: 38px; 
+            border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s;
+        }
+        .radio-item input:checked + label { background: var(--brand-red); border-color: var(--brand-red); color: white; }
+
+        @media (max-width: 1024px) { .branding-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body class="bg-secondary">
+    <creator-header></creator-header>
+
+    <main style="padding: 5rem 0;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h1 style="font-size: 3rem; letter-spacing: -0.02em; margin-bottom: 1rem;">Branding Generator</h1>
+                <p style="color: var(--text-secondary); font-size: 1.1rem;">Build your YouTube identity with SEO-optimized names and profiles.</p>
+            </div>
+
+            <div class="branding-grid">
+                <!-- Control Panel -->
+                <div class="card-premium">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Category</label>
+                        <select id="cat-select" style="width: 100%;">
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Education">Education / Knowledge</option>
+                            <option value="Tech">Tech / How-To</option>
+                            <option value="Gaming">Gaming</option>
+                            <option value="Music">Music</option>
+                            <option value="Lifestyle">Lifestyle / Hobby</option>
+                            <option value="Commentary">Commentary / Opinion</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Concept Keywords</label>
+                        <input type="text" id="keyword-input" placeholder="ex) lofi jazz, daily news, plant care" style="width: 100%;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Language</label>
+                        <div class="radio-grid">
+                            <div class="radio-item"><input type="radio" name="lang" id="lang-ko" value="ko"><label for="lang-ko">Korean</label></div>
+                            <div class="radio-item"><input type="radio" name="lang" id="lang-en" value="en"><label for="lang-en">English</label></div>
+                            <div class="radio-item"><input type="radio" name="lang" id="lang-mix" value="mixed" checked><label for="lang-mix">Mixed</label></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Tone</label>
+                        <div class="radio-grid">
+                            <div class="radio-item"><input type="radio" name="tone" id="tone-safe" value="safe" checked><label for="tone-safe">Safe</label></div>
+                            <div class="radio-item"><input type="radio" name="tone" id="tone-energetic" value="energetic"><label for="tone-energetic">Energetic</label></div>
+                            <div class="radio-item"><input type="radio" name="tone" id="tone-calm" value="calm"><label for="tone-calm">Calm</label></div>
+                            <div class="radio-item"><input type="radio" name="tone" id="tone-premium" value="premium"><label for="tone-premium">Premium</label></div>
+                        </div>
+                    </div>
+
+                    <button onclick="generateNames()" class="btn-primary" style="width: 100%; height: 52px; font-size: 1rem; margin: 0;">Generate Branding 🚀</button>
+                </div>
+
+                <!-- Results Output -->
+                <div id="results-area">
+                    <div id="placeholder" style="text-align: center; padding: 5rem 0; color: var(--text-secondary); opacity: 0.5;">
+                        <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🎨</span>
+                        <h3>Start creating your brand identity</h3>
+                    </div>
+
+                    <div id="names-root" style="display: none;">
+                        <h3 style="margin-bottom: 1.5rem;">Suggested Names (Pick One)</h3>
+                        <div id="names-list" style="margin-bottom: 2.5rem;"></div>
+
+                        <div class="output-box" id="desc-box" style="display: none;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <h3 style="margin:0;">Channel Description</h3>
+                                <div class="char-counter" id="char-count">0 chars</div>
+                            </div>
+                            <textarea id="desc-output" style="width: 100%; height: 220px; padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border-color); font-size: 0.95rem; line-height: 1.6; resize: none; background: var(--bg-primary); font-family: inherit;"></textarea>
+                            <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                                <button onclick="copyText('desc-output')" class="btn-outline" style="flex: 1; height: 46px;">📋 Copy Description</button>
+                                <button onclick="generateDescription()" class="btn-primary" style="flex: 1; height: 46px; margin: 0;">✨ Regenerate Description</button>
+                            </div>
+
+                            <div style="margin-top: 2rem;">
+                                <h4 style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase;">Suggested Tags & Keywords</h4>
+                                <div class="tag-cloud" id="tag-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="up-toast" id="copy-toast" style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #0f172a; color: white; padding: 12px 24px; border-radius: 100px; font-weight: 600; display: none; z-index: 2000;">Copied! 📋</div>
+
+    <creator-footer></creator-footer>
+
+    <script src="/main.js?v=20260221"></script>
+    <script>
+        const CATEGORY_MAP = {
+            Entertainment: { en: ['Spotlight', 'Vibe', 'Clips', 'Moments', 'Pop', 'Now', 'Reel', 'Lounge'], ko: ['공간', '상자', '하이라이트', '다이어리', '순간', '나우', '팝'] },
+            Education: { en: ['Academy', 'Class', 'Primer', 'Lab', 'Notes', 'Explained', 'Wiki', 'Coach'], ko: ['학당', '노트', '연구소', '위키', '교실', '백과', '가이드'] },
+            Tech: { en: ['Toolkit', 'Build', 'HowTo', 'Setup', 'Dev', 'Manual', 'Core', 'Logic'], ko: ['키트', '조립', '매뉴얼', '정석', '코어', '랩', '시스템'] },
+            Gaming: { en: ['Arena', 'Plays', 'Meta', 'Ranked', 'Quest', 'GG', 'Hub', 'Arcade'], ko: ['투기장', '퀘스트', '랭커', '메타', '아카이브', '플레이'] },
+            Music: { en: ['Groove', 'Beats', 'Sound', 'Session', 'Waves', 'Piano', 'Melody'], ko: ['선율', '비트', '그루브', '소리', '감성', '플레이리스트'] },
+            Lifestyle: { en: ['Daily', 'Routine', 'Craft', 'Home', 'Cozy', 'Diary', 'Habit'], ko: ['일상', '루틴', '일기', '공방', '코지', '아지트', '생활'] },
+            Commentary: { en: ['Insight', 'Digest', 'Signals', 'Lens', 'Talk', 'Brief', 'View'], ko: ['통찰', '시선', '다이제스트', '토크', '노트', '브리핑'] }
+        };
+
+        const STORAGE_KEYS = {
+            cat: 'branding.category',
+            kw: 'branding.keywords',
+            lang: 'branding.lang',
+            tone: 'branding.tone',
+            name: 'branding.selectedName',
+            desc: 'branding.desc'
+        };
+
+        let selectedName = "";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const sr = (id) => document.getElementById(id);
+            sr('cat-select').value = localStorage.getItem(STORAGE_KEYS.cat) || 'Entertainment';
+            sr('keyword-input').value = localStorage.getItem(STORAGE_KEYS.kw) || '';
+            const savedLang = localStorage.getItem(STORAGE_KEYS.lang);
+            if(savedLang) document.querySelector(`input[name="lang"][value="${savedLang}"]`).checked = true;
+            const savedTone = localStorage.getItem(STORAGE_KEYS.tone);
+            if(savedTone) document.querySelector(`input[name="tone"][value="${savedTone}"]`).checked = true;
+        });
+
+        function generateNames() {
+            const cat = document.getElementById('cat-select').value;
+            const concept = document.getElementById('keyword-input').value.trim();
+            const lang = document.querySelector('input[name="lang"]:checked').value;
+            
+            if (!concept) return alert('Please enter keywords or a concept');
+
+            localStorage.setItem(STORAGE_KEYS.cat, cat);
+            localStorage.setItem(STORAGE_KEYS.kw, concept);
+            localStorage.setItem(STORAGE_KEYS.lang, lang);
+
+            const baseWord = concept.split(' ')[0];
+            const cleanBase = baseWord.charAt(0).toUpperCase() + baseWord.slice(1);
+            
+            let names = new Set();
+            const enPool = CATEGORY_MAP[cat].en;
+            const koPool = CATEGORY_MAP[cat].ko;
+
+            while (names.size < 10) {
+                let name = "";
+                const randomEn = enPool[Math.floor(Math.random() * enPool.length)];
+                const randomKo = koPool[Math.floor(Math.random() * koPool.length)];
+
+                if (lang === 'en') {
+                    name = Math.random() > 0.5 ? `${cleanBase} ${randomEn}` : `${randomEn} ${cleanBase}`;
+                } else if (lang === 'ko') {
+                    name = `${cleanBase}${randomKo}`;
+                } else {
+                    name = Math.random() > 0.5 ? `${cleanBase} ${randomEn}` : `${cleanBase}${randomKo}`;
+                }
+
+                // Length normalization (10-20ish)
+                if (name.length > 22) name = name.substring(0, 20);
+                if (name.length < 8) name = name + " Channel";
+
+                names.add(name);
+            }
+
+            renderNameList(Array.from(names));
+        }
+
+        function renderNameList(list) {
+            document.getElementById('placeholder').style.display = 'none';
+            const root = document.getElementById('names-root');
+            root.style.display = 'block';
+            const container = document.getElementById('names-list');
+            container.innerHTML = '';
+
+            list.forEach(name => {
+                const item = document.createElement('div');
+                item.className = 'name-suggestion-item';
+                item.innerHTML = `
+                    <span class="name-text">${name}</span>
+                    <div style="display:flex; gap:8px;">
+                        <button onclick="copyValue('${name.replace(/'/g, "'")}')" class="btn-outline" style="height:32px; font-size:0.75rem; margin:0; padding:0 10px;">Copy</button>
+                        <button onclick="selectName('${name.replace(/'/g, "'")}', this)" class="btn-primary" style="height:32px; font-size:0.75rem; margin:0; padding:0 12px;">Use</button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function selectName(name, btn) {
+            selectedName = name;
+            localStorage.setItem(STORAGE_KEYS.name, name);
+            document.querySelectorAll('.name-suggestion-item').forEach(el => el.classList.remove('selected'));
+            btn.closest('.name-suggestion-item').classList.add('selected');
+            
+            document.getElementById('desc-box').style.display = 'block';
+            generateDescription();
+            window.scrollTo({ top: document.getElementById('desc-box').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        function generateDescription() {
+            if (!selectedName) return;
+            const cat = document.getElementById('cat-select').value;
+            const kw = document.getElementById('keyword-input').value;
+            const tone = document.querySelector('input[name="tone"]:checked').value;
+
+            const intros = {
+                safe: `Welcome to ${selectedName}! We are dedicated to bringing you the best ${kw} content.`,
+                energetic: `Ready to level up? ${selectedName} is your go-to source for high-energy ${kw} action!`,
+                calm: `Find your peace at ${selectedName}. A curated space for thoughtful ${kw} explorations.`,
+                premium: `Discover the gold standard of ${kw}. Welcome to the official ${selectedName} experience.`
+            };
+
+            const values = [
+                `Our channel focuses on quality and consistency in the ${cat} niche.`,
+                `We believe that ${kw} can truly change your perspective and workflow.`,
+                `Every video is designed to provide maximum value to our community.`,
+                `Join thousands of subscribers who are passionate about ${kw} and growth.`
+            ];
+
+            const ctas = {
+                safe: `Subscribe to stay updated with our weekly releases.`,
+                energetic: `HIT THAT SUBSCRIBE BUTTON and join the notification squad!`,
+                calm: `If you appreciate our content, consider subscribing for a quieter journey.`,
+                premium: `Join our exclusive circle of viewers by subscribing today.`
+            };
+
+            let output = `${intros[tone]}
+
+${values.join(' ')}
+
+${ctas[tone]}`;
+            
+            // Length Padding
+            const filler = " Whether you are a beginner or a seasoned pro, our goal is to build a community where everyone can learn and share their passion for this amazing topic.";
+            while (output.length < 450) output += filler;
+            if (output.length > 550) output = output.substring(0, 547) + "...";
+
+            const textarea = document.getElementById('desc-output');
+            textarea.value = output;
+            updateCharCount();
+            generateTags(kw);
+            localStorage.setItem(STORAGE_KEYS.desc, output);
+        }
+
+        function generateTags(kw) {
+            const tags = kw.toLowerCase().split(/\s+/).filter(w => w.length > 2).slice(0, 5);
+            const list = document.getElementById('tag-list');
+            list.innerHTML = tags.map(t => `<span class="tag-pill">#${t}</span>`).join('') + 
+                             `<span class="tag-pill">#${document.getElementById('cat-select').value.toLowerCase()}</span>`;
+        }
+
+        function updateCharCount() {
+            const val = document.getElementById('desc-output').value;
+            document.getElementById('char-count').innerText = `${val.length} chars`;
+        }
+
+        function copyValue(val) {
+            navigator.clipboard.writeText(val).then(() => showToast());
+        }
+
+        function copyText(id) {
+            const val = document.getElementById(id).value;
+            navigator.clipboard.writeText(val).then(() => showToast());
+        }
+
+        function showToast() {
+            const t = document.getElementById('copy-toast');
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 2000);
+        }
+
+        document.getElementById('desc-output').oninput = updateCharCount;
+    </script>
+</body>
+</html>
