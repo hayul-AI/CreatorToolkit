@@ -17,6 +17,10 @@
         .keyword-pill-container { display: flex; flex-wrap: wrap; gap: 8px; min-height: 80px; padding: 12px; border: 1px dashed var(--border-color); border-radius: 12px; margin-bottom: 1.5rem; }
         .keyword-pill { background: var(--brand-red-soft); color: var(--brand-red); padding: 6px 14px; border-radius: 100px; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
         .suggestion-list { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
+        .comp-badge { font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; margin-left: 8px; }
+        .comp-low { background: #dcfce7; color: #166534; }
+        .comp-medium { background: #fef3c7; color: #92400e; }
+        .comp-high { background: #fee2e2; color: #991b1b; }
         @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -84,36 +88,85 @@
             `;
 
             setTimeout(() => {
-                const mocks = [
-                    { t: `${input} tutorial`, intent: 'tutorial' },
-                    { t: `best ${input} 2026`, intent: 'comparison' },
-                    { t: `how to setup ${input}`, intent: 'tutorial' },
-                    { t: `is ${input} worth it`, intent: 'info' },
-                    { t: `${input} review`, intent: 'comparison' }
-                ];
+                const results = generateSmartKeywords(input);
 
                 document.querySelector('.ai-status').className = 'ai-status ready';
                 document.querySelector('.ai-status').innerText = 'Analysis Complete';
                 document.getElementById('ai-kw-gauge').style.width = '85%';
                 document.getElementById('ai-kw-feedback').style.display = 'block';
-                document.getElementById('ai-kw-feedback').innerHTML = `<p>• Found high volume for <b>tutorial</b> intent.<br>• Competition is moderate for <b>comparison</b> queries.</p>`;
+                document.getElementById('ai-kw-feedback').innerHTML = `<p>• Found high relevance for <b>niche</b> intents.<br>• Keyword diversity optimized for 2026 SEO.</p>`;
 
                 const list = document.getElementById('results-list');
                 list.innerHTML = '';
-                mocks.forEach((m, i) => {
+                results.forEach((m, i) => {
                     const item = document.createElement('div');
                     item.className = 'result-card-ai fade-in-up';
                     item.style.animationDelay = `${i * 0.05}s`;
                     item.innerHTML = `
-                        <div>
+                        <div style="display:flex; align-items:center;">
                             <span class="intent-badge intent-${m.intent}">${m.intent}</span>
                             <span style="font-weight:600;">${m.t}</span>
+                            <span class="comp-badge comp-${m.comp.toLowerCase()}">COMP: ${m.comp}</span>
                         </div>
                         <button class="btn-add" style="background:var(--bg-secondary); border:1px solid var(--border-color); padding:6px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;" onclick="addKeyword('${m.t}')">+ Add</button>
                     `;
                     list.appendChild(item);
                 });
             }, 400);
+        }
+
+        function generateSmartKeywords(seed) {
+            const normalized = seed.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const base = normalized || 'video';
+            
+            const buckets = [
+                { intent: 'tutorial', mods: ['tutorial', 'setup', 'beginner', 'workflow', 'tips', 'mistakes'] },
+                { intent: 'comparison', mods: ['vs', 'alternatives', 'comparison', 'best', 'ranking'] },
+                { intent: 'info', mods: ['meaning', 'explained', 'features', 'update', 'requirements'] },
+                { intent: 'review', mods: ['review', 'rating', 'proscons', 'verdict', 'pricing'] }
+            ];
+
+            let candidates = [];
+            buckets.forEach(bucket => {
+                bucket.mods.forEach(mod => {
+                    // Form 1: base + mod
+                    candidates.push({ t: (base + mod).toLowerCase(), intent: bucket.intent });
+                    // Form 2: mod + base
+                    candidates.push({ t: (mod + base).toLowerCase(), intent: bucket.intent });
+                });
+            });
+
+            // Filter
+            candidates = candidates.filter(c => {
+                if (c.t.length < 6 && base.length < 5) return false;
+                if (c.t === base) return false;
+                return true;
+            });
+
+            // Shuffle and pick 10
+            const shuffled = candidates.sort(() => 0.5 - Math.random());
+            const unique = [];
+            const seen = new Set();
+            
+            for (const item of shuffled) {
+                if (!seen.has(item.t)) {
+                    seen.add(item.t);
+                    unique.push(item);
+                }
+                if (unique.length >= 10) break;
+            }
+
+            // Competition Heuristic
+            return unique.map(item => {
+                let comp = 'Medium';
+                const highMods = ['best', 'vs', 'review', 'comparison', 'ranking'];
+                const lowMods = ['workflow', 'requirements', 'features', 'mistakes', 'alternatives'];
+                
+                if (highMods.some(m => item.t.includes(m)) || base.length <= 5) comp = 'High';
+                else if (item.t.length >= 10 && lowMods.some(m => item.t.includes(m))) comp = 'Low';
+                
+                return { ...item, comp };
+            });
         }
 
         function addKeyword(kw) {
