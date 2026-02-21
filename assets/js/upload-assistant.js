@@ -44,7 +44,7 @@ class UploadAssistant extends HTMLElement {
         const path = window.location.pathname;
         if (path.includes('thumbnail')) return 'Thumbnail Maker';
         if (path.includes('title')) return 'Title Generator';
-        if (path.includes('keyword')) return 'Keyword Tool';
+        if (path.includes('keyword')) return 'Keyword Generator';
         if (path.includes('tag')) return 'Tag Generator';
         if (path.includes('upload')) return 'Upload Time';
         if (path.includes('about')) return 'About Page';
