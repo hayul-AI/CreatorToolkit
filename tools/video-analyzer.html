@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Analyzer - CreatorToolkit</title>
+    <meta name="description" content="Analyze your YouTube video SEO score and get improvement tips instantly. Free local analysis for creators.">
+    <link rel="stylesheet" href="/style.css?v=20260221">
+    <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .analyzer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+        .thumbnail-preview-box { 
+            width: 100%; aspect-ratio: 16/9; background: var(--bg-secondary); 
+            border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;
+        }
+        .thumbnail-preview-box img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .score-circle { width: 120px; height: 120px; border-radius: 50%; border: 8px solid var(--brand-red-soft); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800; color: var(--brand-red); margin: 0 auto 1.5rem; position: relative; }
+        .score-bar-container { height: 12px; background: var(--border-color); border-radius: 10px; overflow: hidden; margin-bottom: 2rem; }
+        .score-bar-fill { height: 100%; background: var(--brand-red); width: 0%; transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .result-card { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; display: none; }
+        .item-score { display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-weight: 600; }
+        .tip-list { list-style: none; padding: 0; }
+        .tip-list li { padding: 0.75rem; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.9rem; display: flex; gap: 0.75rem; align-items: flex-start; }
+        .tip-list li::before { content: "💡"; }
+        .suggestion-box { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+        @media (max-width: 968px) { .analyzer-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <creator-header></creator-header>
+
+    <main style="padding: 5rem 0; background: var(--bg-secondary);">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h1 style="font-size: 3rem; letter-spacing: -0.02em; margin-bottom: 1rem;">Video Analyzer</h1>
+                <p style="color: var(--text-secondary); font-size: 1.1rem;">Instant SEO Audit for your YouTube Videos</p>
+            </div>
+
+            <div class="analyzer-grid">
+                <!-- Input Section -->
+                <div class="card-premium" style="padding: 2.5rem; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-lg);">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label class="label-premium" style="display: block; font-weight: 700; margin-bottom: 0.5rem;">YouTube Video URL</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" id="video-url" placeholder="https://www.youtube.com/watch?v=..." style="flex: 1;">
+                            <button onclick="loadThumbnail()" class="btn-primary" style="height: 44px; padding: 0 1rem; margin: 0;">Load</button>
+                        </div>
+                    </div>
+
+                    <div class="thumbnail-preview-box" id="thumb-box">
+                        <span id="thumb-placeholder" style="color: var(--text-secondary); font-size: 0.9rem;">Thumbnail Preview</span>
+                        <img id="thumb-img" alt="Thumbnail Preview">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label class="label-premium" style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Video Title</label>
+                        <textarea id="video-title" placeholder="Enter your current or planned title..." style="height: 80px;"></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label class="label-premium" style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Description</label>
+                        <textarea id="video-desc" placeholder="Enter video description..." style="height: 120px;"></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label class="label-premium" style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Target Keywords (max 3, comma separated)</label>
+                        <input type="text" id="target-keywords" placeholder="keyword1, keyword2, keyword3">
+                    </div>
+
+                    <button onclick="analyzeVideo()" class="btn-primary" style="width: 100%; height: 52px; font-size: 1.1rem; margin: 0;">Analyze Video ✨</button>
+                </div>
+
+                <!-- Result Section -->
+                <div class="result-card" id="result-area">
+                    <div style="text-align: center;">
+                        <div class="score-circle" id="total-score-val">0</div>
+                        <h3 style="margin-bottom: 1rem;">SEO Quality Score</h3>
+                        <div class="score-bar-container"><div class="score-bar-fill" id="score-fill"></div></div>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <div class="item-score"><span>Title Score</span> <span id="score-title">0/35</span></div>
+                        <div class="item-score"><span>Description Score</span> <span id="score-desc">0/35</span></div>
+                        <div class="item-score"><span>Keyword Score</span> <span id="score-keywords">0/20</span></div>
+                        <div class="item-score"><span>Thumbnail Score</span> <span id="score-thumb">0/10</span></div>
+                    </div>
+
+                    <h4 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Improvement Tips</h4>
+                    <ul class="tip-list" id="tips-list"></ul>
+
+                    <div class="suggestion-box">
+                        <h4 style="margin-bottom: 1.5rem;">SEO Booster Suggestions</h4>
+                        <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem;">
+                            <button onclick="recommendTitles()" class="btn-outline" style="flex: 1; height: 44px; font-size: 0.85rem; margin: 0;">Suggest Titles</button>
+                            <button onclick="recommendDesc()" class="btn-outline" style="flex: 1; height: 44px; font-size: 0.85rem; margin: 0;">Suggest Description</button>
+                        </div>
+                        <div id="suggestion-output" style="display: none;">
+                            <div id="output-content" style="background: var(--bg-secondary); padding: 1.25rem; border-radius: 12px; font-size: 0.95rem; white-space: pre-wrap; position: relative;"></div>
+                            <button onclick="copyOutput()" id="copy-btn" class="btn-primary" style="width: 100%; height: 40px; margin-top: 0.75rem; font-size: 0.85rem;">Copy to Clipboard</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <creator-footer></creator-footer>
+
+    <script src="/main.js"></script>
+    <script>
+        let currentThumbnailUrl = '';
+        let currentThumbnailQuality = 'low';
+
+        function extractVideoId(url) {
+            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+        }
+
+        function loadThumbnail() {
+            const url = document.getElementById('video-url').value;
+            const videoId = extractVideoId(url);
+            const thumbImg = document.getElementById('thumb-img');
+            const placeholder = document.getElementById('thumb-placeholder');
+
+            if (!videoId) {
+                alert('Please enter a valid YouTube URL');
+                return;
+            }
+
+            placeholder.style.display = 'none';
+            thumbImg.style.display = 'block';
+            
+            // Try high res
+            const maxRes = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+            const hqRes = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+            
+            thumbImg.onload = function() {
+                if (this.naturalWidth === 120) { // YouTube default 120x90 when missing
+                    this.src = hqRes;
+                    currentThumbnailQuality = 'hq';
+                } else {
+                    currentThumbnailQuality = 'max';
+                }
+            };
+            thumbImg.src = maxRes;
+            currentThumbnailUrl = maxRes;
+        }
+
+        function analyzeVideo() {
+            const title = document.getElementById('video-title').value;
+            const desc = document.getElementById('video-desc').value;
+            const kwRaw = document.getElementById('target-keywords').value;
+            const kws = kwRaw.split(',').map(k => k.trim()).filter(k => k.length > 0).slice(0, 3);
+
+            let sTitle = 0, sDesc = 0, sKW = 0, sThumb = 0;
+            let tips = [];
+
+            // 1. Title Scoring (max 35)
+            const tLen = title.length;
+            if (tLen >= 45 && tLen <= 70) sTitle += 20;
+            else if (tLen > 0 && tLen < 20) { sTitle += 5; tips.push("Title is very short. Aim for 45-70 characters for better CTR."); }
+            else if (tLen > 0) sTitle += 15;
+            else tips.push("Add a video title to start analysis.");
+
+            if (kws.some(k => title.toLowerCase().includes(k.toLowerCase()))) sTitle += 10;
+            else if (tLen > 0) tips.push("Try including your main keyword in the title.");
+
+            const upperMatch = title.match(/[A-Z]/g);
+            if (upperMatch && upperMatch.length > tLen * 0.5) sTitle -= 5;
+            if (title.includes('!!!')) sTitle -= 5;
+
+            // 2. Description Scoring (max 35)
+            const dLen = desc.length;
+            if (dLen >= 200) sDesc += 20;
+            else if (dLen >= 100) sDesc += 10;
+            else if (dLen > 0) { sDesc += 5; tips.push("Write a longer description (200+ chars) to help search engines."); }
+
+            if (kws.some(k => desc.toLowerCase().substring(0, 160).includes(k.toLowerCase()))) sDesc += 10;
+            else if (dLen > 0) tips.push("Include target keywords in the first two lines of your description.");
+
+            if ((desc.match(/
+/g) || []).length >= 2) sDesc += 5;
+
+            // 3. Keyword Scoring (max 20)
+            if (kws.length >= 1) sKW += 10;
+            const kwInText = kws.reduce((acc, k) => {
+                const count = ((title + " " + desc).toLowerCase().split(k.toLowerCase()).length - 1);
+                return acc + count;
+            }, 0);
+            if (kwInText >= 1) sKW += 10;
+            else if (kws.length > 0) tips.push("Repeat your keywords naturally in the description 1-3 times.");
+
+            // 4. Thumbnail Scoring (max 10)
+            if (currentThumbnailUrl) {
+                sThumb += 5;
+                if (currentThumbnailQuality === 'max') sThumb += 5;
+                else tips.push("Use a high-resolution thumbnail (1280x720) for a more professional look.");
+            } else {
+                tips.push("Load your thumbnail to check its quality.");
+            }
+
+            // UI Render
+            const total = Math.max(0, Math.min(100, sTitle + sDesc + sKW + sThumb));
+            document.getElementById('result-area').style.display = 'block';
+            document.getElementById('total-score-val').innerText = total;
+            document.getElementById('score-fill').style.width = total + '%';
+            document.getElementById('score-title').innerText = `${Math.max(0, sTitle)}/35`;
+            document.getElementById('score-desc').innerText = `${Math.max(0, sDesc)}/35`;
+            document.getElementById('score-keywords').innerText = `${Math.max(0, sKW)}/20`;
+            document.getElementById('score-thumb').innerText = `${Math.max(0, sThumb)}/10`;
+
+            const tipsList = document.getElementById('tips-list');
+            tipsList.innerHTML = '';
+            tips.slice(0, 5).forEach(tip => {
+                const li = document.createElement('li');
+                li.innerText = tip;
+                tipsList.appendChild(li);
+            });
+            if(tips.length === 0 && total > 90) {
+                tipsList.innerHTML = '<li>Your SEO looks great! Ready to publish.</li>';
+            }
+        }
+
+        function recommendTitles() {
+            const kwRaw = document.getElementById('target-keywords').value;
+            const kws = kwRaw.split(',').map(k => k.trim()).filter(k => k.length > 0);
+            const mainKw = kws[0] || 'your topic';
+            
+            const templates = [
+                `The TRUTH about ${mainKw} (Don't miss out!)`,
+                `How to Master ${mainKw} in 2026: Step-by-Step`,
+                `I tried ${mainKw} for 30 days and THIS happened...`,
+                `Stop doing ${mainKw} WRONG! (Do this instead)`,
+                `5 ${mainKw} Secrets Every Creator Needs to Know`
+            ];
+            
+            showOutput(templates.join('
+'));
+        }
+
+        function recommendDesc() {
+            const kwRaw = document.getElementById('target-keywords').value;
+            const kws = kwRaw.split(',').map(k => k.trim()).filter(k => k.length > 0);
+            const kwList = kws.join(', ');
+            
+            const text = `Welcome back! In today's video, we are diving deep into ${kwList}. 
+
+We'll explore how ${kws[0] || 'this topic'} can transform your content creation workflow and why understanding ${kws[1] || 'SEO'} is essential for growth in 2026. 
+
+TIMESTAMPS:
+0:00 Intro
+1:20 Deep Dive
+5:00 Advanced Tips
+
+🔔 Subscribe for more tips on ${kwList}!
+👍 Like if this was helpful.`;
+            
+            showOutput(text);
+        }
+
+        function showOutput(text) {
+            document.getElementById('suggestion-output').style.display = 'block';
+            document.getElementById('output-content').innerText = text;
+        }
+
+        function copyOutput() {
+            const text = document.getElementById('output-content').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copy-btn');
+                const original = btn.innerText;
+                btn.innerText = 'Copied! ✅';
+                setTimeout(() => btn.innerText = original, 2000);
+            });
+        }
+    </script>
+    <link rel="stylesheet" href="/assets/upload-panel.css">
+    <script defer src="/assets/upload-panel.js"></script>
+</body>
+</html>

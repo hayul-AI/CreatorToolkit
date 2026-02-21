@@ -56,6 +56,7 @@ function registerWebComponents() {
                         
                         <ul class="nav-links">
                             <li><a href="/index.html#tools" class="${activePath.includes('tools') ? 'active' : ''}">Tools</a></li>
+                            <li><a href="/tools/video-analyzer.html" class="${activePath.includes('video-analyzer') ? 'active' : ''}">Analyzer</a></li>
                             <li><a href="/index.html#guides" class="${activePath.includes('guides') ? 'active' : ''}">Guides</a></li>
                             <li><a href="/about.html" class="${activePath === '/about.html' ? 'active' : ''}">About</a></li>
                         </ul>

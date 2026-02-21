@@ -6,27 +6,53 @@
     <title>Thumbnail Editor - CreatorToolkit</title>
     <link rel="stylesheet" href="/assets/styles/base.css">
     <link rel="stylesheet" href="/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=Montserrat:wght@400;900&family=Poppins:wght@400;900&family=Roboto:wght@400;900&family=Anton&family=Bebas+Neue&family=Oswald:wght@400;700&family=Open+Sans:wght@800&family=Playfair+Display:wght@900&family=Space+Grotesk:wght@700&family=Manrope:wght@800&family=Noto+Sans+KR:wght@400;900&family=Nanum+Gothic:wght@800&family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <!-- 20+ Professional Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=Montserrat:wght@400;900&family=Poppins:wght@400;900&family=Roboto:wght@400;900&family=Anton&family=Bebas+Neue&family=Oswald:wght@400;700&family=Open+Sans:wght@800&family=Playfair+Display:wght@900&family=Space+Grotesk:wght@700&family=Manrope:wght@800&family=DM+Sans:wght@900&family=Work+Sans:wght@900&family=Rubik:wght@900&family=Nunito:wght@900&family=Noto+Sans+KR:wght@400;900&family=Noto+Serif+KR:wght@900&family=Nanum+Gothic:wght@800&family=Nanum+Myeongjo:wght@800&family=Gowun+Dodum&display=swap" rel="stylesheet">
     <style>
-        .tool-layout { display: grid; grid-template-columns: 1fr 380px; gap: 2rem; align-items: start; }
+        .tool-layout { display: grid; grid-template-columns: 1fr 540px; gap: 2.5rem; align-items: start; }
         .workspace-premium { 
             background: #1e293b; border-radius: var(--radius-lg); 
             display: flex; align-items: center; justify-content: center; 
-            position: relative; overflow: auto; height: 600px; border: 4px solid var(--slate-800);
+            position: relative; overflow: auto; height: 640px; border: 4px solid var(--slate-800);
             box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
         }
-        .canvas-container { position: relative; width: 1280px; height: 720px; background: #000; zoom: 0.4; box-shadow: 0 0 30px rgba(0,0,0,0.3); }
-        #bg-preview { width: 100%; height: 100%; object-fit: cover; }
+        .canvas-container { 
+            position: relative; width: 1280px; height: 720px; background: #000; zoom: 0.45; 
+            box-shadow: 0 0 30px rgba(0,0,0,0.3); min-width: 640px; 
+        }
+        #bg-preview { width: 100%; height: 100%; object-fit: cover; transition: filter 0.2s; }
         
-        @media (max-width: 1024px) {
+        /* Filter Overlays */
+        #vignette-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 1; transition: opacity 0.2s; }
+        #grain-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 2; opacity: 0; pointer-events: none; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+
+        /* Filter UI Styles */
+        .filter-preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1.5rem; }
+        .preset-btn { 
+            padding: 8px 4px; font-size: 0.7rem; font-weight: 700; border-radius: 8px; border: 1px solid var(--border-color);
+            background: var(--bg-primary); cursor: pointer; transition: all 0.2s; text-align: center; color: var(--text-secondary);
+        }
+        .preset-btn:hover { border-color: var(--brand-red); color: var(--brand-red); }
+        .preset-btn.active { background: var(--brand-red); border-color: var(--brand-red); color: white; }
+        
+        .slider-group { margin-bottom: 1rem; }
+        .slider-header { display: flex; justify-content: space-between; margin-bottom: 0.25rem; font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); }
+        .slider-val { color: var(--brand-red); }
+        input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: var(--border-color); appearance: none; outline: none; }
+        input[type="range"]::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--brand-red); cursor: pointer; border: 2px solid white; box-shadow: var(--shadow-sm); }
+
+        @media (max-width: 1280px) {
             .tool-layout { grid-template-columns: 1fr; }
-            .workspace-premium { height: 400px; }
-            .canvas-container { zoom: 0.25; }
+            .workspace-premium { height: 450px; }
+            .canvas-container { zoom: 0.35; }
+            .sidebar-premium { position: static; width: 100%; }
         }
 
         .sidebar-premium { position: sticky; top: 100px; max-height: calc(100vh - 120px); overflow-y: auto; padding-right: 4px; }
         .sidebar-premium::-webkit-scrollbar { width: 6px; }
         .sidebar-premium::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 10px; }
+
+        .card-premium { padding: 2rem !important; border-radius: 24px !important; }
 
         /* Layers UI */
         .text-layer { 
@@ -35,31 +61,30 @@
         }
         .text-layer.selected { border: 2px dashed var(--brand-red); background: rgba(225, 29, 72, 0.05); }
 
-        /* Resizer Handles */
-        .resizer { position: absolute; width: 10px; height: 10px; background: var(--brand-red); border: 2px solid white; border-radius: 50%; display: none; z-index: 10; }
+        /* Handles */
+        .resizer { position: absolute; width: 12px; height: 12px; background: var(--brand-red); border: 2px solid white; border-radius: 50%; display: none; z-index: 10; }
         .text-layer.selected .resizer { display: block; }
-        .resizer.nw { top: -5px; left: -5px; cursor: nw-resize; }
-        .resizer.ne { top: -5px; right: -5px; cursor: ne-resize; }
-        .resizer.sw { bottom: -5px; left: -5px; cursor: sw-resize; }
-        .resizer.se { bottom: -5px; right: -5px; cursor: se-resize; }
+        .resizer.nw { top: -6px; left: -6px; cursor: nw-resize; }
+        .resizer.ne { top: -6px; right: -6px; cursor: ne-resize; }
+        .resizer.sw { bottom: -6px; left: -6px; cursor: sw-resize; }
+        .resizer.se { bottom: -6px; right: -6px; cursor: se-resize; }
         
         .rotator { 
-            position: absolute; top: -35px; left: 50%; transform: translateX(-50%); 
-            width: 24px; height: 24px; background: white; border: 2px solid var(--brand-red); 
+            position: absolute; top: -45px; left: 50%; transform: translateX(-50%); 
+            width: 32px; height: 32px; background: white; border: 2px solid var(--brand-red); 
             border-radius: 50%; display: none; cursor: crosshair; z-index: 10;
-            align-items: center; justify-content: center; font-size: 12px;
+            align-items: center; justify-content: center; font-size: 14px;
+            box-shadow: var(--shadow-md);
         }
         .text-layer.selected .rotator { display: flex; }
 
-        /* Drop Zone UI */
         .bg-upload-zone {
-            border: 2px dashed var(--slate-300); border-radius: 12px; padding: 2rem 1rem;
+            border: 2px dashed var(--slate-300); border-radius: 16px; padding: 2.5rem 1.5rem;
             text-align: center; cursor: pointer; transition: all 0.2s; background: var(--slate-50);
-            position: relative; margin-bottom: 1rem;
+            position: relative; margin-bottom: 1.5rem;
         }
         .bg-upload-zone:hover { border-color: var(--brand-red); background: var(--brand-red-soft); }
-        .bg-upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-        .bg-file-name { font-size: 0.75rem; color: var(--slate-500); margin-top: 0.5rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+        .bg-file-name { font-size: 0.8rem; color: var(--slate-500); margin-top: 0.75rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         #export-canvas { display: none; }
     </style>
@@ -69,10 +94,10 @@
 
     <main class="section bg-soft">
         <div class="container">
-            <div style="margin-bottom: 3rem; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div style="margin-bottom: 3rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
                 <div>
                     <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; letter-spacing: -0.02em;">Thumbnail Maker</h1>
-                    <p style="color: var(--slate-600);">Professional layer-based editor for high-CTR thumbnails.</p>
+                    <p style="color: var(--slate-600);">The ultimate layer-based editor for high-CTR thumbnails.</p>
                 </div>
                 <div class="badge-premium" style="margin-bottom: 0;">2026 Pro Edition</div>
             </div>
@@ -88,79 +113,138 @@
 
                 <!-- Right: Sidebar -->
                 <aside class="sidebar-premium">
-                    <div class="card-premium" style="padding: 1.5rem; border-radius: 20px;">
+                    <div class="card-premium">
                         <!-- Background Image Section -->
-                        <div class="form-group" style="margin-bottom: 1.5rem;">
-                            <label class="label-premium" style="display:flex; justify-content:space-between;">Background Image <small style="opacity:0.6;">1280x720 Rec.</small></label>
+                        <div class="form-group" style="margin-bottom: 2rem;">
+                            <label class="label-premium" style="display:flex; justify-content:space-between;">Background Image <small style="opacity:0.6;">1280x720 Recommended</small></label>
                             <div class="bg-upload-zone" id="drop-zone">
-                                <span style="font-size: 1.5rem; display: block; margin-bottom: 0.5rem;">🖼️</span>
-                                <p style="font-size: 0.85rem; font-weight: 700;">Drop image here or click</p>
+                                <span style="font-size: 2rem; display: block; margin-bottom: 0.75rem;">🖼️</span>
+                                <p style="font-size: 0.95rem; font-weight: 700;">Drop image here or click to upload</p>
                                 <span class="bg-file-name" id="file-name">No file selected</span>
-                                <input type="file" id="bg-upload" accept="image/*">
+                                <input type="file" id="bg-upload" accept="image/*" style="position:absolute; inset:0; opacity:0; cursor:pointer;">
                             </div>
                         </div>
 
-                        <div id="edit-panel" style="display:none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--slate-200); animation: fadeIn 0.3s ease;">
+                        <!-- Filters Section -->
+                        <div class="form-group" style="margin-bottom: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--slate-200);">
+                            <label class="label-premium">Filter Presets</label>
+                            <div class="filter-preset-grid" id="filter-presets">
+                                <button class="preset-btn active" onclick="applyPreset('none')">None</button>
+                                <button class="preset-btn" onclick="applyPreset('clean')">Clean</button>
+                                <button class="preset-btn" onclick="applyPreset('warm')">Warm</button>
+                                <button class="preset-btn" onclick="applyPreset('cool')">Cool</button>
+                                <button class="preset-btn" onclick="applyPreset('vintage')">Vintage</button>
+                                <button class="preset-btn" onclick="applyPreset('film')">Film</button>
+                                <button class="preset-btn" onclick="applyPreset('punchy')">Punchy</button>
+                                <button class="preset-btn" onclick="applyPreset('glow')">Glow</button>
+                                <button class="preset-btn" onclick="applyPreset('bw')">B&W</button>
+                                <button class="preset-btn" onclick="applyPreset('sepia')">Sepia</button>
+                                <button class="preset-btn" onclick="applyPreset('dramatic')">Dramatic</button>
+                                <button class="preset-btn" onclick="applyPreset('moody')">Moody</button>
+                            </div>
+
+                            <label class="label-premium">Fine Controls</label>
+                            <div id="filter-controls">
+                                <div class="slider-group">
+                                    <div class="slider-header"><span>Brightness</span> <span class="slider-val" id="val-brightness">100%</span></div>
+                                    <input type="range" id="f-brightness" min="70" max="140" value="100">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header"><span>Contrast</span> <span class="slider-val" id="val-contrast">100%</span></div>
+                                    <input type="range" id="f-contrast" min="70" max="160" value="100">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header"><span>Saturation</span> <span class="slider-val" id="val-saturate">100%</span></div>
+                                    <input type="range" id="f-saturate" min="0" max="180" value="100">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header"><span>Blur</span> <span class="slider-val" id="val-blur">0px</span></div>
+                                    <input type="range" id="f-blur" min="0" max="6" value="0">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header"><span>Vignette</span> <span class="slider-val" id="val-vignette">0%</span></div>
+                                    <input type="range" id="f-vignette" min="0" max="100" value="0">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header"><span>Grain</span> <span class="slider-val" id="val-grain">0%</span></div>
+                                    <input type="range" id="f-grain" min="0" max="30" value="0">
+                                </div>
+                            </div>
+                            <button class="btn-premium btn-outline" style="width:100%; height:36px; font-size:0.75rem; margin-top:0.5rem;" onclick="resetFilters()">Reset All Filters</button>
+                        </div>
+
+                        <div id="edit-panel" style="display:none; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--slate-200);">
                             <div class="form-group">
                                 <label class="label-premium">Text Content</label>
-                                <input type="text" id="input-text" class="input-premium" placeholder="Enter viral text...">
+                                <input type="text" id="input-text" class="input-premium" style="font-size: 1.1rem; padding: 14px;" placeholder="Enter viral text...">
                             </div>
 
                             <div class="form-group">
                                 <label class="label-premium">Font Style</label>
-                                <select id="input-font" class="input-premium" style="margin-bottom: 0.75rem; font-weight: 700;">
-                                    <optgroup label="Viral (Bold)">
-                                        <option value="Impact">Impact (System)</option>
+                                <select id="input-font" class="input-premium" style="margin-bottom: 1rem; font-weight: 700; height: 50px;">
+                                    <optgroup label="VIRAL & BOLD">
                                         <option value="Anton">Anton (Viral)</option>
                                         <option value="Bebas Neue">Bebas Neue</option>
+                                        <option value="Impact">Impact (System)</option>
                                         <option value="Montserrat">Montserrat Black</option>
                                         <option value="Poppins">Poppins Black</option>
+                                        <option value="Oswald">Oswald Bold</option>
                                     </optgroup>
-                                    <optgroup label="Modern">
+                                    <optgroup label="MODERN SANS">
                                         <option value="Inter">Inter</option>
                                         <option value="Roboto">Roboto</option>
+                                        <option value="Open Sans">Open Sans</option>
                                         <option value="Space Grotesk">Space Grotesk</option>
                                         <option value="Manrope">Manrope</option>
+                                        <option value="DM Sans">DM Sans</option>
+                                        <option value="Work Sans">Work Sans</option>
+                                        <option value="Rubik">Rubik</option>
+                                        <option value="Nunito">Nunito</option>
                                     </optgroup>
-                                    <optgroup label="Classic/KR">
+                                    <optgroup label="KOREAN (한글)">
                                         <option value="Noto Sans KR">Noto Sans KR</option>
+                                        <option value="Noto Serif KR">Noto Serif KR</option>
                                         <option value="Nanum Gothic">Nanum Gothic</option>
+                                        <option value="Nanum Myeongjo">Nanum Myeongjo</option>
                                         <option value="Gowun Dodum">Gowun Dodum</option>
+                                    </optgroup>
+                                    <optgroup label="CLASSIC">
                                         <option value="Playfair Display">Playfair Display</option>
                                     </optgroup>
                                 </select>
-                                <p style="font-size: 0.65rem; color: var(--slate-500); margin-bottom: 0.75rem;">* All fonts are free/open-license (Google Fonts)</p>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                                <p style="font-size: 0.75rem; color: var(--slate-500); margin-bottom: 1rem;">* Premium fonts powered by Google Fonts (OFL)</p>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                                     <div style="position:relative;">
-                                        <span style="position:absolute; left:12px; top:12px; font-size:0.7rem; font-weight:800; opacity:0.4;">SIZE</span>
-                                        <input type="number" id="input-size" class="input-premium" value="120" style="padding-left:45px;">
+                                        <span style="position:absolute; left:14px; top:14px; font-size:0.75rem; font-weight:800; opacity:0.4;">SIZE</span>
+                                        <input type="number" id="input-size" class="input-premium" value="120" style="padding-left:55px; height:50px;">
                                     </div>
-                                    <input type="color" id="input-color" class="input-premium" style="height:44px; padding:4px; border-radius:12px; cursor:pointer;">
+                                    <input type="color" id="input-color" class="input-premium" style="height:50px; padding:6px; border-radius:12px; cursor:pointer;">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="label-premium">Outline (Stroke)</label>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                                    <input type="color" id="input-stroke-color" class="input-premium" style="height:44px; padding:2px;">
-                                    <input type="number" id="input-stroke-width" class="input-premium" value="8">
+                                <label class="label-premium">Outline & Design</label>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <input type="color" id="input-stroke-color" class="input-premium" style="height:50px; padding:6px; border-radius:12px;">
+                                    <div style="position:relative;">
+                                        <span style="position:absolute; left:14px; top:14px; font-size:0.75rem; font-weight:800; opacity:0.4;">STK</span>
+                                        <input type="number" id="input-stroke-width" class="input-premium" value="8" style="padding-left:50px; height:50px;">
+                                    </div>
                                 </div>
                             </div>
 
-                            <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
-                                <button class="btn-premium btn-outline" style="flex: 1; height: 40px;" onclick="deleteLayer()">Delete</button>
-                                <button class="btn-premium btn-outline" style="flex: 1; height: 40px;" onclick="changeZ(1)">Forward</button>
+                            <div style="display: flex; gap: 0.75rem; margin-top: 2rem;">
+                                <button class="btn-premium btn-outline" style="flex: 1; height: 48px;" onclick="deleteLayer()">Delete</button>
+                                <button class="btn-premium btn-outline" style="flex: 1; height: 48px;" onclick="changeZ(1)">Forward</button>
                             </div>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem;">
-                            <button class="btn-premium btn-outline" onclick="addTextLayer()">+ Add Text Layer</button>
-                            <button class="btn-premium btn-primary" onclick="exportPNG()">Export Thumbnail</button>
+                        <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2.5rem;">
+                            <button class="btn-premium btn-outline" style="height:52px; border-width:2px;" onclick="addTextLayer()">+ Add Text Layer</button>
+                            <button class="btn-premium btn-primary" style="height:52px; font-size:1.05rem;" onclick="exportPNG()">Export Thumbnail</button>
                         </div>
                     </div>
-                    
-                    <!-- Sidebar Ad Slot -->
-                    <div class="ad-slot ad-300x250" style="margin-top: 2rem;"></div>
                 </aside>
             </div>
         </div>
@@ -176,7 +260,81 @@
         let selectedId = null;
         const root = document.getElementById('layers-root');
         const bgImg = document.getElementById('bg-preview');
-        const zoom = 0.4;
+        const zoom = 0.45;
+
+        // Filter State
+        let filtersState = {
+            brightness: 100, contrast: 100, saturate: 100, blur: 0, 
+            vignette: 0, grain: 0
+        };
+
+        const presets = {
+            none: { brightness: 100, contrast: 100, saturate: 100, blur: 0, vignette: 0, grain: 0 },
+            clean: { brightness: 110, contrast: 110, saturate: 105, blur: 0, vignette: 10, grain: 0 },
+            warm: { brightness: 105, contrast: 100, saturate: 120, blur: 0, vignette: 15, grain: 5 },
+            cool: { brightness: 100, contrast: 105, saturate: 90, blur: 0, vignette: 20, grain: 0 },
+            vintage: { brightness: 95, contrast: 90, saturate: 80, blur: 0, vignette: 40, grain: 15 },
+            film: { brightness: 100, contrast: 85, saturate: 90, blur: 0, vignette: 30, grain: 10 },
+            punchy: { brightness: 105, contrast: 130, saturate: 130, blur: 0, vignette: 25, grain: 0 },
+            glow: { brightness: 115, contrast: 100, saturate: 110, blur: 1, vignette: 10, grain: 0 },
+            bw: { brightness: 100, contrast: 120, saturate: 0, blur: 0, vignette: 30, grain: 5 },
+            sepia: { brightness: 100, contrast: 100, saturate: 50, blur: 0, vignette: 35, grain: 10 },
+            dramatic: { brightness: 85, contrast: 140, saturate: 110, blur: 0, vignette: 50, grain: 5 },
+            moody: { brightness: 80, contrast: 110, saturate: 70, blur: 0, vignette: 60, grain: 15 }
+        };
+
+        const updateUIFromFilters = () => {
+            Object.keys(filtersState).forEach(key => {
+                const el = document.getElementById(`f-${key}`);
+                const valEl = document.getElementById(`val-${key}`);
+                if (el) el.value = filtersState[key];
+                if (valEl) valEl.innerText = (key === 'blur' ? filtersState[key] + 'px' : filtersState[key] + '%');
+            });
+            applyFiltersToPreview();
+        };
+
+        const applyFiltersToPreview = () => {
+            const f = filtersState;
+            bgImg.style.filter = `brightness(${f.brightness}%) contrast(${f.contrast}%) saturate(${f.saturate}%) blur(${f.blur}px)`;
+            
+            const vOverlay = document.getElementById('vignette-overlay');
+            if (vOverlay) {
+                vOverlay.style.opacity = f.vignette / 100;
+                vOverlay.style.background = `radial-gradient(circle, transparent 40%, rgba(0,0,0,${f.vignette/100}) 100%)`;
+            }
+            
+            const gOverlay = document.getElementById('grain-overlay');
+            if (gOverlay) gOverlay.style.opacity = f.grain / 100;
+        };
+
+        const applyPreset = (name) => {
+            filtersState = { ...filtersState, ...presets[name] };
+            document.querySelectorAll('.preset-btn').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('onclick').includes(`'${name}'`));
+            });
+            updateUIFromFilters();
+        };
+
+        const resetFilters = () => applyPreset('none');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            ['brightness', 'contrast', 'saturate', 'blur', 'vignette', 'grain'].forEach(key => {
+                const el = document.getElementById(`f-${key}`);
+                if (el) {
+                    el.oninput = (e) => {
+                        filtersState[key] = parseFloat(e.target.value);
+                        updateUIFromFilters();
+                    };
+                }
+            });
+            
+            const view = document.getElementById('canvas-view');
+            if (!document.getElementById('vignette-overlay')) {
+                const v = document.createElement('div'); v.id = 'vignette-overlay';
+                const g = document.createElement('div'); g.id = 'grain-overlay';
+                view.appendChild(v); view.appendChild(g);
+            }
+        });
 
         // Background Upload Logic
         const bgInput = document.getElementById('bg-upload');
@@ -206,8 +364,8 @@
         function addTextLayer() {
             const id = Date.now();
             layers.push({
-                id, text: 'VIRAL TITLE', x: 200, y: 200,
-                size: 100, font: 'Anton', color: '#ffffff',
+                id, text: 'NEW TEXT', x: 300, y: 250,
+                size: 120, font: 'Anton', color: '#ffffff',
                 bold: true, italic: false, strokeColor: '#000000', strokeWidth: 10,
                 rotation: 0, zIndex: layers.length
             });
@@ -224,27 +382,25 @@
                 div.id = `layer-${l.id}`;
                 div.innerText = l.text;
                 
-                // Ensure font is loaded before measuring or rendering
-                await document.fonts.load(`${l.size}px "${l.font}"`);
+                try {
+                    await document.fonts.load(`900 ${l.size}px "${l.font}"`);
+                } catch(e) {}
 
                 div.style.cssText = `
-                    left:${l.x}px; top:${l.y}px; font-size:${l.size}px; font-family:'${l.font}', Impact, sans-serif;
+                    left:${l.x}px; top:${l.y}px; font-size:${l.size}px; font-family:'${l.font}', sans-serif;
                     color:${l.color}; font-weight:900;
                     -webkit-text-stroke:${l.strokeWidth}px ${l.strokeColor}; 
-                    z-index:${l.zIndex};
+                    z-index:${l.zIndex + 10};
                     transform: rotate(${l.rotation}deg);
                 `;
 
                 if (isSelected) {
-                    // Add Resizers
                     ['nw','ne','sw','se'].forEach(pos => {
                         const resizer = document.createElement('div');
                         resizer.className = `resizer ${pos}`;
                         resizer.onmousedown = (e) => { e.stopPropagation(); startResize(e, l, pos); };
                         div.appendChild(resizer);
                     });
-
-                    // Add Rotator
                     const rotator = document.createElement('div');
                     rotator.className = 'rotator';
                     rotator.innerHTML = '🔄';
@@ -279,13 +435,12 @@
         function startDrag(e, l) {
             const startX = e.clientX; const startY = e.clientY;
             const initX = l.x; const initY = l.y;
-
-            function move(ev) {
+            const move = (ev) => {
                 l.x = initX + (ev.clientX - startX) / zoom;
                 l.y = initY + (ev.clientY - startY) / zoom;
                 render();
-            }
-            function stop() { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop); }
+            };
+            const stop = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop); };
             window.addEventListener('mousemove', move);
             window.addEventListener('mouseup', stop);
         }
@@ -293,16 +448,13 @@
         function startResize(e, l, pos) {
             const startX = e.clientX;
             const initSize = l.size;
-            const initX = l.x;
-            const initY = l.y;
-
-            function move(ev) {
+            const move = (ev) => {
                 const diff = (ev.clientX - startX) / zoom;
                 const newSize = pos.includes('e') ? initSize + diff : initSize - diff;
-                l.size = Math.max(20, Math.min(500, newSize));
+                l.size = Math.max(20, Math.min(600, newSize));
                 render();
-            }
-            function stop() { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop); }
+            };
+            const stop = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop); };
             window.addEventListener('mousemove', move);
             window.addEventListener('mouseup', stop);
         }
@@ -312,31 +464,33 @@
             const rect = el.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
-
-            function move(ev) {
+            const move = (ev) => {
                 const angle = Math.atan2(ev.clientY - centerY, ev.clientX - centerX);
                 let deg = angle * (180 / Math.PI) + 90;
                 if(ev.shiftKey) deg = Math.round(deg / 15) * 15;
                 l.rotation = deg;
                 render();
-            }
-            function stop() { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop); }
+            };
+            const stop = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop); };
             window.addEventListener('mousemove', move);
             window.addEventListener('mouseup', stop);
         }
 
         ['input-text','input-font','input-size','input-color','input-stroke-color','input-stroke-width'].forEach(id => {
-            document.getElementById(id).oninput = () => {
-                const l = layers.find(x => x.id === selectedId);
-                if(!l) return;
-                l.text = document.getElementById('input-text').value;
-                l.font = document.getElementById('input-font').value;
-                l.size = parseInt(document.getElementById('input-size').value);
-                l.color = document.getElementById('input-color').value;
-                l.strokeColor = document.getElementById('input-stroke-color').value;
-                l.strokeWidth = parseInt(document.getElementById('input-stroke-width').value);
-                render();
-            };
+            const el = document.getElementById(id);
+            if (el) {
+                el.oninput = () => {
+                    const l = layers.find(x => x.id === selectedId);
+                    if(!l) return;
+                    l.text = document.getElementById('input-text').value;
+                    l.font = document.getElementById('input-font').value;
+                    l.size = parseInt(document.getElementById('input-size').value);
+                    l.color = document.getElementById('input-color').value;
+                    l.strokeColor = document.getElementById('input-stroke-color').value;
+                    l.strokeWidth = parseInt(document.getElementById('input-stroke-width').value);
+                    render();
+                };
+            }
         });
 
         function changeZ(v) { const l = layers.find(x => x.id === selectedId); if(l) { l.zIndex += v; render(); } }
@@ -346,26 +500,49 @@
             const canvas = document.getElementById('export-canvas');
             const ctx = canvas.getContext('2d');
             
-            // Background
+            // 1. Background with Filters
+            ctx.clearRect(0, 0, 1280, 720);
             ctx.fillStyle = '#000';
-            ctx.fillRect(0,0,1280,720);
+            ctx.fillRect(0, 0, 1280, 720);
+            
+            const f = filtersState;
+            ctx.save();
+            ctx.filter = `brightness(${f.brightness}%) contrast(${f.contrast}%) saturate(${f.saturate}%) blur(${f.blur}px)`;
             ctx.drawImage(bgImg, 0, 0, 1280, 720);
+            ctx.restore();
 
-            for (const l of layers.sort((a,b) => a.zIndex - b.zIndex)) {
-                await document.fonts.load(`${l.size}px "${l.font}"`);
+            // 2. Overlays
+            if (f.vignette > 0) {
+                const gradient = ctx.createRadialGradient(640, 360, 200, 640, 360, 800);
+                gradient.addColorStop(0, 'transparent');
+                gradient.addColorStop(1, `rgba(0,0,0,${f.vignette/100})`);
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 1280, 720);
+            }
+
+            if (f.grain > 0) {
                 ctx.save();
-                
-                // Set font style
-                ctx.font = `900 ${l.size}px "${l.font}", Impact, sans-serif`;
+                ctx.globalAlpha = f.grain / 150;
+                ctx.globalCompositeOperation = 'overlay';
+                for (let i = 0; i < 40000; i++) {
+                    ctx.fillStyle = Math.random() > 0.5 ? '#fff' : '#000';
+                    ctx.fillRect(Math.random() * 1280, Math.random() * 720, 1, 1);
+                }
+                ctx.restore();
+            }
+
+            // 3. Text Layers
+            for (const l of layers.sort((a,b) => a.zIndex - b.zIndex)) {
+                try { await document.fonts.load(`900 ${l.size}px "${l.font}"`); } catch(e) {}
+                ctx.save();
+                ctx.font = `900 ${l.size}px "${l.font}", sans-serif`;
                 ctx.textBaseline = 'middle';
                 ctx.textAlign = 'center';
 
-                // Measure text for proper centering during rotation
                 const metrics = ctx.measureText(l.text);
                 const textWidth = metrics.width;
-                const textHeight = l.size * 0.8; // Approximate height
+                const textHeight = l.size * 0.8;
 
-                // Transform: Move to center of text layer position
                 ctx.translate(l.x + textWidth/2, l.y + textHeight/2);
                 ctx.rotate(l.rotation * Math.PI / 180);
 
@@ -375,13 +552,10 @@
                     ctx.lineJoin = 'round';
                     ctx.strokeText(l.text, 0, 0);
                 }
-                
                 ctx.fillStyle = l.color;
                 ctx.fillText(l.text, 0, 0);
-                
                 ctx.restore();
             }
-
             const link = document.createElement('a');
             link.download = `thumbnail-${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png', 1.0);
