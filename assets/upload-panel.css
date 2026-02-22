@@ -24,7 +24,7 @@
     border: 1px solid var(--up-border);
     border-radius: var(--up-radius);
     box-shadow: var(--up-shadow);
-    z-index: 10001;
+    z-index: 2147483647 !important; /* Max Z-index to stay on top */
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -36,7 +36,7 @@
 
 /* Minimize State */
 #upload-assistant-panel.is-minimized {
-    transform: scale(0.5) translate(100%, 100%);
+    transform: scale(0.8) translate(120%, 0);
     opacity: 0;
     pointer-events: none;
 }
@@ -49,7 +49,9 @@
     align-items: center;
     justify-content: space-between;
     cursor: grab;
+    user-select: none;
 }
+.up-header:active { cursor: grabbing; }
 .up-header-title { font-weight: 800; font-size: 0.85rem; color: var(--up-accent); letter-spacing: 0.05em; }
 
 .up-icon-btn {
@@ -107,17 +109,39 @@
 }
 .up-btn-primary:hover { background: var(--up-accent-hover); transform: translateY(-1px); }
 
-/* FAB (Floating Action Button) */
-.up-open-btn {
-    position: fixed; bottom: 30px; right: 30px; background: var(--up-accent); color: white;
-    width: 60px; height: 60px; border-radius: 30px; border: none; cursor: pointer;
-    box-shadow: 0 10px 25px rgba(225, 29, 72, 0.4); z-index: 10000; font-size: 1.8rem;
-    display: flex; align-items: center; justify-content: center;
+/* Sleek Minimized Banner Badge */
+.up-minimized-badge {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--up-accent);
+    color: white;
+    padding: 12px 8px;
+    border-radius: 12px 0 0 12px;
+    cursor: pointer;
+    z-index: 2147483646;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    box-shadow: -4px 0 15px rgba(225, 29, 72, 0.3);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    animation: popIn 0.4s ease-out;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
 }
-@keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-.up-open-btn:hover { transform: scale(1.1) rotate(5deg); }
+.up-minimized-badge:hover {
+    padding-right: 15px;
+    background: var(--up-accent-hover);
+}
+.up-minimized-badge .icon {
+    writing-mode: horizontal-tb;
+    font-size: 1.2rem;
+    margin-bottom: 4px;
+}
 
 /* Toast */
 #up-toast-container { position: absolute; bottom: 80px; left: 20px; z-index: 10002; pointer-events: none; }

@@ -1,26 +1,35 @@
 /**
- * YouTube MetaScore PRO - Production Version (Fixed Drag & Duplication)
+ * YouTube MetaScore PRO - Production Version (Ultimate Singleton & Stability Fix)
  */
 (function() {
+    const STORAGE_KEY = 'metascore_state_pro';
     const DEFAULTS = {
         isOpen: true,
         isMinimized: false,
-        position: { top: 100, left: 30 },
+        position: { top: 100, left: window.innerWidth - 400 },
         content: { title: '', description: '', tags: [], category: '' }
     };
 
-    // Global state management
-    let state = JSON.parse(localStorage.getItem('metascore_state_pro')) || DEFAULTS;
+    let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || DEFAULTS;
     let lastScore = 0;
 
-    function saveState() { localStorage.setItem('metascore_state_pro', JSON.stringify(state)); }
+    function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
     function init() {
-        // CRITICAL: Prevent duplicate instances
-        if (window._metascoreInitialized || document.getElementById('upload-assistant-panel')) {
-            return;
-        }
-        window._metascoreInitialized = true;
+        // 1. Strict Singleton: Cleanup ANY existing versions
+        const selectors = [
+            '#upload-assistant-panel', 
+            '#up-maximize-fab', 
+            '.up-minimized-badge', 
+            '#ctk-metascore-container',
+            '#metascoreFloatWrap'
+        ];
+        selectors.forEach(s => {
+            document.querySelectorAll(s).forEach(el => el.remove());
+        });
+
+        if (window._metascoreLoading) return;
+        window._metascoreLoading = true;
 
         createUI();
         setupEventListeners();
@@ -29,14 +38,11 @@
         setTimeout(() => {
             updateScore();
             restoreState();
+            window._metascoreLoading = false;
         }, 100);
     }
 
     function createUI() {
-        // Remove any existing wrapper to clean up
-        const oldWrap = document.getElementById('metascoreFloatWrap');
-        if (oldWrap) oldWrap.remove();
-
         const panel = document.createElement('div');
         panel.id = 'upload-assistant-panel';
         panel.className = 'metascore-pro-panel';
@@ -103,15 +109,15 @@
             <div id="up-toast-container"></div>
         `;
         
-        const fab = document.createElement('button');
-        fab.id = 'up-maximize-fab';
-        fab.className = 'up-open-btn';
-        fab.innerHTML = '🚀';
-        fab.style.display = 'none';
+        // Redesigned Minimized Badge
+        const badge = document.createElement('div');
+        badge.id = 'up-maximize-badge';
+        badge.className = 'up-minimized-badge';
+        badge.innerHTML = '<span class="icon">🚀</span> METASCORE';
+        badge.style.display = 'none';
 
-        // Append to body directly to avoid container issues
         document.body.appendChild(panel);
-        document.body.appendChild(fab);
+        document.body.appendChild(badge);
     }
 
     function setupEventListeners() {
@@ -132,17 +138,17 @@
 
         sr('up-copy-all').onclick = (e) => {
             e.preventDefault();
-            const tags = state.content.tags.map(t => `#${t}`).join(' ');
+            const tags = (state.content.tags || []).map(t => `#${t}`).join(' ');
             const category = catIn.options[catIn.selectedIndex] ? catIn.options[catIn.selectedIndex].text : '';
             const copyContent = `Title: ${state.content.title}\nCategory: ${category}\nHashtags: ${tags}\n\nDescription:\n${state.content.description}`;
             copyToClipboard(copyContent);
         };
 
         sr('up-minimize-x').onclick = () => setMinimized(true);
-        sr('up-maximize-fab').onclick = () => setMinimized(false);
+        sr('up-maximize-badge').onclick = () => setMinimized(false);
 
         sr('up-reset-all').onclick = () => {
-            if(!confirm("Clear all inputs?")) return;
+            if(!confirm("Clear all MetaScore inputs?")) return;
             state.content = { title: '', description: '', tags: [], category: '' };
             titleIn.value = descIn.value = catIn.value = tagIn.value = '';
             renderTags(); updateScore(); saveState();
@@ -159,7 +165,7 @@
         (state.content.tags || []).forEach((tag, i) => {
             const chip = document.createElement('div');
             chip.className = 'up-tag';
-            chip.innerHTML = `#${tag} <span onclick="window.removeUpTag(${i})">×</span>`;
+            chip.innerHTML = `#${tag} <span style="cursor:pointer;margin-left:4px;" onclick="window.removeUpTag(${i})">×</span>`;
             cont.insertBefore(chip, input);
         });
         const tagCnt = document.getElementById('up-tag-cnt');
@@ -170,10 +176,12 @@
     function updateScore() {
         const c = state.content; let score = 0; let hints = [];
         if (!c.category) { score -= 10; hints.push("Select a category"); }
-        if (c.title.length > 40 && c.title.length < 80) score += 30; else hints.push("Aim for 40-80 chars in title");
-        if (c.description.length > 200) score += 30; else hints.push("Add more description detail");
-        if (c.tags.length >= 3) score += 20; else hints.push("Add at least 3 hashtags");
-        if (c.description.toLowerCase().includes('subscribe') || c.description.toLowerCase().includes('like')) score += 20; else hints.push("Add a CTA (Like/Sub)");
+        const tl = (c.title || "").length;
+        if (tl > 45 && tl < 80) score += 30; else hints.push("Aim for 45-80 chars in title");
+        if ((c.description || "").length > 200) score += 30; else hints.push("Add more description detail");
+        if ((c.tags || []).length >= 3) score += 20; else hints.push("Add at least 3 hashtags");
+        const descLower = (c.description || "").toLowerCase();
+        if (descLower.includes('subscribe') || descLower.includes('like')) score += 20; else hints.push("Add a CTA (Like/Sub)");
 
         const final = Math.max(0, Math.min(100, score));
         const root = document.getElementById('up-metascore-root'), stars = document.getElementById('up-score-stars'), val = document.getElementById('up-score-val');
@@ -203,9 +211,9 @@
     function setMinimized(min) {
         state.isMinimized = min;
         const panel = document.getElementById('upload-assistant-panel');
-        const fab = document.getElementById('up-maximize-fab');
+        const badge = document.getElementById('up-maximize-badge');
         if (panel) panel.classList.toggle('is-minimized', min);
-        if (fab) fab.style.display = min ? 'flex' : 'none';
+        if (badge) badge.style.display = min ? 'flex' : 'none';
         saveState();
     }
 
@@ -223,7 +231,7 @@
             initialTop = panel.offsetTop;
             initialLeft = panel.offsetLeft;
             panel.style.transition = 'none';
-            document.body.style.userSelect = 'none'; // Prevent text selection
+            document.body.style.userSelect = 'none';
         };
 
         window.onmousemove = (e) => {
@@ -233,19 +241,18 @@
             state.position.top = initialTop + deltaY;
             state.position.left = initialLeft + deltaX;
             
-            // Constrain within viewport
-            state.position.top = Math.max(0, Math.min(window.innerHeight - 100, state.position.top));
-            state.position.left = Math.max(0, Math.min(window.innerWidth - 300, state.position.left));
+            state.position.top = Math.max(0, Math.min(window.innerHeight - 80, state.position.top));
+            state.position.left = Math.max(0, Math.min(window.innerWidth - 100, state.position.left));
 
             panel.style.top = `${state.position.top}px`;
             panel.style.left = `${state.position.left}px`;
-            panel.style.right = 'auto'; // Disable 'right' if set
+            panel.style.right = 'auto';
         };
 
         window.onmouseup = () => {
             if (isDragging) {
                 isDragging = false;
-                panel.style.transition = '';
+                panel.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease';
                 document.body.style.userSelect = '';
                 saveState();
             }
@@ -255,6 +262,11 @@
     function restoreState() {
         const panel = document.getElementById('upload-assistant-panel');
         if (!panel) return;
+
+        // Validation: if off-screen, reset to default
+        if (state.position.top > window.innerHeight || state.position.left > window.innerWidth) {
+            state.position = DEFAULTS.position;
+        }
 
         panel.style.top = `${state.position.top}px`;
         panel.style.left = `${state.position.left}px`;
@@ -274,7 +286,7 @@
     }
 
     function copyToClipboard(txt) {
-        navigator.clipboard.writeText(txt).then(() => showToast("Copied Everything!"));
+        navigator.clipboard.writeText(txt).then(() => showToast("Copied Content ✨"));
     }
 
     function showToast(msg) {
