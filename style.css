@@ -143,12 +143,133 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.75rem); }
     }
 }
 
-/* Button System Continued */
+.btn-primary {
+    background-color: var(--brand-red);
+    color: #ffffff;
+    box-shadow: var(--shadow-sm);
+}
 
-/* Layout Stability */
+.btn-primary:hover {
+    background-color: var(--brand-red-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Specific fix for Contact Page button */
+#contact-form button[type="submit"],
+.contact-form button[type="submit"] {
+    background-color: #ef2b4a !important;
+    color: white !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(239, 43, 74, 0.2) !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+    border: none !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#contact-form button[type="submit"]:hover,
+.contact-form button[type="submit"]:hover {
+    background-color: #d12440 !important;
+    box-shadow: 0 6px 16px rgba(239, 43, 74, 0.3) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Navigation Active State */
+.active-nav {
+    color: #ef2b4a !important;
+    border-bottom: 2px solid #ef2b4a;
+    font-weight: 700 !important;
+}
+
+/* Responsive Grid for Index and other pages */
 .hero-section { background: var(--bg-secondary); }
 .popular-tools-section { background: var(--bg-secondary); }
 .tool-card { background: var(--bg-primary); border-color: var(--border-color); }
+
+/* Internal Pages Readability Fix */
+.readable-content, .content-area, .card-premium {
+    background: #ffffff !important;
+    max-width: 900px !important;
+    margin: 2rem auto !important;
+    padding: 32px !important;
+    border-radius: 14px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05) !important;
+}
+
+.readable-content h1, .content-area h1, .card-premium h1 {
+    font-size: 2.5rem !important;
+    color: var(--text-primary);
+    margin-top: 0 !important;
+    margin-bottom: 1.5rem !important;
+    padding-bottom: 1rem !important;
+    border-bottom: 2px solid var(--bg-secondary) !important;
+}
+
+.readable-content h2, .content-area h2, .card-premium h2 {
+    color: var(--text-primary);
+    margin-top: 3rem !important;
+    margin-bottom: 1.25rem !important;
+    padding-top: 1.5rem !important;
+    border-top: 1px solid var(--border-color) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.readable-content h2::before, .content-area h2::before, .card-premium h2::before {
+    content: "•" !important;
+    color: #ef2b4a !important;
+    font-size: 1.5rem !important;
+    line-height: 1 !important;
+}
+
+.readable-content p, .content-area p, .card-premium p {
+    line-height: 1.75 !important;
+    color: #2a2a2a !important;
+    margin-bottom: 16px !important;
+    font-size: 1.05rem !important;
+}
+
+.readable-content ul, .content-area ul, 
+.readable-content ol, .content-area ol {
+    margin-bottom: 1.5rem !important;
+    padding-left: 1.5rem !important;
+}
+
+.readable-content li, .content-area li {
+    margin-bottom: 0.75rem !important;
+    line-height: 1.75 !important;
+    color: #2a2a2a !important;
+}
+
+.readable-content a, .content-area a, .card-premium a {
+    color: #ef2b4a !important;
+    font-weight: 600 !important;
+    transition: all 0.2s !important;
+}
+
+.readable-content a:hover, .content-area a:hover, .card-premium a:hover {
+    text-decoration: underline !important;
+}
+
+/* Dark mode overrides for readable content */
+html.dark .readable-content, 
+html.dark .content-area, 
+html.dark .card-premium {
+    background: var(--bg-primary) !important;
+}
+
+html.dark .readable-content p,
+html.dark .readable-content li,
+html.dark .content-area p,
+html.dark .content-area li {
+    color: var(--text-secondary) !important;
+}
 
 /* AI Assistant UI Components */
 .ai-panel {
@@ -559,142 +680,87 @@ main input[type="range"]{
 .pill{display:inline-block;margin-left:8px;padding:3px 8px;font-size:12px;border-radius:999px;background:rgba(225,29,72,.10);}
 .tool-bottom-nav{margin-top:26px;display:flex;justify-content:space-between;gap:12px;}
 
-/* ===== MetaScore Floating Panel ===== */
-.metascore-float {
-  position: fixed;
-  top: 92px;                 /* below navbar */
-  right: 16px;
-  width: 360px;
-  max-width: calc(100vw - 32px);
-  height: calc(100vh - 140px);
-  max-height: 720px;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
+/* ===== MetaScore Floating Panel Fix ===== */
+.metascore-float, 
+#metascorePanel, 
+#ctk-metascore-container, 
+#upload-assistant-panel,
+#upload-assistant-panel {
+  position: fixed !important;
+  z-index: 2147483647 !important; /* Maximum possible z-index */
+  right: 24px !important;
+  width: 380px !important;
+  max-width: calc(100vw - 48px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  
+  /* Reset height/overflow to prevent clipping */
+  height: auto !important;
+  max-height: calc(100vh - 100px) !important;
+  overflow: visible !important; 
+  padding: 0 !important;
+  margin: 0 !important;
+  top: 80px !important; /* Fixed position from top */
+  bottom: auto !important;
 }
 
-.metascore-float.is-hidden {
-  display: none !important;
+/* The actual card container */
+.metascore-float .metascore-inner,
+#metascorePanel,
+#ctk-metascore-container,
+#upload-assistant-panel {
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 20px !important;
+  /* Natural multi-layered shadow for inspector feel */
+  box-shadow: 
+    0 0 0 1px rgba(0,0,0,0.05),
+    0 10px 25px -5px rgba(0, 0, 0, 0.1), 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important; /* Content clip */
+  height: auto !important;
+  max-height: inherit !important;
 }
 
-.metascore-float .metascore-inner {
-  height: 100%;
-  overflow: hidden;
-  border-radius: 18px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.10);
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.06);
+/* Body scroll area */
+.up-body, .ms-body {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 20px !important;
+  min-height: 150px;
 }
 
-.metascore-reopen-btn {
-  position: fixed;
-  top: 110px;
-  right: 16px;
-  z-index: 10000;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(0,0,0,0.10);
-  background: #fff;
-  box-shadow: 0 10px 22px rgba(0,0,0,0.10);
-  cursor: pointer;
-  user-select: none;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.metascore-reopen-btn.is-hidden {
-  display: none !important;
+/* Header fix */
+.up-header, .ms-header {
+  flex-shrink: 0 !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  background: var(--bg-primary) !important;
+  z-index: 10 !important;
 }
 
 @media (max-width: 980px) {
-  .metascore-float {
-    top: auto;
-    bottom: 16px;
-    right: 16px;
-    left: 16px;
-    width: auto;
-    height: 52vh;
-    max-height: 520px;
+  .metascore-float, 
+  #metascorePanel, 
+  #ctk-metascore-container, 
+  #upload-assistant-panel {
+    top: auto !important;
+    bottom: 20px !important;
+    right: 16px !important;
+    left: 16px !important;
+    width: auto !important;
+    max-height: 50vh !important;
   }
-  .metascore-reopen-btn {
-    top: auto;
-    bottom: 16px;
-    right: 16px;
-  }
+}
+
+/* Remove or suppress old conflicting styles */
+#ctk-metascore-container {
+    box-shadow: none !important;
+    border: none !important;
 }
 
 /* ===== Video Title Generator: show full titles (no ellipsis) ===== */
-.vtg-result-title,
-.title-result,
-.result-title,
-.suggestion-title,
-.suggestion-card h4,
-.suggestion-card .title,
-.suggestion-item h4,
-.suggestion-item .title {
-  white-space: normal !important;
-  overflow: visible !important;
-  text-overflow: clip !important;
-  display: block !important;
-
-  /* allow wrapping safely */
-  word-break: break-word !important;
-  overflow-wrap: anywhere !important;
-}
-
-/* If you used line-clamp anywhere, disable it */
-.vtg-result-title,
-.title-result,
-.result-title,
-.suggestion-title,
-.suggestion-card h4,
-.suggestion-item h4 {
-  -webkit-line-clamp: unset !important;
-  -webkit-box-orient: unset !important;
-}
-
-/* If any container forces single-line flex squeeze, allow wrap */
-.suggestion-card,
-.suggestion-item,
-.result-card {
-  align-items: flex-start;
-}
-
-/* ===== CTK Global MetaScore Floating Panel ===== */
-#ctk-metascore-container {
-    position: fixed;
-    z-index: 9999;
-    width: 340px;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-#ctk-metascore-container.hidden {
-    display: none !important;
-}
-
-.ms-header {
-    background: var(--brand-red);
-    color: white;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: move;
-    user-select: none;
-}
-
-.ms-header-title { font-weight: 800; font-size: 0.85rem; letter-spacing: 0.05em; }
-.ms-close-btn { background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem; line-height: 1; padding: 4px; }
 
 .ms-body {
     padding: 16px;

@@ -126,12 +126,12 @@ function registerWebComponents() {
                     
                     <nav class="nav-center">
                         <ul class="nav-links-list">
-                            <li><a href="/tools.html" class="${activePath.includes('tools') ? 'active' : ''}">Tools</a></li>
-                            <li><a href="/guides.html" class="${activePath.includes('guides') ? 'active' : ''}">Guides</a></li>
-                            <li><a href="/about.html" class="${activePath === '/about.html' ? 'active' : ''}">About</a></li>
-                            <li><a href="/privacy.html" class="${activePath === '/privacy.html' ? 'active' : ''}">Privacy</a></li>
-                            <li><a href="/terms.html" class="${activePath === '/terms.html' ? 'active' : ''}">Terms</a></li>
-                            <li><a href="/contact.html" class="${activePath === '/contact.html' ? 'active' : ''}">Contact</a></li>
+                            <li><a href="/tools.html" class="${activePath.includes('tools') ? 'active-nav' : ''}">Tools</a></li>
+                            <li><a href="/guides.html" class="${activePath.includes('guides') ? 'active-nav' : ''}">Guides</a></li>
+                            <li><a href="/about.html" class="${activePath === '/about.html' ? 'active-nav' : ''}">About</a></li>
+                            <li><a href="/privacy.html" class="${activePath === '/privacy.html' ? 'active-nav' : ''}">Privacy</a></li>
+                            <li><a href="/terms.html" class="${activePath === '/terms.html' ? 'active-nav' : ''}">Terms</a></li>
+                            <li><a href="/contact.html" class="${activePath === '/contact.html' ? 'active-nav' : ''}">Contact</a></li>
                         </ul>
                     </nav>
 
