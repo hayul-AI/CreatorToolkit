@@ -212,11 +212,11 @@
             const avdSecEl = document.getElementById("avdSeconds");
 
             const avdMinutes = avdMinEl && avdMinEl.value ? Number(avdMinEl.value) : 0;
-            const avdSeconds = avdSecEl && avdSecEl.value ? Number(avdSeconds.value) : 0;
+            const avdSecondsValue = avdSecEl && avdSecEl.value ? Number(avdSecEl.value) : 0;
 
             // clamp seconds to 0–59 (AdSense-friendly: no alert)
-            const safeMin = Number.isFinite(avdMinutes) && avdMinutes > 0 ? avdMinutes : 0;
-            let safeSec = Number.isFinite(avdSeconds) && avdSeconds > 0 ? avdSeconds : 0;
+            const safeMin = Number.isFinite(avdMinutes) && avdMinutes >= 0 ? avdMinutes : 0;
+            let safeSec = Number.isFinite(avdSecondsValue) && avdSecondsValue >= 0 ? avdSecondsValue : 0;
             if (safeSec > 59) safeSec = 59;
 
             const avgViewDurationSeconds = Math.round(safeMin * 60 + safeSec);
@@ -231,7 +231,10 @@
             if (highNiches.includes(selectedNiche)) mLevel = 'high';
             else if (lowNiches.includes(selectedNiche)) mLevel = 'low';
 
-            if (views <= 0) return;
+            if (views <= 0) {
+                document.getElementById('views-input').focus();
+                return;
+            }
 
             // 1. Get Base RPM
             let baseRpmSet = RPM_DATA[country] || TIERS[COUNTRY_TIER_MAP[country]] || TIERS.tier3;

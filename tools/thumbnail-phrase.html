@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thumbnail Phrase Generator | CreatorToolkit</title>
+  <meta name="description" content="Generate short, clickable thumbnail phrases matching your video title. 100% browser-based." />
+  <link rel="stylesheet" href="/style.css?v=20260221" />
+  <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-secondary">
+  <creator-header></creator-header>
+
+  <main style="padding: 5rem 0;">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 4rem;">
+        <h1 style="font-size: 3rem; letter-spacing: -0.02em; margin-bottom: 1rem;">Thumbnail Phrase Generator</h1>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;">Short phrases that trigger curiosity and clicks — generated locally.</p>
+      </div>
+
+      <div class="tool-grid-2">
+        <div class="card result-card-ai" style="display:block; padding:2rem; cursor:default; min-height:auto;">
+          <h2 style="font-size:1.2rem; font-weight:800; margin-bottom:1.5rem;">Inputs</h2>
+
+          <div class="form-group">
+            <label>Video Title</label>
+            <input id="tpTitle" type="text" placeholder="e.g. 7 Common Jazz Mistakes Beginners Make" />
+            <div class="hint" style="margin-top:8px; font-size:0.8rem; opacity:0.7;">Tip: Include your main keyword. Phrases will stay short for thumbnails.</div>
+          </div>
+
+          <div class="form-group" style="margin-top:1.5rem;">
+            <label>Phrase Style</label>
+            <select id="tpStyle">
+              <option value="aggressive">공격적인</option>
+              <option value="curiosity" selected>호기심유발</option>
+              <option value="contrast">대조적인</option>
+              <option value="natural">자연스러운</option>
+              <option value="expert">전문가처럼</option>
+            </select>
+          </div>
+
+          <button id="tpGenerate" class="btn-primary" style="margin-top:2rem; width:100%; height:52px;" type="button">Generate Phrases ✨</button>
+          <div class="micro-note" style="margin-top:12px; font-size:0.75rem; text-align:center; opacity:0.6;">100% browser-based. No data leaves your device.</div>
+        </div>
+
+        <div class="card result-card-ai" style="display:block; padding:2rem; cursor:default; min-height:auto;">
+          <div class="ai-header" style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="font-size:1.2rem; font-weight:800; margin:0;">Results</h2>
+            <span id="tpStatus" class="ai-status">Ready</span>
+          </div>
+
+          <div class="ai-gauge-container" style="margin:1rem 0;"><div id="tpProgress" class="ai-gauge-fill" style="width:0%;"></div></div>
+
+          <div style="display:flex; justify-content:flex-end; margin-bottom:1.5rem;">
+            <button id="tpCopyAll" class="btn-outline" style="height:36px; padding:0 16px; font-size:0.85rem;" type="button">Copy All</button>
+          </div>
+
+          <div id="tpOutput" class="results-container">
+            <div style="text-align:center; padding:2rem; opacity:0.5;">Enter a title and click “Generate Phrases”.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <creator-footer></creator-footer>
+
+  <script src="/main.js?v=20260221"></script>
+  <script src="/assets/js/thumbnail-phrase.js" defer></script>
+</body>
+</html>
