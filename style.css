@@ -503,6 +503,15 @@ body.is-home .bottom-nav {
   --ctk-control-padding-x: 14px;
   --ctk-control-padding-y: 10px;
   --ctk-focus-ring: 0 0 0 3px rgba(225, 29, 72, 0.18); /* 사이트 포인트 컬러에 맞춘 부드러운 링 */
+  --input-bg: #ffffff;
+  --input-text: #0f172a;
+  --input-border: rgba(15, 23, 42, 0.18);
+}
+
+html.dark {
+  --input-bg: #1e293b;
+  --input-text: #f8fafc;
+  --input-border: rgba(255, 255, 255, 0.1);
 }
 
 /* 기본 텍스트 가독성(툴 페이지 본문) */
@@ -542,8 +551,9 @@ main :where(
   min-height: var(--ctk-control-height);
   padding: var(--ctk-control-padding-y) var(--ctk-control-padding-x);
   border-radius: var(--ctk-control-radius);
-  border: 1px solid rgba(15, 23, 42, 0.18);
-  background: #fff;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--input-text);
   outline: none;
   transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
