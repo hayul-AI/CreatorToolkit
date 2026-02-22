@@ -1,6 +1,6 @@
 // MetaScore floating panel controller (static, local-only)
 (function () {
-  const STORAGE_KEY = "metascore_open"; // "1" open, "0" closed
+  const STORAGE_KEY = "metascore_state_v1"; // Match upload-panel.js state key
 
   // Pages to EXCLUDE (by path or filename substring)
   const EXCLUDE = ["guides", "about", "privacy", "terms", "contact"];
@@ -12,15 +12,11 @@
 
   function qs(sel, root=document) { return root.querySelector(sel); }
 
-  // Try to find existing metascore panel (already in DOM somewhere)
-  // Adjust selectors to match your current markup if needed:
-  // Example: container id: #metascorePanel or .metascore-panel
   function findExistingPanel() {
-    return qs("#metascorePanel") || qs(".metascore-panel") || qs("[data-metascore-panel]") || qs("#upload-assistant-panel");
+    return qs("#upload-assistant-panel") || qs("#metascorePanel") || qs(".metascore-panel");
   }
 
   function wrapAsFloating(panelEl) {
-    // If already wrapped, do nothing
     if (panelEl.closest(".metascore-float")) return panelEl.closest(".metascore-float");
 
     const wrapper = document.createElement("div");
@@ -30,7 +26,6 @@
     const inner = document.createElement("div");
     inner.className = "metascore-inner";
 
-    // Move the panel into inner wrapper
     panelEl.parentNode.insertBefore(wrapper, panelEl);
     inner.appendChild(panelEl);
     wrapper.appendChild(inner);
@@ -39,37 +34,46 @@
   }
 
   function setOpenState(isOpen) {
-    localStorage.setItem(STORAGE_KEY, isOpen ? "1" : "0");
+    try {
+      let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+      state.isOpen = isOpen;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.error("MetaScore state save failed", e);
+    }
   }
 
   function getOpenState() {
-    const v = localStorage.getItem(STORAGE_KEY);
-    // default open on tool pages
-    if (v === null) return true;
-    return v === "1";
+    try {
+      const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (state && typeof state.isOpen !== 'undefined') return state.isOpen;
+    } catch (e) {}
+    return true; // default open
   }
 
   function applyVisibility(wrapper, isOpen) {
+    if (!wrapper) return;
     if (isOpen) {
       wrapper.classList.remove("is-hidden");
     } else {
       wrapper.classList.add("is-hidden");
     }
+    // Also sync with the panel element itself if it uses .hidden
+    const panel = qs("#upload-assistant-panel", wrapper);
+    if (panel) panel.classList.toggle('hidden', !isOpen);
   }
 
   function bindCloseButton(wrapper) {
-    // Find close button inside metascore panel (X)
-    // Adjust selector to match your close icon button.
     const closeBtn =
-      qs("#metascoreClose", wrapper) ||
-      qs(".metascore-close", wrapper) ||
-      qs("[data-metascore-close]", wrapper) ||
       qs("#up-close-x", wrapper) ||
-      qs("button[aria-label='Close']", wrapper);
+      qs("[data-metascore-close]", wrapper) ||
+      qs(".metascore-close", wrapper);
 
     if (closeBtn && !closeBtn.__metascoreBound) {
       closeBtn.__metascoreBound = true;
-      closeBtn.addEventListener("click", () => {
+      closeBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         setOpenState(false);
         applyVisibility(wrapper, false);
       });
@@ -81,9 +85,8 @@
 
     const panel = findExistingPanel();
     if (!panel) {
-        // Retry a few times in case panel is created dynamically
         if (!window._metascoreRetries) window._metascoreRetries = 0;
-        if (window._metascoreRetries < 10) {
+        if (window._metascoreRetries < 15) {
             window._metascoreRetries++;
             setTimeout(init, 200);
         }
@@ -91,13 +94,19 @@
     }
 
     const wrapper = wrapAsFloating(panel);
-
     const open = getOpenState();
+    
+    // Initial state sync
     applyVisibility(wrapper, open);
     bindCloseButton(wrapper);
+
+    // Watch for dynamic changes to the panel (e.g. if it's re-rendered)
+    const observer = new MutationObserver(() => {
+        bindCloseButton(wrapper);
+    });
+    observer.observe(wrapper, { childList: true, subtree: true });
   }
 
-  // DOM ready
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {

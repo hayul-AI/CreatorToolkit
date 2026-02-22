@@ -1,62 +1,48 @@
 /**
- * YouTube MetaScore Panel - 2026 Refactored Version
- * Replaced AI Generator with Category selection and updated scoring logic.
- * Enhanced: Star rating UI & Count-up animation.
+ * YouTube MetaScore Panel - 2026 Production Fix
  */
 (function() {
     const DEFAULTS = {
         isOpen: true,
         position: { top: 100, left: 30 },
-        content: { title: '', description: '', tags: [], category: '' },
-        settings: { includeCTA: true }
+        content: { title: '', description: '', tags: [], category: '' }
     };
 
     let state = JSON.parse(localStorage.getItem('metascore_state_v1')) || DEFAULTS;
-    let lastScore = 0; // For count-up animation
+    let lastScore = 0;
 
-    function saveState() {
-        localStorage.setItem('metascore_state_v1', JSON.stringify(state));
-    }
+    function saveState() { localStorage.setItem('metascore_state_v1', JSON.stringify(state)); }
 
     function init() {
         if (document.getElementById('upload-assistant-panel')) return;
         createUI();
         setupEventListeners();
         setupDrag();
-        
-        setTimeout(() => {
-            updateScore();
-            restorePanel();
-        }, 100);
+        setTimeout(() => { updateScore(); restorePanel(); }, 100);
     }
 
     function createUI() {
         const panel = document.createElement('div');
         panel.id = 'upload-assistant-panel';
-        panel.setAttribute('id', 'metascorePanel'); // Add requested ID
         if (!state.isOpen) panel.classList.add('hidden');
 
         panel.innerHTML = `
             <div class="up-header" id="up-drag-handle">
                 <div class="up-header-title">🚀 METASCORE</div>
                 <div style="display:flex; gap:8px;">
-                    <button class="up-icon-btn" id="up-reset-all" title="Reset" aria-label="Reset MetaScore inputs">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                          <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                          <path d="M6 6l1 16h10l1-16" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-                          <path d="M10 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                          <path d="M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <button type="button" class="up-icon-btn" id="up-reset-all" title="Reset">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M3 6h18M8 6V4h8v2M6 6l1 16h10l1-16M10 11v6M14 11v6" stroke-linecap="round"/>
                         </svg>
                     </button>
-                    <button class="up-icon-btn" id="up-close-x" data-metascore-close>✕</button>
+                    <button type="button" class="up-icon-btn" id="up-close-x" data-metascore-close>✕</button>
                 </div>
             </div>
             <div class="up-body">
                 <div class="up-score-card metascore" id="up-metascore-root">
                     <div class="metascore__label">META SCORE</div>
                     <div class="metascore__row">
-                        <div class="stars" id="up-stars-container" aria-label="MetaScore rating">
+                        <div class="stars" id="up-stars-container">
                             <div class="stars__base">★★★★★</div>
                             <div class="stars__fill" id="up-score-stars">★★★★★</div>
                         </div>
@@ -64,260 +50,161 @@
                     </div>
                     <ul class="up-hints" id="up-hints"></ul>
                 </div>
-
                 <div class="up-field">
                     <div class="up-label-row"><span>TITLE</span> <span id="up-title-cnt">0/100</span></div>
-                    <input type="text" class="up-input" id="up-title-in" maxlength="100" placeholder="Enter video title...">
+                    <input type="text" class="up-input" id="up-title-in" maxlength="100" placeholder="Enter title...">
                 </div>
-
                 <div class="up-field">
                     <div class="up-label-row"><span>CATEGORY</span></div>
-                    <select class="up-input" id="up-category-in" style="font-weight:600; cursor:pointer;">
+                    <select class="up-input" id="up-category-in">
                         <option value="">Select Category...</option>
-                        <option value="ent">Entertainment</option>
-                        <option value="edu">Education / Knowledge</option>
-                        <option value="tech">Tech / How-To</option>
-                        <option value="game">Gaming</option>
-                        <option value="music">Music</option>
-                        <option value="life">Lifestyle / Hobby</option>
-                        <option value="opinion">Commentary / Opinion</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Education / Knowledge">Education / Knowledge</option>
+                        <option value="Tech / How-To">Tech / How-To</option>
+                        <option value="Gaming">Gaming</option>
+                        <option value="Music">Music</option>
+                        <option value="Lifestyle / Hobby">Lifestyle / Hobby</option>
+                        <option value="Commentary / Opinion">Commentary / Opinion</option>
                     </select>
                 </div>
-
                 <div class="up-field">
                     <div class="up-label-row"><span>HASHTAGS (MAX 5)</span> <span id="up-tag-cnt">0/5</span></div>
                     <div class="up-tag-container" id="up-tag-cont">
-                        <input type="text" class="up-input" id="up-tag-in" style="border:none; padding:4px; width:auto; flex:1;" placeholder="Enter a hashtag ↵">
+                        <input type="text" class="up-input" id="up-tag-in" style="border:none;width:auto;flex:1;" placeholder="Add hashtag...">
                     </div>
                 </div>
-
                 <div class="up-field">
                     <div class="up-label-row"><span>DESCRIPTION</span> <span id="up-desc-cnt">0</span></div>
-                    <textarea class="up-input" id="up-desc-in" style="min-height:150px;" placeholder="Paste or type detailed description here..."></textarea>
+                    <textarea class="up-input" id="up-desc-in" style="min-height:120px;" placeholder="Video description..."></textarea>
                 </div>
             </div>
             <div class="up-footer">
-                <button class="up-btn up-btn-primary" id="up-copy-all">Copy Everything</button>
+                <button type="button" class="up-btn up-btn-primary" id="up-copy-all">Copy Everything</button>
             </div>
-            <div class="up-toast" id="up-toast">Copied!</div>
+            <div id="up-toast-container"></div>
         `;
         document.body.appendChild(panel);
     }
 
     function setupEventListeners() {
         const sr = (id) => document.getElementById(id);
-        const titleIn = sr('up-title-in');
-        const descIn = sr('up-desc-in');
-        const tagIn = sr('up-tag-in');
-        const catIn = sr('up-category-in');
+        const titleIn = sr('up-title-in'), descIn = sr('up-desc-in'), tagIn = sr('up-tag-in'), catIn = sr('up-category-in');
 
-        titleIn.value = state.content.title;
-        descIn.value = state.content.description;
-        catIn.value = state.content.category;
+        titleIn.value = state.content.title || '';
+        descIn.value = state.content.description || '';
+        catIn.value = state.content.category || '';
         renderTags();
 
-        titleIn.oninput = (e) => {
-            state.content.title = e.target.value;
-            sr('up-title-cnt').innerText = `${e.target.value.length}/100`;
-            updateScore();
-            saveState();
-        };
+        titleIn.oninput = (e) => { state.content.title = e.target.value; updateScore(); saveState(); };
+        descIn.oninput = (e) => { state.content.description = e.target.value; updateScore(); saveState(); };
+        catIn.onchange = (e) => { state.content.category = e.target.value; updateScore(); saveState(); };
 
-        descIn.oninput = (e) => {
-            state.content.description = e.target.value;
-            sr('up-desc-cnt').innerText = e.target.value.length;
-            updateScore();
-            saveState();
-        };
-
-        catIn.onchange = (e) => {
-            state.content.category = e.target.value;
-            updateScore();
-            saveState();
-        };
-
-        const processTags = () => {
-            const val = tagIn.value.trim();
-            if (!val) return;
-            const newTags = val.split(/[\s,]+/).map(t => t.trim().replace(/^#/, '')).filter(t => t !== '');
-            let combined = [...new Set([...state.content.tags, ...newTags])];
-            if (combined.length > 5) combined = combined.slice(0, 5);
-            state.content.tags = combined;
-            tagIn.value = '';
-            renderTags();
-            updateScore();
-            saveState();
-        };
-
-        tagIn.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); processTags(); } };
-        tagIn.onblur = processTags;
-
-        sr('up-copy-all').onclick = () => {
+        sr('up-copy-all').onclick = (e) => {
+            e.preventDefault();
             const tags = state.content.tags.map(t => `#${t}`).join(' ');
-            copyText(`${state.content.title}\n\n${state.content.description}\n\n${tags}`);
+            const categoryText = catIn.options[catIn.selectedIndex] ? catIn.options[catIn.selectedIndex].text : '';
+            const copyContent = `Title: ${state.content.title}\nCategory: ${categoryText}\nHashtags: ${tags}\n\nDescription:\n${state.content.description}`;
+            copyText(copyContent);
         };
 
-        sr('up-close-x').onclick = () => togglePanel(false);
+        sr('up-close-x').onclick = (e) => { e.preventDefault(); togglePanel(false); };
+        
+        const processTags = () => {
+            const val = tagIn.value.trim(); if (!val) return;
+            const newTags = val.split(/[\s,]+/).map(t => t.trim().replace(/^#/, '')).filter(t => t !== '');
+            state.content.tags = [...new Set([...state.content.tags, ...newTags])].slice(0, 5);
+            tagIn.value = ''; renderTags(); updateScore(); saveState();
+        };
+        tagIn.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); processTags(); } };
         sr('up-reset-all').onclick = () => {
-            // 1) Title input 비우기
-            state.content.title = '';
-            sr('up-title-in').value = '';
-            sr('up-title-cnt').innerText = '0/100';
-
-            // 2) Category select 기본값으로 되돌리기
-            state.content.category = '';
-            sr('up-category-in').value = '';
-
-            // 3) Hashtags(칩/태그) 전부 삭제 + 입력창도 비우기
-            state.content.tags = [];
-            sr('up-tag-in').value = '';
-            renderTags();
-
-            // 4) Description textarea 비우기
-            state.content.description = '';
-            sr('up-desc-in').value = '';
-            sr('up-desc-cnt').innerText = '0';
-
-            // 5) MetaScore 즉시 재계산/리셋 상태로 반영
-            updateScore();
-
-            // 6) localStorage 초기화 (DEFAULTS의 content와 매칭)
-            saveState();
+            state.content = { title: '', description: '', tags: [], category: '' };
+            titleIn.value = descIn.value = catIn.value = ''; renderTags(); updateScore(); saveState();
         };
     }
 
     function renderTags() {
-        const cont = document.getElementById('up-tag-cont');
-        const input = document.getElementById('up-tag-in');
+        const cont = document.getElementById('up-tag-cont'), input = document.getElementById('up-tag-in');
+        if (!cont) return;
         cont.querySelectorAll('.up-tag').forEach(t => t.remove());
-        state.content.tags.forEach((tag, i) => {
+        (state.content.tags || []).forEach((tag, i) => {
             const chip = document.createElement('div');
             chip.className = 'up-tag';
             chip.innerHTML = `#${tag} <span style="cursor:pointer;margin-left:4px;" onclick="window.removeUpTag(${i})">×</span>`;
             cont.insertBefore(chip, input);
         });
-        document.getElementById('up-tag-cnt').innerText = `${state.content.tags.length}/5`;
     }
-
-    window.removeUpTag = (idx) => {
-        state.content.tags.splice(idx, 1);
-        renderTags();
-        updateScore();
-        saveState();
-    };
+    window.removeUpTag = (idx) => { state.content.tags.splice(idx, 1); renderTags(); updateScore(); saveState(); };
 
     function updateScore() {
-        const c = state.content;
-        let score = 0;
-        let hints = [];
-
-        if (!c.category) { score -= 10; hints.push("Choose a category to improve clarity."); }
-
-        const tl = c.title.trim().length;
-        if (tl >= 45 && tl <= 75) score += 30;
-        else if (tl > 0) { score += 15; hints.push("Aim for 45-75 chars in title."); }
-        else hints.push("Add a video title to start.");
-
-        const dl = c.description.trim().length;
-        if (dl >= 250) score += 30;
-        else if (dl >= 50) { score += 15; hints.push(`Description is a bit short.`); }
-        else hints.push("Add a detailed description.");
-
-        const tc = c.tags.length;
-        if (tc >= 3) score += 20;
-        else if (tc > 0) { score += 10; hints.push("Add at least 3 hashtags."); }
-        else hints.push("Use hashtags for better reach.");
-
-        if (c.description.toLowerCase().includes('subscribe') || c.description.toLowerCase().includes('like')) score += 20;
-        else hints.push("Add a Call to Action (Like/Sub).");
-
-        const final = Math.max(0, Math.min(100, score));
-        
-        // UI Updates
-        const root = document.getElementById('up-metascore-root');
-        const starsFill = document.getElementById('up-score-stars');
-        const scoreVal = document.getElementById('up-score-val');
-        const hintsEl = document.getElementById('up-hints');
-        const container = document.getElementById('up-stars-container');
-
-        if (root) {
-            root.classList.remove('tone-danger', 'tone-warn', 'tone-good');
-            const tone = final < 40 ? 'tone-danger' : (final < 70 ? 'tone-warn' : 'tone-good');
-            root.classList.add(tone);
-        }
-
+        const c = state.content; let score = 0;
+        if (c.category) score += 10;
+        if (c.title.length > 40) score += 30;
+        if (c.description.length > 100) score += 30;
+        if (c.tags.length >= 3) score += 30;
+        const final = Math.min(100, score);
+        const starsFill = document.getElementById('up-score-stars'), scoreVal = document.getElementById('up-score-val');
         if (starsFill) starsFill.style.width = `${final}%`;
-        
-        if (container) {
-            const starsValue = (final / 20).toFixed(1);
-            container.setAttribute('aria-label', `MetaScore ${final} out of 100, ${starsValue} out of 5 stars`);
-        }
-
-        if (scoreVal) animateValue(scoreVal, lastScore, final, 350);
-        lastScore = final;
-
-        if (hintsEl) hintsEl.innerHTML = hints.slice(0, 3).map(h => `<li>${h}</li>`).join('');
-    }
-
-    function animateValue(obj, start, end, duration) {
-        let startTimestamp = null;
-        const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            obj.innerHTML = Math.floor(progress * (end - start) + start);
-            if (progress < 1) window.requestAnimationFrame(step);
-        };
-        window.requestAnimationFrame(step);
-    }
-
-    function setupDrag() {
-        const panel = document.getElementById('upload-assistant-panel');
-        const handle = document.getElementById('up-drag-handle');
-        let isDragging = false;
-        let startX, startY, initialTop, initialLeft;
-
-        const start = (e) => {
-            if (e.target.closest('button') || e.target.closest('input') || e.target.closest('textarea') || e.target.closest('select')) return;
-            isDragging = true;
-            const ev = e.touches ? e.touches[0] : e;
-            startX = ev.clientX; startY = ev.clientY;
-            initialTop = panel.offsetTop; initialLeft = panel.offsetLeft;
-            panel.style.transition = 'none';
-        };
-        const move = (e) => {
-            if (!isDragging) return;
-            const ev = e.touches ? e.touches[0] : e;
-            state.position.top = initialTop + (ev.clientY - startY);
-            state.position.left = initialLeft + (ev.clientX - startX);
-            panel.style.top = `${state.position.top}px`;
-            panel.style.left = `${state.position.left}px`;
-        };
-        const end = () => { isDragging = false; panel.style.transition = ''; saveState(); };
-
-        handle.onmousedown = start; handle.ontouchstart = start;
-        window.onmousemove = move; window.ontouchmove = move;
-        window.onmouseup = end; window.ontouchend = end;
+        if (scoreVal) scoreVal.innerText = final;
     }
 
     function togglePanel(open) {
         state.isOpen = open;
-        document.getElementById('upload-assistant-panel').classList.toggle('hidden', !open);
+        const wrapper = document.getElementById('metascoreFloatWrap');
+        if (wrapper) wrapper.classList.toggle('is-hidden', !open);
         saveState();
+    }
+
+    function setupDrag() { 
+        const panel = document.getElementById('upload-assistant-panel');
+        const handle = document.getElementById('up-drag-handle');
+        if (!panel || !handle) return;
+        let isDragging = false, startX, startY, initialTop, initialLeft;
+        handle.onmousedown = (e) => {
+            if (e.target.closest('button') || e.target.closest('input')) return;
+            isDragging = true; startX = e.clientX; startY = e.clientY;
+            initialTop = panel.offsetTop; initialLeft = panel.offsetLeft;
+            panel.style.transition = 'none';
+        };
+        window.onmousemove = (e) => {
+            if (!isDragging) return;
+            state.position.top = initialTop + (e.clientY - startY);
+            state.position.left = initialLeft + (e.clientX - startX);
+            panel.style.top = `${state.position.top}px`; panel.style.left = `${state.position.left}px`;
+        };
+        window.onmouseup = () => { isDragging = false; panel.style.transition = ''; saveState(); };
     }
 
     function restorePanel() {
         const p = document.getElementById('upload-assistant-panel');
-        p.style.top = `${state.position.top}px`;
-        p.style.left = `${state.position.left}px`;
+        if (p) { p.style.top = `${state.position.top}px`; p.style.left = `${state.position.left}px`; }
     }
 
-    function copyText(txt) { navigator.clipboard.writeText(txt).then(() => showToast("Copied to Clipboard!")); }
+    function copyText(txt) {
+        const fallbackCopy = (text) => {
+            const area = document.createElement("textarea");
+            area.value = text; document.body.appendChild(area);
+            area.select(); document.execCommand("copy");
+            document.body.removeChild(area);
+            showToast("Copied!");
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(txt).then(() => showToast("Copied!")).catch(() => fallbackCopy(txt));
+        } else { fallbackCopy(txt); }
+    }
+
     function showToast(msg) {
-        const t = document.getElementById('up-toast');
-        t.innerText = msg; t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 2000);
+        const container = document.getElementById('up-toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'up-toast';
+        toast.innerText = msg;
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 1500);
     }
 
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-    else init();
+    init();
 })();
