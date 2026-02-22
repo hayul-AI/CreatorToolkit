@@ -9,7 +9,6 @@
   const progressEl = $("tpProgress");
   const outputEl = $("tpOutput");
   const copyAllBtn = $("tpCopyAll");
-  const copiedEl = $("tpCopied");
 
   if (!genBtn || !outputEl) return;
 
@@ -103,14 +102,15 @@
       b.addEventListener("click", async () => {
         const i = Number(b.getAttribute("data-i"));
         const ok = await copyText(items[i] || "");
+        const originalText = b.textContent;
         b.textContent = ok ? "Saved!" : "Error";
-        setTimeout(()=> b.textContent = "Copy", 1200);
+        setTimeout(()=> b.textContent = originalText, 1200);
       });
     });
   }
 
   function styleLabelFromValue(v){
-    return ({aggressive:"공격적인", curiosity:"호기심유발", contrast:"대조적인", natural:"자연스러운", expert:"전문가처럼"})[v] || "호기심유발";
+    return ({aggressive:"Aggressive", curiosity:"Curiosity", contrast:"Contrast", natural:"Natural", expert:"Expert"})[v] || "Curiosity";
   }
 
   function generate(){
@@ -137,11 +137,11 @@
   genBtn.addEventListener("click", generate);
   if (titleEl) titleEl.addEventListener("keydown", (e) => { if(e.key==="Enter") generate(); });
   if (copyAllBtn) copyAllBtn.addEventListener("click", async () => {
-    const text = Array.from(outputEl.querySelectorAll(".result-phrase")).map(el => el.textContent.trim()).join("
-");
+    const text = Array.from(outputEl.querySelectorAll(".result-phrase")).map(el => el.textContent.trim()).join("\n");
     const ok = await copyText(text);
+    const originalText = copyAllBtn.textContent;
     copyAllBtn.textContent = ok ? "All Copied!" : "Error";
-    setTimeout(()=> copyAllBtn.textContent = "Copy All", 1500);
+    setTimeout(()=> copyAllBtn.textContent = originalText, 1500);
   });
 
   setStatus("Ready");
