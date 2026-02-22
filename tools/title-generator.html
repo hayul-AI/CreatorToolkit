@@ -129,6 +129,7 @@
                             return;
                         }
 
+                        const style = videoStyle.value;
                         const intensity = document.querySelector('input[name="intensity"]:checked')?.value || 'balanced';
 
                         // UI Feedback
@@ -143,36 +144,35 @@
                                             setTimeout(() => {
                                                 progressFill.style.width = '100%';
                                                 statusBadge.innerText = 'Done';
-                                                statusBadge.className = 'ready';
+                                                statusBadge.className = 'ai-status ready';
                         
                                                 // Category-Specific Base Templates
                                                 const categoryBases = {
                                                     "Entertainment": ["[Topic]: The Story No One Expected", "[Topic]: What Happened Behind The Scenes", "[Topic]: The Mystery Finally Solved"],
                                                     "Education / Knowledge": ["The Science Of [Topic] Explained", "Why [Topic] Is Changing Everything", "Everything You Need To Know About [Topic]"],
-                                                    "Tech / How-To": "[Topic]: The Best Way To Master This",
-                                                    "Gaming": "How I Won The [Topic] World Record",
-                                                    "Music": "The Most Emotive [Topic] Vibe Remix",
-                                                    "Lifestyle / Hobby": "[Topic]: Beginner To Pro Transformation",
-                                                    "Commentary / Opinion": "The Truth About The [Topic] Situation"
+                                                    "Tech / How-To": ["[Topic]: The Best Way To Master This", "Step-By-Step [Topic] Masterclass", "Stop Doing [Topic] The Hard Way"],
+                                                    "Gaming": ["How I Won The [Topic] World Record", "The [Topic] Secret Every Pro Uses", "Mastering [Topic]: Full Speedrun Guide"],
+                                                    "Music": ["The Most Emotive [Topic] Vibe Remix", "[Topic] (Official Cover Video)", "Relaxing [Topic] To Study/Relax To"],
+                                                    "Lifestyle / Hobby": ["[Topic]: Beginner To Pro Transformation", "My 30 Day [Topic] Routine Results", "How [Topic] Changed My Life Forever"],
+                                                    "Commentary / Opinion": ["The Truth About The [Topic] Situation", "Why I Was Wrong About [Topic]", "The Real Problem With [Topic] Revealed"]
                                                 };
                         
                                                 // Intensity Logic
-                                                const generateTitle = (topic, style, intensity) => {
-                                                    let base = (categoryBases[style] && Array.isArray(categoryBases[style])) 
-                                                        ? categoryBases[style][Math.floor(Math.random() * categoryBases[style].length)]
-                                                        : (categoryBases[style] || "[Topic]: The Ultimate Guide");
+                                                const generateTitle = (topic, currentStyle, currentIntensity) => {
+                                                    let pool = categoryBases[currentStyle] || ["[Topic]: The Ultimate Guide", "Mastering [Topic] in 2026"];
+                                                    let base = Array.isArray(pool) ? pool[Math.floor(Math.random() * pool.length)] : pool;
                                                     
                                                     base = base.replace(/\[Topic\]/g, topic);
                         
-                                                    if (intensity === 'safe') {
-                                                        return `${topic}: The Professional Guide`;
-                                                    } else if (intensity === 'balanced') {
-                                                        const curiosity = ["The Truth Revealed", "5 Secrets You Need", "Results Finally In"];
-                                                        return `${topic}: ${curiosity[Math.floor(Math.random() * curiosity.length)]}`;
+                                                    if (currentIntensity === 'safe') {
+                                                        return base;
+                                                    } else if (currentIntensity === 'balanced') {
+                                                        const curiosity = [" (Must See)", " - 2026 Update", " - Don't Skip", " (Hidden Details)"];
+                                                        return base + curiosity[Math.floor(Math.random() * curiosity.length)];
                                                     } else {
-                                                        const power = ["SHOCKING", "NEVER", "UNBELIEVABLE", "SCARY"];
+                                                        const power = ["SHOCKING", "NEVER", "UNBELIEVABLE", "SCARY", "INSANE"];
                                                         const p = power[Math.floor(Math.random() * power.length)];
-                                                        return `${topic}: ${p} Truth You Will ${p === 'NEVER' ? 'ALWAYS' : 'NEVER'} Believe!`;
+                                                        return `${p}: ${base} - You Won't Believe This!`;
                                                     }
                                                 };
                         
