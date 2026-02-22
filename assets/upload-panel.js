@@ -1,6 +1,5 @@
 /**
- * YouTube MetaScore PRO - Production Version
- * Features: Minimize to icon, Trash-can reset, Copy feedback, Pro UI
+ * YouTube MetaScore PRO - Production Version (Fixed Drag & Duplication)
  */
 (function() {
     const DEFAULTS = {
@@ -10,13 +9,19 @@
         content: { title: '', description: '', tags: [], category: '' }
     };
 
+    // Global state management
     let state = JSON.parse(localStorage.getItem('metascore_state_pro')) || DEFAULTS;
     let lastScore = 0;
 
     function saveState() { localStorage.setItem('metascore_state_pro', JSON.stringify(state)); }
 
     function init() {
-        if (document.getElementById('upload-assistant-panel')) return;
+        // CRITICAL: Prevent duplicate instances
+        if (window._metascoreInitialized || document.getElementById('upload-assistant-panel')) {
+            return;
+        }
+        window._metascoreInitialized = true;
+
         createUI();
         setupEventListeners();
         setupDrag();
@@ -28,7 +33,10 @@
     }
 
     function createUI() {
-        // Main Panel
+        // Remove any existing wrapper to clean up
+        const oldWrap = document.getElementById('metascoreFloatWrap');
+        if (oldWrap) oldWrap.remove();
+
         const panel = document.createElement('div');
         panel.id = 'upload-assistant-panel';
         panel.className = 'metascore-pro-panel';
@@ -95,14 +103,13 @@
             <div id="up-toast-container"></div>
         `;
         
-        // Floating Action Button (for minimized state)
         const fab = document.createElement('button');
         fab.id = 'up-maximize-fab';
         fab.className = 'up-open-btn';
         fab.innerHTML = '🚀';
-        fab.title = 'Open MetaScore PRO';
         fab.style.display = 'none';
 
+        // Append to body directly to avoid container issues
         document.body.appendChild(panel);
         document.body.appendChild(fab);
     }
@@ -111,12 +118,10 @@
         const sr = (id) => document.getElementById(id);
         const titleIn = sr('up-title-in'), descIn = sr('up-desc-in'), tagIn = sr('up-tag-in'), catIn = sr('up-category-in');
 
-        // Input sync
         titleIn.oninput = (e) => { state.content.title = e.target.value; updateCount('up-title-cnt', e.target.value.length, 100); updateScore(); saveState(); };
         descIn.oninput = (e) => { state.content.description = e.target.value; sr('up-desc-cnt').innerText = e.target.value.length; updateScore(); saveState(); };
         catIn.onchange = (e) => { state.content.category = e.target.value; updateScore(); saveState(); };
 
-        // Tag logic
         const processTags = () => {
             const val = tagIn.value.trim(); if (!val) return;
             const newTags = val.split(/[\s,]+/).map(t => t.trim().replace(/^#/, '')).filter(t => t !== '');
@@ -125,20 +130,17 @@
         };
         tagIn.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); processTags(); } };
 
-        // Copy Everything
         sr('up-copy-all').onclick = (e) => {
             e.preventDefault();
             const tags = state.content.tags.map(t => `#${t}`).join(' ');
-            const category = catIn.options[catIn.selectedIndex].text;
+            const category = catIn.options[catIn.selectedIndex] ? catIn.options[catIn.selectedIndex].text : '';
             const copyContent = `Title: ${state.content.title}\nCategory: ${category}\nHashtags: ${tags}\n\nDescription:\n${state.content.description}`;
             copyToClipboard(copyContent);
         };
 
-        // Minimize / Maximize
         sr('up-minimize-x').onclick = () => setMinimized(true);
         sr('up-maximize-fab').onclick = () => setMinimized(false);
 
-        // Reset (Trash can)
         sr('up-reset-all').onclick = () => {
             if(!confirm("Clear all inputs?")) return;
             state.content = { title: '', description: '', tags: [], category: '' };
@@ -148,10 +150,11 @@
         };
     }
 
-    function updateCount(id, val, max) { document.getElementById(id).innerText = `${val}/${max}`; }
+    function updateCount(id, val, max) { const el = document.getElementById(id); if (el) el.innerText = `${val}/${max}`; }
 
     function renderTags() {
         const cont = document.getElementById('up-tag-cont'), input = document.getElementById('up-tag-in');
+        if (!cont || !input) return;
         cont.querySelectorAll('.up-tag').forEach(t => t.remove());
         (state.content.tags || []).forEach((tag, i) => {
             const chip = document.createElement('div');
@@ -159,14 +162,15 @@
             chip.innerHTML = `#${tag} <span onclick="window.removeUpTag(${i})">×</span>`;
             cont.insertBefore(chip, input);
         });
-        document.getElementById('up-tag-cnt').innerText = `${state.content.tags.length}/5`;
+        const tagCnt = document.getElementById('up-tag-cnt');
+        if (tagCnt) tagCnt.innerText = `${state.content.tags.length}/5`;
     }
     window.removeUpTag = (idx) => { state.content.tags.splice(idx, 1); renderTags(); updateScore(); saveState(); };
 
     function updateScore() {
         const c = state.content; let score = 0; let hints = [];
         if (!c.category) { score -= 10; hints.push("Select a category"); }
-        if (c.title.length > 45 && c.title.length < 75) score += 30; else hints.push("Aim for 45-75 chars in title");
+        if (c.title.length > 40 && c.title.length < 80) score += 30; else hints.push("Aim for 40-80 chars in title");
         if (c.description.length > 200) score += 30; else hints.push("Add more description detail");
         if (c.tags.length >= 3) score += 20; else hints.push("Add at least 3 hashtags");
         if (c.description.toLowerCase().includes('subscribe') || c.description.toLowerCase().includes('like')) score += 20; else hints.push("Add a CTA (Like/Sub)");
@@ -181,7 +185,8 @@
         if (val) animateValue(val, lastScore, final, 400);
         lastScore = final;
         
-        document.getElementById('up-hints').innerHTML = hints.slice(0, 3).map(h => `<li>${h}</li>`).join('');
+        const hintsEl = document.getElementById('up-hints');
+        if (hintsEl) hintsEl.innerHTML = hints.slice(0, 3).map(h => `<li>${h}</li>`).join('');
     }
 
     function animateValue(obj, start, end, duration) {
@@ -199,44 +204,71 @@
         state.isMinimized = min;
         const panel = document.getElementById('upload-assistant-panel');
         const fab = document.getElementById('up-maximize-fab');
-        const wrapper = document.getElementById('metascoreFloatWrap');
-
-        if (min) {
-            panel.classList.add('is-minimized');
-            setTimeout(() => { fab.style.display = 'flex'; }, 300);
-            if (wrapper) wrapper.classList.add('is-hidden');
-        } else {
-            panel.classList.remove('is-minimized');
-            fab.style.display = 'none';
-            if (wrapper) wrapper.classList.remove('is-hidden');
-        }
+        if (panel) panel.classList.toggle('is-minimized', min);
+        if (fab) fab.style.display = min ? 'flex' : 'none';
         saveState();
     }
 
     function setupDrag() {
         const handle = document.getElementById('up-drag-handle'), panel = document.getElementById('upload-assistant-panel');
+        if (!handle || !panel) return;
+
         let isDragging = false, startX, startY, initialTop, initialLeft;
+
         handle.onmousedown = (e) => {
             if (e.target.closest('button')) return;
-            isDragging = true; startX = e.clientX; startY = e.clientY;
-            initialTop = panel.offsetTop; initialLeft = panel.offsetLeft;
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            initialTop = panel.offsetTop;
+            initialLeft = panel.offsetLeft;
             panel.style.transition = 'none';
+            document.body.style.userSelect = 'none'; // Prevent text selection
         };
+
         window.onmousemove = (e) => {
             if (!isDragging) return;
-            state.position.top = initialTop + (e.clientY - startY);
-            state.position.left = initialLeft + (e.clientX - startX);
-            panel.style.top = `${state.position.top}px`; panel.style.left = `${state.position.left}px`;
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+            state.position.top = initialTop + deltaY;
+            state.position.left = initialLeft + deltaX;
+            
+            // Constrain within viewport
+            state.position.top = Math.max(0, Math.min(window.innerHeight - 100, state.position.top));
+            state.position.left = Math.max(0, Math.min(window.innerWidth - 300, state.position.left));
+
+            panel.style.top = `${state.position.top}px`;
+            panel.style.left = `${state.position.left}px`;
+            panel.style.right = 'auto'; // Disable 'right' if set
         };
-        window.onmouseup = () => { isDragging = false; panel.style.transition = ''; saveState(); };
+
+        window.onmouseup = () => {
+            if (isDragging) {
+                isDragging = false;
+                panel.style.transition = '';
+                document.body.style.userSelect = '';
+                saveState();
+            }
+        };
     }
 
     function restoreState() {
-        const p = document.getElementById('upload-assistant-panel'), titleIn = document.getElementById('up-title-in'), descIn = document.getElementById('up-desc-in'), catIn = document.getElementById('up-category-in');
-        p.style.top = `${state.position.top}px`; p.style.left = `${state.position.left}px`;
-        titleIn.value = state.content.title; descIn.value = state.content.description; catIn.value = state.content.category;
-        updateCount('up-title-cnt', state.content.title.length, 100);
-        document.getElementById('up-desc-cnt').innerText = state.content.description.length;
+        const panel = document.getElementById('upload-assistant-panel');
+        if (!panel) return;
+
+        panel.style.top = `${state.position.top}px`;
+        panel.style.left = `${state.position.left}px`;
+        panel.style.right = 'auto';
+
+        const tIn = document.getElementById('up-title-in'), dIn = document.getElementById('up-desc-in'), cIn = document.getElementById('up-category-in');
+        if (tIn) tIn.value = state.content.title || '';
+        if (dIn) dIn.value = state.content.description || '';
+        if (cIn) cIn.value = state.content.category || '';
+        
+        updateCount('up-title-cnt', (state.content.title || '').length, 100);
+        const dCnt = document.getElementById('up-desc-cnt');
+        if (dCnt) dCnt.innerText = (state.content.description || '').length;
+        
         renderTags();
         setMinimized(state.isMinimized);
     }
@@ -247,6 +279,7 @@
 
     function showToast(msg) {
         const container = document.getElementById('up-toast-container');
+        if (!container) return;
         const toast = document.createElement('div');
         toast.className = 'up-toast'; toast.innerText = msg;
         container.appendChild(toast);
